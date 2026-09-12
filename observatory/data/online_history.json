@@ -1,0 +1,2581 @@
+[
+  {
+    "id": "banked-reset-2097752790177370535",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "手动重置故障补偿重置",
+      "ja": "任意リセット不具合補償リセット",
+      "en": "Banked Reset Issue Compensation Reset"
+    },
+    "summary": {
+      "zh": "ChatGPT Work 和 Codex 出现部分手动重置（banked reset）使用后未完全生效的问题。在受影响时段内使用过手动重置的用户将收到一封致歉邮件以及补发的手动重置机会。",
+      "ja": "ChatGPT WorkおよびCodexにおいて、任意リセット権（banked reset）を使用した際に正常に適用されない問題が発生しました。影響を受けた時間帯に任意リセット権を使用したユーザーに対して、お詫びメールの送付とともに、補償として任意リセット権が1回分再配布されました。",
+      "en": "An issue occurred where some Banked Resets did not fully apply when used in ChatGPT Work and Codex. Users who used one during the affected time window are receiving an apology email along with a replacement Banked Reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-09-09T18:23:34.000Z",
+    "closed_at": "2026-09-09T18:23:34.000Z",
+    "completed_at": "2026-09-09T18:23:34.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2097752790177370535",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2097752790177370535"
+    ],
+    "scope": "部分用户",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "部分用户",
+      "noticeToExecution": "",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "ChatGPT Work 和 Codex 出现部分手动重置（banked reset）使用后未完全生效的问题。在受影响时段内使用过手动重置的用户将收到一封致歉邮件以及补发的手动重置机会。",
+        "ja": "ChatGPT WorkおよびCodexにおいて、任意リセット権（banked reset）を使用した際に正常に適用されない問題が発生しました。影響を受けた時間帯に任意リセット権を使用したユーザーに対して、お詫びメールの送付とともに、補償として任意リセット権が1回分再配布されました。",
+        "en": "An issue occurred where some Banked Resets did not fully apply when used in ChatGPT Work and Codex. Users who used one during the affected time window are receiving an apology email along with a replacement Banked Reset."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "一部ユーザー",
+        "noticeToExecution": "",
+        "noticeType": "告知あり",
+        "note": "ChatGPT WorkおよびCodexにおいて、任意リセット権（banked reset）を使用した際に正常に適用されない問題が発生しました。影響を受けた時間帯に任意リセット権を使用したユーザーに対して、お詫びメールの送付とともに、補償として任意リセット権が1回分再配布されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "Some users",
+        "noticeToExecution": "",
+        "noticeType": "Announcement",
+        "note": "An issue occurred where some Banked Resets did not fully apply when used in ChatGPT Work and Codex. Users who used one during the affected time window are receiving an apology email along with a replacement Banked Reset."
+      }
+    }
+  },
+  {
+    "id": "local-codex-rolling-notice-reset-2026-09-08",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "Tibo 绝不放弃你重置",
+      "ja": "Tiboの君を絶対に諦めないリセット",
+      "en": "Tibo's Never Gonna Give You Up Reset"
+    },
+    "summary": {
+      "zh": "根据“绝不放弃你”（Never Gonna Give You Up）预告，Codex 和 ChatGPT Work 的使用额度已陆续完成重置。",
+      "ja": "Tibo氏による『Never Gonna Give You Up』（君を絶対に諦めない）予告に基づき、CodexおよびChatGPT Workの利用上限が順次リセットされました。",
+      "en": "Following the 'Never Gonna Give You Up' teaser notice, usage limits for Codex and ChatGPT Work were rolled out sequentially."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-09-07T19:24:57.000Z",
+    "closed_at": "2026-09-08T04:06:57.741Z",
+    "completed_at": "2026-09-08T04:06:57.741Z",
+    "source_url": "https://x.com/thsottiaux/status/2097043464538264003",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2097043464538264003"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "6 小时 5 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "重置并非所有账号同时进行，而是按顺序执行，各账号的执行时间有所不同。",
+        "ja": "リセットは全アカウントで同時ではなく順次実施され、実施時刻にはアカウントごとの差がありました。",
+        "en": "The reset was carried out sequentially rather than simultaneously for all accounts, so the execution time varied by account."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "6時間5分",
+        "noticeType": "告知あり",
+        "note": "リセットは全アカウントで同時ではなく順次実施され、実施時刻にはアカウントごとの差がありました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "6 hours 5 minutes",
+        "noticeType": "Announcement",
+        "note": "The reset was carried out sequentially rather than simultaneously for all accounts, so the execution time varied by account."
+      }
+    }
+  },
+  {
+    "id": "banked-reset-2095651088502591861-observation-20260904T234601897Z",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "GPT-6 Astra 发布庆祝重置（第2次）",
+      "ja": "GPT-6 Astraリリース記念リセット（2回目）",
+      "en": "GPT-6 Astra Launch Celebration Reset (2nd)"
+    },
+    "summary": {
+      "zh": "已观测到 BANKED 重置发放。",
+      "ja": "任意リセット権の配布が確認されました。",
+      "en": "A BANKED Reset distribution was observed."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-09-03T23:12:09.000Z",
+    "closed_at": "2026-09-04T23:46:01.897Z",
+    "completed_at": "2026-09-04T23:46:01.897Z",
+    "source_url": "https://x.com/thsottiaux/status/2095651088502591861",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2095651088502591861"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "24 小时 34 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "配合 GPT-6 Astra 发布，已发放 BANKED 重置。发放可能会分批进行，而不是一次性全部到账。",
+        "ja": "GPT-6 Astraの提供開始にあわせ、BANKEDリセットが配布されました。配布は一斉ではなく、順次行われる場合があります。",
+        "en": "To mark the GPT-6 Astra launch, a BANKED Reset was distributed. Distribution may take place progressively rather than all at once."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "24時間34分",
+        "noticeType": "告知あり",
+        "note": "GPT-6 Astraの提供開始にあわせ、BANKEDリセットが配布されました。配布は一斉ではなく、順次行われる場合があります。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "24 hours 34 minutes",
+        "noticeType": "Announcement",
+        "note": "To mark the GPT-6 Astra launch, a BANKED Reset was distributed. Distribution may take place progressively rather than all at once."
+      }
+    }
+  },
+  {
+    "id": "banked-reset-2095651088502591861",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "GPT-6 Astra 发布纪念 BANKED 重置发放",
+      "ja": "GPT-6 Astraリリース記念BANKEDリセット配布",
+      "en": "GPT-6 Astra Launch BANKED Reset Distribution"
+    },
+    "summary": {
+      "zh": "已观测到 BANKED 重置发放。",
+      "ja": "任意リセット権の配布が確認されました。",
+      "en": "A BANKED Reset distribution was observed."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-09-03T23:12:09.000Z",
+    "closed_at": "2026-09-04T03:34:46.386Z",
+    "completed_at": "2026-09-04T03:34:46.386Z",
+    "source_url": "https://x.com/thsottiaux/status/2095651088502591861",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2095651088502591861"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "4 小时 23 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "配合 GPT-6 Astra 发布，已发放 BANKED 重置。发放可能会分批进行，而不是一次性全部到账。",
+        "ja": "GPT-6 Astraの提供開始にあわせ、BANKEDリセットが配布されました。配布は一斉ではなく、順次行われる場合があります。",
+        "en": "To mark the GPT-6 Astra launch, a BANKED Reset was distributed. Distribution may take place progressively rather than all at once."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "4時間23分",
+        "noticeType": "告知あり",
+        "note": "GPT-6 Astraの提供開始にあわせ、BANKEDリセットが配布されました。配布は一斉ではなく、順次行われる場合があります。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "4 hours 23 minutes",
+        "noticeType": "Announcement",
+        "note": "To mark the GPT-6 Astra launch, a BANKED Reset was distributed. Distribution may take place progressively rather than all at once."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2093811840258293947",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "活跃用户突破2500万纪念重置",
+      "ja": "2500万人アクティブユーザー突破記念リセット",
+      "en": "25 Million Active Users Milestone Reset"
+    },
+    "summary": {
+      "zh": "已确认 Codex 每周使用额度已重置。",
+      "ja": "Codexの週間利用枠がリセットされたことを確認しました。",
+      "en": "Codex weekly usage limits were confirmed to have been reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-29T21:23:38.000Z",
+    "closed_at": "2026-08-31T02:24:50.909Z",
+    "completed_at": "2026-08-31T02:24:50.909Z",
+    "source_url": "https://x.com/thsottiaux/status/2093811840258293947",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2093811840258293947"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "29 小时 1 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "已确认 Codex 每周使用额度已重置。",
+        "ja": "Codexの週間利用枠がリセットされたことを確認しました。",
+        "en": "Codex weekly usage limits were confirmed to have been reset."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "29時間1分",
+        "noticeType": "匂わせあり",
+        "note": "Codexの週間利用枠がリセットされたことを確認しました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "29 hours 1 minute",
+        "noticeType": "Teaser hint",
+        "note": "Codex weekly usage limits were confirmed to have been reset."
+      }
+    }
+  },
+  {
+    "id": "usage-reset-41c8ec4e-f752-4e5b-b685-4af67a1e6925",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "Codex 使用限制改进重置",
+      "ja": "Codex利用制限改善対応リセット",
+      "en": "Codex Usage Limit Improvement Reset"
+    },
+    "summary": {
+      "zh": "已确认 Codex 每周使用额度已重置。",
+      "ja": "Codexの週間利用枠がリセットされたことを確認しました。",
+      "en": "Codex weekly usage limits were confirmed to have been reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-29T20:43:34.878Z",
+    "closed_at": "2026-08-29T21:25:40.549Z",
+    "completed_at": "2026-08-29T21:25:40.549Z",
+    "source_url": "https://x.com/thsottiaux/status/2093801758665715784",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2093801758665715784"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "42 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "已确认 Codex 每周使用额度已重置。",
+        "ja": "Codexの週間利用枠がリセットされたことを確認しました。",
+        "en": "Codex weekly usage limits were confirmed to have been reset."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "42分",
+        "noticeType": "告知あり",
+        "note": "Codexの週間利用枠がリセットされたことを確認しました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "42 minutes",
+        "noticeType": "Announcement",
+        "note": "Codex weekly usage limits were confirmed to have been reset."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2093014447833116908",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "随机重置",
+      "ja": "Tiboの快眠若返り記念リセット",
+      "en": "Random reset"
+    },
+    "summary": {
+      "zh": "Tibo 宣布 Codex 的使用限制已重置。",
+      "ja": "Tibo氏がCodexの利用上限リセット完了を発表しました。",
+      "en": "Tibo announced that Codex usage limits were reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-27T06:31:31.000Z",
+    "closed_at": "2026-08-27T16:28:02.721Z",
+    "completed_at": "2026-08-27T16:28:02.721Z",
+    "source_url": "https://x.com/thsottiaux/status/2092862554632826968",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2092862554632826968"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "10 小时 4 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "Tibo 宣布 Codex 的使用限制已重置。",
+        "ja": "Tibo氏がCodexの利用上限リセット完了を発表しました。",
+        "en": "Tibo announced that Codex usage limits were reset."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "10時間4分",
+        "noticeType": "匂わせあり",
+        "note": "Tibo氏がCodexの利用上限リセット完了を発表しました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "10 hours 4 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Tibo announced that Codex usage limits were reset."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2092058556707344708",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "恢复5小时限制附带重置",
+      "ja": "5時間制限復活に伴うリセット",
+      "en": "5-hour limit restoration reset"
+    },
+    "summary": {
+      "zh": "随着 Plus 计划恢复每 5 小时使用限制，Codex 整体使用额度已作为补偿进行重置。",
+      "ja": "Plusプランにおける5時間ごとの利用制限復活に伴い、Codex全体の利用枠がお詫びとしてリセットされました。",
+      "en": "Codex usage limits were reset as compensation accompanying the restoration of the 5-hour limit for Plus plans."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-25T01:16:43.000Z",
+    "closed_at": "2026-08-25T14:13:31.428Z",
+    "completed_at": "2026-08-25T14:13:31.428Z",
+    "source_url": "https://x.com/thsottiaux/status/2092058556707344708",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2092058556707344708"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "12 小时 57 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "随着 Plus 计划恢复每 5 小时使用限制，Codex 整体使用额度已作为补偿进行重置。",
+        "ja": "Plusプランにおける5時間ごとの利用制限復活に伴い、Codex全体の利用枠がお詫びとしてリセットされました。",
+        "en": "Codex usage limits were reset as compensation accompanying the restoration of the 5-hour limit for Plus plans."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "12時間57分",
+        "noticeType": "匂わせあり",
+        "note": "Plusプランにおける5時間ごとの利用制限復活に伴い、Codex全体の利用枠がお詫びとしてリセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "12 hours 57 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Codex usage limits were reset as compensation accompanying the restoration of the 5-hour limit for Plus plans."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2091412393368945027",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "过度消耗补偿重置",
+      "ja": "過剰消費のお詫びリセット",
+      "en": "Excessive consumption compensation reset"
+    },
+    "summary": {
+      "zh": "针对周末过度消耗问题，Codex 整体使用额度已作为补偿进行重置。",
+      "ja": "週末の過剰消費トラブルに伴い、Codex全体の利用枠がお詫びとしてリセットされました。",
+      "en": "Codex usage limits were reset as compensation for the weekend's excessive consumption issue."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-23T06:29:05.000Z",
+    "closed_at": "2026-08-23T23:37:43.201Z",
+    "completed_at": "2026-08-23T23:37:43.201Z",
+    "source_url": "https://x.com/thsottiaux/status/2091412393368945027",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2091412393368945027"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "17 小时 9 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "针对周末过度消耗问题，Codex 整体使用额度已作为补偿进行重置。",
+        "ja": "週末の過剰消費トラブルに伴い、Codex全体の利用枠がお詫びとしてリセットされました。",
+        "en": "Codex usage limits were reset as compensation for the weekend's excessive consumption issue."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "17時間9分",
+        "noticeType": "告知あり",
+        "note": "週末の過剰消費トラブルに伴い、Codex全体の利用枠がお詫びとしてリセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "17 hours 9 minutes",
+        "noticeType": "Announcement",
+        "note": "Codex usage limits were reset as compensation for the weekend's excessive consumption issue."
+      }
+    }
+  },
+  {
+    "id": "banked-reset-2090766694897619318",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "活跃用户突破2000万纪念重置",
+      "ja": "2000万人アクティブユーザー突破記念リセット",
+      "en": "20 Million Active Users Milestone Reset"
+    },
+    "summary": {
+      "zh": "已观测到 BANKED 重置发放。",
+      "ja": "任意リセット権の配布が確認されました。",
+      "en": "A BANKED Reset distribution was observed."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-21T11:43:19.000Z",
+    "closed_at": "2026-08-22T01:52:00.000Z",
+    "completed_at": "2026-08-22T01:52:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2090947196107764189",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2090947196107764189"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "14 小时 9 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "已观测到 BANKED 重置发放。",
+        "ja": "任意リセット権の配布が確認されました。",
+        "en": "A BANKED Reset distribution was observed."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "14時間9分",
+        "noticeType": "告知あり",
+        "note": "任意リセット権の配布が確認されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "14 hours 9 minutes",
+        "noticeType": "Announcement",
+        "note": "A BANKED Reset distribution was observed."
+      }
+    }
+  },
+  {
+    "id": "regular-reset-weekly-regular-reset-2026-08-20T03-34-43-341Z",
+    "recordKind": "regular_completed",
+    "title": {
+      "zh": "定期重置",
+      "ja": "定期リセット",
+      "en": "Weekly reset"
+    },
+    "summary": {
+      "zh": "在常规的 1 周循环时间点，执行了 Codex 使用限制重置。",
+      "ja": "通常の1週間サイクルのタイミングで、Codexの利用上限リセットが実施されました。",
+      "en": "Codex usage limits were reset on the usual weekly-cycle timing."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-20T04:01:28.26+00:00",
+    "closed_at": "2026-08-20T04:01:28.26+00:00",
+    "completed_at": "2026-08-20T04:01:28.26+00:00",
+    "source_url": null,
+    "sourceKind": "none",
+    "sourceTweetIds": [],
+    "scope": "未使用任意重置的账户",
+    "details": {
+      "cycleType": "定期リセット",
+      "reasonType": "定期更新",
+      "resetMethod": "强制重置",
+      "scope": "未使用任意重置的账户",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "定期重置会在您上次重置后首次使用 Codex 或 Work 的一周后进行。使用手动重置后也一样，会从该重置后的首次使用时间起算一周，因此实际时间可能与此处显示的时间不同。",
+        "ja": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。",
+        "en": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "定期リセット",
+        "reasonType": "定期更新",
+        "resetMethod": "強制リセット",
+        "scope": "任意リセット未使用アカウント",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。"
+      },
+      "en": {
+        "cycleType": "Weekly reset",
+        "reasonType": "Regular update",
+        "resetMethod": "Hard Reset",
+        "scope": "Accounts without a Banked Reset",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2087706104814023111",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "活跃用户突破1500万纪念重置",
+      "ja": "1500万人アクティブユーザー突破記念リセット",
+      "en": "15 Million Active Users Milestone Reset"
+    },
+    "summary": {
+      "zh": "为纪念 Codex 活跃用户数突破 1500 万，ChatGPT Work 和 Codex 的使用额度进行了强制重置。",
+      "ja": "Codexのアクティブユーザー数1500万人突破を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+      "en": "To celebrate Codex surpassing 15 million active users, usage limits for ChatGPT Work and Codex were forcibly reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-13T01:01:37.000Z",
+    "closed_at": "2026-08-13T03:34:43.341Z",
+    "completed_at": "2026-08-13T03:34:43.341Z",
+    "source_url": "https://x.com/thsottiaux/status/2087706104814023111",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2087706104814023111"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "2 小时 33 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "为纪念 Codex 活跃用户数突破 1500 万，ChatGPT Work 和 Codex 的使用额度进行了强制重置。",
+        "ja": "Codexのアクティブユーザー数1500万人突破を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+        "en": "To celebrate Codex surpassing 15 million active users, usage limits for ChatGPT Work and Codex were forcibly reset."
+      }
+    },
+    "executionTimePrecision": "approximate",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "2時間33分",
+        "noticeType": "告知あり",
+        "note": "Codexのアクティブユーザー数1500万人突破を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "2 hours 33 minutes",
+        "noticeType": "Announcement",
+        "note": "To celebrate Codex surpassing 15 million active users, usage limits for ChatGPT Work and Codex were forcibly reset."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2086972933566857393",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "随机重置",
+      "ja": "Tiboのパフォーマンス的なリセット",
+      "en": "Random reset"
+    },
+    "summary": {
+      "zh": "Tibo 宣布 Codex 的使用限制已重置。",
+      "ja": "Tibo氏がCodexの利用上限リセット完了を発表しました。",
+      "en": "Tibo announced that Codex usage limits were reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-08T20:34:50.000Z",
+    "closed_at": "2026-08-11T00:00:00.000Z",
+    "completed_at": "2026-08-11T00:00:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2086189414292865249",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2086189414292865249"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "51 小时 53 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "Tibo 宣布 Codex 的使用限制已重置。",
+        "ja": "Tibo氏がCodexの利用上限リセット完了を発表しました。",
+        "en": "Tibo announced that Codex usage limits were reset."
+      }
+    },
+    "executionTimePrecision": "exact",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "51時間53分",
+        "noticeType": "告知あり",
+        "note": "Tibo氏がCodexの利用上限リセット完了を発表しました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "51 hours 53 minutes",
+        "noticeType": "Announcement",
+        "note": "Tibo announced that Codex usage limits were reset."
+      }
+    }
+  },
+  {
+    "id": "tibo-reset-2086188036493344823",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "随机重置",
+      "ja": "Claude CodeでもGPT-5.6 Solが使える記念リセット",
+      "en": "Random reset"
+    },
+    "summary": {
+      "zh": "Tibo 宣布 Codex 的使用限制已重置。",
+      "ja": "Tibo氏がCodexの利用上限リセット完了を発表しました。",
+      "en": "Tibo announced that Codex usage limits were reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-08T20:29:22.000Z",
+    "closed_at": "2026-08-08T20:29:22.000Z",
+    "completed_at": "2026-08-08T20:29:22.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2086188036493344823",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2086188036493344823"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "Tibo 宣布 Codex 的使用限制已重置。",
+        "ja": "Tibo氏がCodexの利用上限リセット完了を発表しました。",
+        "en": "Tibo announced that Codex usage limits were reset."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Tibo氏がCodexの利用上限リセット完了を発表しました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Tibo announced that Codex usage limits were reset."
+      }
+    }
+  },
+  {
+    "id": "regular-reset-weekly-regular-reset-2026-08-08T03-32-00-000Z",
+    "recordKind": "regular_completed",
+    "title": {
+      "zh": "定期重置",
+      "ja": "定期リセット",
+      "en": "Weekly reset"
+    },
+    "summary": {
+      "zh": "在常规的 1 周循环时间点，执行了 Codex 使用限制重置。",
+      "ja": "通常の1週間サイクルのタイミングで、Codexの利用上限リセットが実施されました。",
+      "en": "Codex usage limits were reset on the usual weekly-cycle timing."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-08-08T03:32:00+00:00",
+    "closed_at": "2026-08-08T03:32:00+00:00",
+    "completed_at": "2026-08-08T03:32:00+00:00",
+    "source_url": null,
+    "sourceKind": "none",
+    "sourceTweetIds": [],
+    "scope": "未使用任意重置的账户",
+    "details": {
+      "cycleType": "定期リセット",
+      "reasonType": "定期更新",
+      "resetMethod": "强制重置",
+      "scope": "未使用任意重置的账户",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "定期重置会在您上次重置后首次使用 Codex 或 Work 的一周后进行。使用手动重置后也一样，会从该重置后的首次使用时间起算一周，因此实际时间可能与此处显示的时间不同。",
+        "ja": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。",
+        "en": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "定期リセット",
+        "reasonType": "定期更新",
+        "resetMethod": "強制リセット",
+        "scope": "任意リセット未使用アカウント",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。"
+      },
+      "en": {
+        "cycleType": "Weekly reset",
+        "reasonType": "Regular update",
+        "resetMethod": "Hard Reset",
+        "scope": "Accounts without a Banked Reset",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    }
+  },
+  {
+    "id": "local-luna-100k-threads-efficiency-reset-2026-08-01",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "Luna 10万线程与效率改进庆祝重置",
+      "ja": "Luna 10万スレッド到達・効率改善記念リセット",
+      "en": "Luna 100k Threads & Efficiency Milestone Reset"
+    },
+    "summary": {
+      "zh": "Tibo 宣布由于本周效率提升，全员重置 Codex 与 ChatGPT Work 用量上限，方便周末运行 10 万个 Luna 线程。",
+      "ja": "Tibo氏より今週の利用効率改善を記念し、週末に10万件のLunaスレッドを実行できるようCodexおよびChatGPT Workの利用上限が全ユーザー強制リセットされました。",
+      "en": "Tibo announced a forced reset for all Codex and ChatGPT Work users to celebrate a week of efficiency gains and enable 100,000 Luna threads over the weekend."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-31T04:53:19.170Z",
+    "closed_at": "2026-08-01T03:32:00.000Z",
+    "completed_at": "2026-08-01T03:32:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2083053369351090254",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2083053369351090254"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "22 小时 39 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "Tibo 宣布由于本周效率提升，全员重置 Codex 与 ChatGPT Work 用量上限，方便周末运行 10 万个 Luna 线程。",
+        "ja": "Tibo氏より今週の利用効率改善を記念し、週末に10万件のLunaスレッドを実行できるようCodexおよびChatGPT Workの利用上限が全ユーザー強制リセットされました。",
+        "en": "Tibo announced a forced reset for all Codex and ChatGPT Work users to celebrate a week of efficiency gains and enable 100,000 Luna threads over the weekend."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "22時間39分",
+        "noticeType": "匂わせあり",
+        "note": "Tibo氏より今週の利用効率改善を記念し、週末に10万件のLunaスレッドを実行できるようCodexおよびChatGPT Workの利用上限が全ユーザー強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "22 hours 39 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Tibo announced a forced reset for all Codex and ChatGPT Work users to celebrate a week of efficiency gains and enable 100,000 Luna threads over the weekend."
+      }
+    }
+  },
+  {
+    "id": "local-codex-gpt56-sol-efficiency-reset-2026-07-29",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "GPT-5.6 Sol 效率提升重置",
+      "ja": "GPT-5.6 Sol利用効率改善リセット",
+      "en": "GPT-5.6 Sol Efficiency Improvement Reset"
+    },
+    "summary": {
+      "zh": "随着 Tibo 宣布 GPT-5.6 Sol 模型的消耗效率提升（使用时长延长约 18%），所有 ChatGPT Work 和 Codex 用户的用量上限已立即被强制重置。",
+      "ja": "Tibo氏よりGPT-5.6 Solモデルの消費効率改善（利用持続力約18%向上）の発表とともに、全ChatGPT WorkおよびCodexユーザーの利用上限が即時強制リセットされました。",
+      "en": "Following the announcement by Tibo regarding efficiency improvements for the GPT-5.6 Sol model (~18% longer usage duration), rate limits for all ChatGPT Work and Codex users were forcibly reset immediately."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-28T14:00:00+09:00",
+    "closed_at": "2026-07-29T13:09:00+09:00",
+    "completed_at": "2026-07-29T13:09:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "23 小时 9 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "随着 Tibo 宣布 GPT-5.6 Sol 模型的消耗效率提升（使用时长延长约 18%），所有 ChatGPT Work 和 Codex 用户的用量上限已立即被强制重置。",
+        "ja": "Tibo氏よりGPT-5.6 Solモデルの消費効率改善（利用持続力約18%向上）の発表とともに、全ChatGPT WorkおよびCodexユーザーの利用上限が即時強制リセットされました。",
+        "en": "Following the announcement by Tibo regarding efficiency improvements for the GPT-5.6 Sol model (~18% longer usage duration), rate limits for all ChatGPT Work and Codex users were forcibly reset immediately."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "23時間9分",
+        "noticeType": "匂わせあり",
+        "note": "Tibo氏よりGPT-5.6 Solモデルの消費効率改善（利用持続力約18%向上）の発表とともに、全ChatGPT WorkおよびCodexユーザーの利用上限が即時強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "23 hours 9 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Following the announcement by Tibo regarding efficiency improvements for the GPT-5.6 Sol model (~18% longer usage duration), rate limits for all ChatGPT Work and Codex users were forcibly reset immediately."
+      }
+    }
+  },
+  {
+    "id": "local-codex-chatgpt-work-adoption-reset-2026-07-28",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "ChatGPT Work 快速采用庆祝重置",
+      "ja": "ChatGPT Work急速採用記念リセット",
+      "en": "ChatGPT Work Rapid Adoption Celebration Reset"
+    },
+    "summary": {
+      "zh": "为庆祝 ChatGPT Work 的快速普及和团队付出的努力，Codex 与 ChatGPT Work 整体的使用限制已强制重置。",
+      "ja": "ChatGPT Workの急速な普及とチームの努力を祝し、CodexとChatGPT Work全体の利用上限が強制リセットされました。",
+      "en": "Usage limits for Codex and ChatGPT Work were forcibly reset to celebrate the rapid adoption of ChatGPT Work and team efforts."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-28T09:27:00+09:00",
+    "closed_at": "2026-07-28T12:09:00+09:00",
+    "completed_at": "2026-07-28T12:09:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "2 小时 42 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "为庆祝 ChatGPT Work 的快速普及和团队付出的努力，Codex 与 ChatGPT Work 整体的使用限制已强制重置。",
+        "ja": "ChatGPT Workの急速な普及とチームの努力を祝し、CodexとChatGPT Work全体の利用上限が強制リセットされました。",
+        "en": "Usage limits for Codex and ChatGPT Work were forcibly reset to celebrate the rapid adoption of ChatGPT Work and team efforts."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "2時間42分",
+        "noticeType": "匂わせあり",
+        "note": "ChatGPT Workの急速な普及とチームの努力を祝し、CodexとChatGPT Work全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "2 hours 42 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Usage limits for Codex and ChatGPT Work were forcibly reset to celebrate the rapid adoption of ChatGPT Work and team efforts."
+      }
+    }
+  },
+  {
+    "id": "local-codex-outage-compensation-reset-2026-07-26",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "大规模故障补偿重置",
+      "ja": "大規模障害に伴う詫びリセット",
+      "en": "Outage Compensation Reset"
+    },
+    "summary": {
+      "zh": "为弥补全球范围发生的系统故障，ChatGPT Work 和 Codex 的使用限制已在服务恢复后强制重置。",
+      "ja": "世界規模で発生したシステム障害の復旧に伴い、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were forcibly reset following full recovery from a global system outage."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-26T04:17:00+09:00",
+    "closed_at": "2026-07-26T04:17:00+09:00",
+    "completed_at": "2026-07-26T04:17:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "为弥补全球范围发生的系统故障，ChatGPT Work 和 Codex 的使用限制已在服务恢复后强制重置。",
+        "ja": "世界規模で発生したシステム障害の復旧に伴い、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were forcibly reset following full recovery from a global system outage."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "世界規模で発生したシステム障害の復旧に伴い、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Usage limits for ChatGPT Work and Codex were forcibly reset following full recovery from a global system outage."
+      }
+    }
+  },
+  {
+    "id": "local-codex-10m-users-reset-2026-07-22",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "1000万活跃用户庆祝重置",
+      "ja": "1000万人アクティブユーザー記念リセット",
+      "en": "10M Active Users Celebration Reset"
+    },
+    "summary": {
+      "zh": "为庆祝活跃用户数达到 1000 万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+      "ja": "アクティブユーザー数1000万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 10 million active users."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-22T02:05:00+09:00",
+    "closed_at": "2026-07-22T02:05:00+09:00",
+    "completed_at": "2026-07-22T02:05:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "为庆祝活跃用户数达到 1000 万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+        "ja": "アクティブユーザー数1000万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 10 million active users."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "アクティブユーザー数1000万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 10 million active users."
+      }
+    }
+  },
+  {
+    "id": "local-codex-gpt-5-6-sol-release-reset-4-2026-07-18",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "GPT-5.6 Sol 发布庆祝重置（第4次）",
+      "ja": "GPT-5.6 Solリリース記念リセット（4回目）",
+      "en": "GPT-5.6 Sol launch celebration reset (fourth)"
+    },
+    "summary": {
+      "zh": "随着对 GPT-5.6 Sol 的进一步调查与改进，ChatGPT Work 和 Codex 的使用限制已第4次被强制重置。",
+      "ja": "GPT-5.6 Solの追加調査・改善に伴い、ChatGPT WorkとCodex全体の利用上限が4回目に強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset for a fourth time following additional investigations and improvements to GPT-5.6 Sol."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-18T12:31:00+09:00",
+    "closed_at": "2026-07-18T12:31:00+09:00",
+    "completed_at": "2026-07-18T12:31:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "随着对 GPT-5.6 Sol 的进一步调查与改进，ChatGPT Work 和 Codex 的使用限制已第4次被强制重置。",
+        "ja": "GPT-5.6 Solの追加調査・改善に伴い、ChatGPT WorkとCodex全体の利用上限が4回目に強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset for a fourth time following additional investigations and improvements to GPT-5.6 Sol."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "GPT-5.6 Solの追加調査・改善に伴い、ChatGPT WorkとCodex全体の利用上限が4回目に強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Usage limits for ChatGPT Work and Codex were reset for a fourth time following additional investigations and improvements to GPT-5.6 Sol."
+      }
+    }
+  },
+  {
+    "id": "local-codex-9m-users-reset-2026-07-16",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "900万活跃用户庆祝重置",
+      "ja": "900万人アクティブユーザー記念リセット",
+      "en": "9 million active users celebration reset"
+    },
+    "summary": {
+      "zh": "为庆祝活跃用户数达到 900 万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+      "ja": "アクティブユーザー数900万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 9 million active users."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-15T15:00:00+09:00",
+    "closed_at": "2026-07-16T13:15:00+09:00",
+    "completed_at": "2026-07-16T13:15:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "22 小时 15 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "为庆祝活跃用户数达到 900 万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+        "ja": "アクティブユーザー数900万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 9 million active users."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "22時間15分",
+        "noticeType": "匂わせあり",
+        "note": "アクティブユーザー数900万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "22 hours 15 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 9 million active users."
+      }
+    }
+  },
+  {
+    "id": "local-codex-8m-users-reset-2026-07-15",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "800万活跃用户庆祝重置",
+      "ja": "800万人アクティブユーザー記念リセット",
+      "en": "8 million active users celebration reset"
+    },
+    "summary": {
+      "zh": "为庆祝活跃用户数达到800万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+      "ja": "アクティブユーザー数800万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 8 million active users."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-14T14:52:00+09:00",
+    "closed_at": "2026-07-15T05:45:00+09:00",
+    "completed_at": "2026-07-15T05:45:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "14 小时 53 分钟",
+      "noticeType": "有预告提示",
+      "note": {
+        "zh": "为庆祝活跃用户数达到800万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+        "ja": "アクティブユーザー数800万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 8 million active users."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "14時間53分",
+        "noticeType": "匂わせあり",
+        "note": "アクティブユーザー数800万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "14 hours 53 minutes",
+        "noticeType": "Teaser hint",
+        "note": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 8 million active users."
+      }
+    }
+  },
+  {
+    "id": "personal-tibo-7m-users-banked-reset-2026-07-14",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "700万活跃用户庆祝手动重置发放",
+      "ja": "700万人アクティブユーザー記念任意リセット配布",
+      "en": "7 Million Active Users Celebration Banked Reset Distribution"
+    },
+    "summary": {
+      "zh": "为庆祝活跃用户数达到700万，已向所有付费用户（Codex Go/Plus/Pro）发放了 1 次手动重置。",
+      "ja": "アクティブユーザー数700万人到達を記念し、全有料ユーザー（Codex Go/Plus/Pro）に対して任意リセット（マニュアルリセット）1回分が配布されました。",
+      "en": "One Banked Reset was granted to all paid users (Codex Go/Plus/Pro) to celebrate reaching 7 million active users."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-14T03:40:00+09:00",
+    "closed_at": "2026-07-14T03:40:00+09:00",
+    "completed_at": "2026-07-14T03:40:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "为庆祝活跃用户数达到700万，已向所有付费用户（Codex Go/Plus/Pro）发放了 1 次手动重置。",
+        "ja": "アクティブユーザー数700万人到達を記念し、全有料ユーザー（Codex Go/Plus/Pro）に対して任意リセット（マニュアルリセット）1回分が配布されました。",
+        "en": "One Banked Reset was granted to all paid users (Codex Go/Plus/Pro) to celebrate reaching 7 million active users."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "アクティブユーザー数700万人到達を記念し、全有料ユーザー（Codex Go/Plus/Pro）に対して任意リセット（マニュアルリセット）1回分が配布されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "One Banked Reset was granted to all paid users (Codex Go/Plus/Pro) to celebrate reaching 7 million active users."
+      }
+    }
+  },
+  {
+    "id": "personal-tibo-500k-compensation-reset-2026-07-13",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "网页/移动端功能异常补偿手动重置",
+      "ja": "Web/モバイル機能不具合補償任意リセット",
+      "en": "Web/Mobile Feature Bug Compensation Banked Reset"
+    },
+    "summary": {
+      "zh": "由于网页/移动端手动重置功能发布时，部分用户（约 50 万人）点击重置按钮后未生效，已向所有受影响的付费用户补发 1 次手动重置机会。",
+      "ja": "Web/モバイルからの任意リセット機能リリース時に、ボタンを押しても適用されなかった一部ユーザー（約50万人）に対して任意リセット（マニュアルリセット）1回分が補償配布されました。",
+      "en": "One Banked Reset was granted as compensation to approximately 500,000 affected users whose reset did not apply after they pressed the button during the web/mobile feature rollout."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-13T07:00:00+09:00",
+    "closed_at": "2026-07-13T07:00:00+09:00",
+    "completed_at": "2026-07-13T07:00:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "异常受影响用户（约 50 万人）",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "异常受影响用户（约 50 万人）",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "由于网页/移动端手动重置功能发布时，部分用户（约 50 万人）点击重置按钮后未生效，已向所有受影响的付费用户补发 1 次手动重置机会。",
+        "ja": "Web/モバイルからの任意リセット機能リリース時に、ボタンを押しても適用されなかった一部ユーザー（約50万人）に対して任意リセット（マニュアルリセット）1回分が補償配布されました。",
+        "en": "One Banked Reset was granted as compensation to approximately 500,000 affected users whose reset did not apply after they pressed the button during the web/mobile feature rollout."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "不具合対象ユーザー（約50万人）",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Web/モバイルからの任意リセット機能リリース時に、ボタンを押しても適用されなかった一部ユーザー（約50万人）に対して任意リセット（マニュアルリセット）1回分が補償配布されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "Affected users (approx. 500k)",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "One Banked Reset was granted as compensation to approximately 500,000 affected users whose reset did not apply after they pressed the button during the web/mobile feature rollout."
+      }
+    }
+  },
+  {
+    "id": "local-codex-6m-users-reset-2026-07-13",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "600万活跃用户庆祝重置",
+      "ja": "600万人アクティブユーザー記念リセット",
+      "en": "6 million active users celebration reset"
+    },
+    "summary": {
+      "zh": "为庆祝活跃用户数达到600万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+      "ja": "アクティブユーザー数600万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 6 million active users."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-13T03:30:00+09:00",
+    "closed_at": "2026-07-13T03:30:00+09:00",
+    "completed_at": "2026-07-13T03:30:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "为庆祝活跃用户数达到600万，ChatGPT Work 和 Codex 的使用限制已被强制重置。",
+        "ja": "アクティブユーザー数600万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 6 million active users."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "アクティブユーザー数600万人到達を記念し、ChatGPT WorkとCodex全体の利用上限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Usage limits for ChatGPT Work and Codex were reset to celebrate reaching 6 million active users."
+      }
+    }
+  },
+  {
+    "id": "local-codex-gpt-5-6-sol-release-reset-3-2026-07-11",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "GPT-5.6 Sol 发布庆祝重置（第3次）",
+      "ja": "GPT-5.6 Solリリース記念リセット（3回目）",
+      "en": "GPT-5.6 Sol launch celebration reset (third)"
+    },
+    "summary": {
+      "zh": "为庆祝GPT-5.6 Sol发布，ChatGPT Work 和 Codex 的使用限制已第3次被强制重置。",
+      "ja": "GPT-5.6 Solのリリース記念として、ChatGPT WorkとCodex全体の利用上限が3回目に強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset for a third time to celebrate the GPT-5.6 Sol launch."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-10T14:30:00+09:00",
+    "closed_at": "2026-07-11T15:00:00+09:00",
+    "completed_at": "2026-07-11T15:00:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "24 小时 30 分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "为庆祝GPT-5.6 Sol发布，ChatGPT Work 和 Codex 的使用限制已第3次被强制重置。",
+        "ja": "GPT-5.6 Solのリリース記念として、ChatGPT WorkとCodex全体の利用上限が3回目に強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset for a third time to celebrate the GPT-5.6 Sol launch."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "24時間30分",
+        "noticeType": "告知あり",
+        "note": "GPT-5.6 Solのリリース記念として、ChatGPT WorkとCodex全体の利用上限が3回目に強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "24 hours 30 minutes",
+        "noticeType": "Announcement",
+        "note": "Usage limits for ChatGPT Work and Codex were reset for a third time to celebrate the GPT-5.6 Sol launch."
+      }
+    }
+  },
+  {
+    "id": "local-codex-gpt-5-6-sol-release-reset-2-2026-07-11",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "GPT-5.6 Sol 发布庆祝重置（第2次）",
+      "ja": "GPT-5.6 Solリリース記念リセット（2回目）",
+      "en": "GPT-5.6 Sol launch celebration reset (second)"
+    },
+    "summary": {
+      "zh": "为庆祝GPT-5.6 Sol发布，ChatGPT Work 和 Codex 的使用限制已第2次被强制重置。",
+      "ja": "GPT-5.6 Solのリリース記念として、ChatGPT WorkとCodex全体の利用上限が2回目に強制リセットされました。",
+      "en": "Usage limits for ChatGPT Work and Codex were reset for a second time to celebrate the GPT-5.6 Sol launch."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-10T14:30:00+09:00",
+    "closed_at": "2026-07-11T03:26:00+09:00",
+    "completed_at": "2026-07-11T03:26:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "12小时56分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "为庆祝GPT-5.6 Sol发布，ChatGPT Work 和 Codex 的使用限制已第2次被强制重置。",
+        "ja": "GPT-5.6 Solのリリース記念として、ChatGPT WorkとCodex全体の利用上限が2回目に強制リセットされました。",
+        "en": "Usage limits for ChatGPT Work and Codex were reset for a second time to celebrate the GPT-5.6 Sol launch."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "12時間56分",
+        "noticeType": "告知あり",
+        "note": "GPT-5.6 Solのリリース記念として、ChatGPT WorkとCodex全体の利用上限が2回目に強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "12 hours 56 minutes",
+        "noticeType": "Announcement",
+        "note": "Usage limits for ChatGPT Work and Codex were reset for a second time to celebrate the GPT-5.6 Sol launch."
+      }
+    }
+  },
+  {
+    "id": "local-codex-gpt-5-6-release-reset-2026-07-10",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "GPT-5.6 发布庆祝重置",
+      "ja": "GPT-5.6リリース記念リセット",
+      "en": "GPT-5.6 launch celebration reset"
+    },
+    "summary": {
+      "zh": "为庆祝GPT-5.6发布，所有付费套餐的Codex使用限制已被强制重置。",
+      "ja": "GPT-5.6のリリース記念として、全有料プランのCodex利用上限が強制的にリセットされました。",
+      "en": "Codex usage limits for all paid plans were reset to celebrate the GPT-5.6 launch."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-10T06:00:00+09:00",
+    "closed_at": "2026-07-10T07:00:00+09:00",
+    "completed_at": "2026-07-10T07:00:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "1小时",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "为庆祝GPT-5.6发布，所有付费套餐的Codex使用限制已被强制重置。",
+        "ja": "GPT-5.6のリリース記念として、全有料プランのCodex利用上限が強制的にリセットされました。",
+        "en": "Codex usage limits for all paid plans were reset to celebrate the GPT-5.6 launch."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "1時間",
+        "noticeType": "告知あり",
+        "note": "GPT-5.6のリリース記念として、全有料プランのCodex利用上限が強制的にリセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "1 hour",
+        "noticeType": "Announcement",
+        "note": "Codex usage limits for all paid plans were reset to celebrate the GPT-5.6 launch."
+      }
+    }
+  },
+  {
+    "id": "local-codex-regular-reset-2026-07-07",
+    "recordKind": "reference",
+    "title": {
+      "zh": "定期重置",
+      "ja": "定期リセット",
+      "en": "Weekly reset"
+    },
+    "summary": {
+      "zh": "在常规的 1 周循环时间点，执行了 Codex 使用限制重置。",
+      "ja": "通常の1週間サイクルのタイミングで、Codexの利用上限リセットが実施されました。",
+      "en": "Codex usage limits were reset on the usual weekly-cycle timing."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-07T09:30:00+09:00",
+    "closed_at": "2026-07-07T09:30:00+09:00",
+    "completed_at": "2026-07-07T09:30:00+09:00",
+    "source_url": null,
+    "sourceKind": "none",
+    "sourceTweetIds": [],
+    "scope": "未使用任意重置的账户",
+    "details": {
+      "cycleType": "定期リセット",
+      "reasonType": "定期更新",
+      "resetMethod": "强制重置",
+      "scope": "未使用任意重置的账户",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "定期重置会在您上次重置后首次使用 Codex 或 Work 的一周后进行。使用手动重置后也一样，会从该重置后的首次使用时间起算一周，因此实际时间可能与此处显示的时间不同。",
+        "ja": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。",
+        "en": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "定期リセット",
+        "reasonType": "定期更新",
+        "resetMethod": "強制リセット",
+        "scope": "任意リセット未使用アカウント",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。"
+      },
+      "en": {
+        "cycleType": "Weekly reset",
+        "reasonType": "Regular update",
+        "resetMethod": "Hard Reset",
+        "scope": "Accounts without a Banked Reset",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    }
+  },
+  {
+    "id": "personal-codex-reset-button-aie-2026-07-02",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "Codex 重置按钮（AIE World's Fair 纪念）",
+      "ja": "Codex reset button 配布 (AIE World's Fair 記念)",
+      "en": "Codex Reset Button (AIE World's Fair)"
+    },
+    "summary": {
+      "zh": "在 AI Engineer World's Fair 的演示中，Codex 重置按钮被按下，向所有付费用户（Codex Go/Plus/Pro）发放了 1 次手动重置机会。",
+      "ja": "AI Engineer World's Fair のデモにおいて Codex reset button が押され、全有料ユーザー（Codex Go/Plus/Pro）に対して任意リセット（マニュアルリセット）1回分が配布されました。",
+      "en": "During the AI Engineer World's Fair demo, the Codex reset button was pressed, granting one Banked Reset to all paid users (Codex Go/Plus/Pro)."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-07-02T04:50:00+09:00",
+    "closed_at": "2026-07-02T05:50:00+09:00",
+    "completed_at": "2026-07-02T05:50:00+09:00",
+    "source_url": "https://x.com/dkundel",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "1小时",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "在 AI Engineer World's Fair 的演示中，Codex 重置按钮被按下，向所有付费用户（Codex Go/Plus/Pro）发放了 1 次手动重置机会。",
+        "ja": "AI Engineer World's Fair のデモにおいて Codex reset button が押され、全有料ユーザー（Codex Go/Plus/Pro）に対して任意リセット（マニュアルリセット）1回分が配布されました。",
+        "en": "During the AI Engineer World's Fair demo, the Codex reset button was pressed, granting one Banked Reset to all paid users (Codex Go/Plus/Pro)."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "1時間",
+        "noticeType": "告知あり",
+        "note": "AI Engineer World's Fair のデモにおいて Codex reset button が押され、全有料ユーザー（Codex Go/Plus/Pro）に対して任意リセット（マニュアルリセット）1回分が配布されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "1 hour",
+        "noticeType": "Announcement",
+        "note": "During the AI Engineer World's Fair demo, the Codex reset button was pressed, granting one Banked Reset to all paid users (Codex Go/Plus/Pro)."
+      }
+    }
+  },
+  {
+    "id": "local-codex-forced-reset-2026-06-30",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "临时重置",
+      "ja": "利用制限の過剰消費問題に対するお詫びリセット",
+      "en": "Temporary Reset"
+    },
+    "summary": {
+      "zh": "Tibo 宣布将在 1 小时内再次完全重置，并且所有人的 Codex 额度限制已作为过度消耗问题的补偿被强制重置。",
+      "ja": "Tibo氏が1時間以内の再フルリセットを告知し、利用制限の過剰消費問題への補償対応として全有料プランのCodex利用制限が強制リセットされました。",
+      "en": "Tibo announced that a full reset would take place within an hour. Codex limits were then reset for all users as compensation for an excessive-usage issue."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-30T08:50:00+09:00",
+    "closed_at": "2026-06-30T09:30:00+09:00",
+    "completed_at": "2026-06-30T09:30:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "40分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "Tibo 宣布将在 1 小时内再次完全重置，并且所有人的 Codex 额度限制已作为过度消耗问题的补偿被强制重置。",
+        "ja": "Tibo氏が1時間以内の再フルリセットを告知し、利用制限の過剰消費問題への補償対応として全有料プランのCodex利用制限が強制リセットされました。",
+        "en": "Tibo announced that a full reset would take place within an hour. Codex limits were then reset for all users as compensation for an excessive-usage issue."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "40分",
+        "noticeType": "告知あり",
+        "note": "Tibo氏が1時間以内の再フルリセットを告知し、利用制限の過剰消費問題への補償対応として全有料プランのCodex利用制限が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "40 minutes",
+        "noticeType": "Announcement",
+        "note": "Tibo announced that a full reset would take place within an hour. Codex limits were then reset for all users as compensation for an excessive-usage issue."
+      }
+    }
+  },
+  {
+    "id": "local-codex-forced-comp-reset-2026-06-29",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "过度消耗漏洞调查强制补偿重置",
+      "ja": "過剰消費バグ調査・強制補償リセット",
+      "en": "Forced Compensation Reset (Excessive Consumption Investigation)"
+    },
+    "summary": {
+      "zh": "因部分用户出现 Codex 使用额度过度消耗的问题，在调查期间已强制重置（清空）所有用户的限制额度。",
+      "ja": "一部のユーザーでCodexの使用制限が過剰に消費される不具合が発生したため、その調査に伴い全ユーザーの利用制限が強制的にリセット（クリア）されました。",
+      "en": "Due to an issue causing excessive usage limit consumption for some users, everyone's Codex limits were forcibly reset (cleared) during the investigation."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-29T00:00:00.000Z",
+    "closed_at": "2026-06-29T00:00:00.000Z",
+    "completed_at": "2026-06-29T00:00:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2067711440019483321",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2067711440019483321"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "因部分用户出现 Codex 使用额度过度消耗的问题，在调查期间已强制重置（清空）所有用户的限制额度。",
+        "ja": "一部のユーザーでCodexの使用制限が過剰に消費される不具合が発生したため、その調査に伴い全ユーザーの利用制限が強制的にリセット（クリア）されました。",
+        "en": "Due to an issue causing excessive usage limit consumption for some users, everyone's Codex limits were forcibly reset (cleared) during the investigation."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "一部のユーザーでCodexの使用制限が過剰に消費される不具合が発生したため、その調査に伴い全ユーザーの利用制限が強制的にリセット（クリア）されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Due to an issue causing excessive usage limit consumption for some users, everyone's Codex limits were forcibly reset (cleared) during the investigation."
+      }
+    }
+  },
+  {
+    "id": "personal-compensation-reset-credit-2026-06-27",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "模型退化及额度过度消耗补偿手动重置",
+      "ja": "能力退化・過剰消費補償任意リセット",
+      "en": "Model Degradation & Excessive Consumption Compensation Reset"
+    },
+    "summary": {
+      "zh": "因模型能力退化及额度过度消耗问题，已对所有付费套餐发放 1 次手动重置作为补偿。",
+      "ja": "モデルの能力退化および過剰な利用制限消費不具合に対する補償として、全有料プランに任意リセット（マニュアルリセット）1回分が配布されました。",
+      "en": "One Banked Reset was distributed to all paid plans as compensation for model degradation and excessive usage consumption issues."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-27T11:00:00+09:00",
+    "closed_at": "2026-06-27T12:00:00+09:00",
+    "completed_at": "2026-06-27T12:00:00+09:00",
+    "source_url": "https://x.com/thsottiaux",
+    "sourceKind": "profile",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "1小时",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "因模型能力退化及额度过度消耗问题，已对所有付费套餐发放 1 次手动重置作为补偿。",
+        "ja": "モデルの能力退化および過剰な利用制限消費不具合に対する補償として、全有料プランに任意リセット（マニュアルリセット）1回分が配布されました。",
+        "en": "One Banked Reset was distributed to all paid plans as compensation for model degradation and excessive usage consumption issues."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "1時間",
+        "noticeType": "告知あり",
+        "note": "モデルの能力退化および過剰な利用制限消費不具合に対する補償として、全有料プランに任意リセット（マニュアルリセット）1回分が配布されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "1 hour",
+        "noticeType": "Announcement",
+        "note": "One Banked Reset was distributed to all paid plans as compensation for model degradation and excessive usage consumption issues."
+      }
+    }
+  },
+  {
+    "id": "local-codex-regular-reset-2026-06-25",
+    "recordKind": "reference",
+    "title": {
+      "zh": "定期重置",
+      "ja": "定期リセット",
+      "en": "Weekly reset"
+    },
+    "summary": {
+      "zh": "在常规的 1 周循环时间点，执行了 Codex 使用限制重置。",
+      "ja": "通常の1週間サイクルのタイミングで、Codexの利用上限リセットが実施されました。",
+      "en": "Codex usage limits were reset on the usual weekly-cycle timing."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-25T07:01:00+09:00",
+    "closed_at": "2026-06-25T07:01:00+09:00",
+    "completed_at": "2026-06-25T07:01:00+09:00",
+    "source_url": null,
+    "sourceKind": "none",
+    "sourceTweetIds": [],
+    "scope": "未使用任意重置的账户",
+    "details": {
+      "cycleType": "定期リセット",
+      "reasonType": "定期更新",
+      "resetMethod": "强制重置",
+      "scope": "未使用任意重置的账户",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "定期重置会在您上次重置后首次使用 Codex 或 Work 的一周后进行。使用手动重置后也一样，会从该重置后的首次使用时间起算一周，因此实际时间可能与此处显示的时间不同。",
+        "ja": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。",
+        "en": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "定期リセット",
+        "reasonType": "定期更新",
+        "resetMethod": "強制リセット",
+        "scope": "任意リセット未使用アカウント",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。"
+      },
+      "en": {
+        "cycleType": "Weekly reset",
+        "reasonType": "Regular update",
+        "resetMethod": "Hard Reset",
+        "scope": "Accounts without a Banked Reset",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    }
+  },
+  {
+    "id": "local-codex-rate-limit-reset-notice-2026-06-17",
+    "recordKind": "reference",
+    "title": {
+      "zh": "定期重置",
+      "ja": "定期リセット",
+      "en": "Weekly reset"
+    },
+    "summary": {
+      "zh": "在常规的 1 周循环时间点，执行了 Codex 使用限制重置。",
+      "ja": "通常の1週間サイクルのタイミングで、Codexの利用上限リセットが実施されました。",
+      "en": "Codex usage limits were reset on the usual weekly-cycle timing."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-17T22:00:00.000Z",
+    "closed_at": "2026-06-17T22:00:00.000Z",
+    "completed_at": "2026-06-17T22:00:00.000Z",
+    "source_url": null,
+    "sourceKind": "none",
+    "sourceTweetIds": [],
+    "scope": "未使用任意重置的账户",
+    "details": {
+      "cycleType": "定期リセット",
+      "reasonType": "定期更新",
+      "resetMethod": "强制重置",
+      "scope": "未使用任意重置的账户",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "定期重置会在您上次重置后首次使用 Codex 或 Work 的一周后进行。使用手动重置后也一样，会从该重置后的首次使用时间起算一周，因此实际时间可能与此处显示的时间不同。",
+        "ja": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。",
+        "en": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "conditional",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "定期リセット",
+        "reasonType": "定期更新",
+        "resetMethod": "強制リセット",
+        "scope": "任意リセット未使用アカウント",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "前回のリセット後にCodex / Workを初めて使用した時点から、1週間後に定期リセットが行われます。任意リセットを使用した場合も、任意リセット後の初使用から1週間後となるため、この表示時刻とはずれる場合があります。"
+      },
+      "en": {
+        "cycleType": "Weekly reset",
+        "reasonType": "Regular update",
+        "resetMethod": "Hard Reset",
+        "scope": "Accounts without a Banked Reset",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "A regular reset occurs one week after you first use Codex or Work following the previous reset. If you use a Banked Reset, the next weekly timing is likewise counted from your first use after that reset, so it may differ from the time shown here."
+      }
+    }
+  },
+  {
+    "id": "personal-compensation-reset-credit-2026-06-18",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "Codex 可靠性故障补偿手动重置",
+      "ja": "Codex信頼性障害補償任意リセット",
+      "en": "Codex Reliability Incident Compensation Reset"
+    },
+    "summary": {
+      "zh": "因影响 Codex 可靠性的故障，已对所有账号发放 1 次手动重置作为补偿。",
+      "ja": "Codexの信頼性に影響する不具合の補償として、全アカウントに対して任意リセット（マニュアルリセット）1回分が配布されました。",
+      "en": "One Banked Reset was distributed to all accounts as compensation for issues affecting Codex reliability."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-17T22:00:00.000Z",
+    "closed_at": "2026-06-17T22:00:00.000Z",
+    "completed_at": "2026-06-17T22:00:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2066956441173323943",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2066956441173323943"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "因影响 Codex 可靠性的故障，已对所有账号发放 1 次手动重置作为补偿。",
+        "ja": "Codexの信頼性に影響する不具合の補償として、全アカウントに対して任意リセット（マニュアルリセット）1回分が配布されました。",
+        "en": "One Banked Reset was distributed to all accounts as compensation for issues affecting Codex reliability."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Codexの信頼性に影響する不具合の補償として、全アカウントに対して任意リセット（マニュアルリセット）1回分が配布されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "One Banked Reset was distributed to all accounts as compensation for issues affecting Codex reliability."
+      }
+    }
+  },
+  {
+    "id": "personal-reset-credit-2026-06-11",
+    "recordKind": "banked_distribution",
+    "title": {
+      "zh": "定期重置",
+      "ja": "定期リセット",
+      "en": "Weekly reset"
+    },
+    "summary": {
+      "zh": "这不是定期强制重置，而是发放了 1 次手动重置；使用后的额度周期和下次日期可能因账号而异。",
+      "ja": "定期的な強制リセットではなく、任意リセット権が1回分配布されました。使用後の利用枠や次回日時はユーザーごとに異なる場合があります。",
+      "en": "This was not a regular forced reset. One Banked Reset was distributed, and the resulting usage window or next date may differ by account."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-12T09:11:00+09:00",
+    "closed_at": "2026-06-12T09:11:00+09:00",
+    "completed_at": "2026-06-12T09:11:00+09:00",
+    "source_url": null,
+    "sourceKind": "none",
+    "sourceTweetIds": [],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "定期リセット",
+      "reasonType": "定期更新",
+      "resetMethod": "BANKED 重置发放",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "这不是定期强制重置，而是发放了 1 次手动重置；使用后的额度周期和下次日期可能因账号而异。",
+        "ja": "定期的な強制リセットではなく、任意リセット権が1回分配布されました。使用後の利用枠や次回日時はユーザーごとに異なる場合があります。",
+        "en": "This was not a regular forced reset. One Banked Reset was distributed, and the resulting usage window or next date may differ by account."
+      }
+    },
+    "executionTimePrecision": null,
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "定期リセット",
+        "reasonType": "定期更新",
+        "resetMethod": "任意リセット権配布",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "定期的な強制リセットではなく、任意リセット権が1回分配布されました。使用後の利用枠や次回日時はユーザーごとに異なる場合があります。"
+      },
+      "en": {
+        "cycleType": "Weekly reset",
+        "reasonType": "Regular update",
+        "resetMethod": "Banked Reset distribution",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "This was not a regular forced reset. One Banked Reset was distributed, and the resulting usage window or next date may differ by account."
+      }
+    }
+  },
+  {
+    "id": "local-codex-reliability-compensation-2026-06-04",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "Codex 可靠性事故补偿重置",
+      "ja": "Codex信頼性障害補償リセット",
+      "en": "Codex reliability compensation reset"
+    },
+    "summary": {
+      "zh": "为补偿过去 24 小时内发生的 3 起影响 Codex 可靠性的故障，所有付费套餐的使用限制已重置。",
+      "ja": "過去24時間以内に発生したCodexの信頼性に影響する3件の障害への補償として、全有料プランの利用制限がリセットされました。",
+      "en": "As compensation for three incidents affecting Codex reliability in the past 24 hours, usage limits for all paid plans were reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-06-04T00:25:58.000Z",
+    "closed_at": "2026-06-04T00:25:58.000Z",
+    "completed_at": "2026-06-04T00:25:58.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2062329981548802523",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2062329981548802523"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "为补偿过去 24 小时内发生的 3 起影响 Codex 可靠性的故障，所有付费套餐的使用限制已重置。",
+        "ja": "過去24時間以内に発生したCodexの信頼性に影響する3件の障害への補償として、全有料プランの利用制限がリセットされました。",
+        "en": "As compensation for three incidents affecting Codex reliability in the past 24 hours, usage limits for all paid plans were reset."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "告知あり",
+        "note": "過去24時間以内に発生したCodexの信頼性に影響する3件の障害への補償として、全有料プランの利用制限がリセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "Announcement",
+        "note": "As compensation for three incidents affecting Codex reliability in the past 24 hours, usage limits for all paid plans were reset."
+      }
+    }
+  },
+  {
+    "id": "local-5m-users-celebration-2026-05-31",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "500 万活跃用户庆祝重置",
+      "ja": "500万人アクティブユーザー記念リセット",
+      "en": "5M active users milestone celebration reset"
+    },
+    "summary": {
+      "zh": "为庆祝 Codex 活跃用户数达到 500 万，所有付费 ChatGPT/Codex 用户的使用次数已被强制重置。",
+      "ja": "Codexアクティブユーザー数500万人達成を記念し、全有料ChatGPT/Codexユーザーの利用回数が強制リセットされました。",
+      "en": "To celebrate reaching 5 million active Codex users, usage counts for all paid ChatGPT/Codex users were forcibly reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-05-31T14:59:10+09:00",
+    "closed_at": "2026-05-31T15:25:06.000Z",
+    "completed_at": "2026-05-31T15:25:06.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2061106703446450392",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2061106703446450392"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "9小时25分",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "为庆祝 Codex 活跃用户数达到 500 万，所有付费 ChatGPT/Codex 用户的使用次数已被强制重置。",
+        "ja": "Codexアクティブユーザー数500万人達成を記念し、全有料ChatGPT/Codexユーザーの利用回数が強制リセットされました。",
+        "en": "To celebrate reaching 5 million active Codex users, usage counts for all paid ChatGPT/Codex users were forcibly reset."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "9時間25分",
+        "noticeType": "告知あり",
+        "note": "Codexアクティブユーザー数500万人達成を記念し、全有料ChatGPT/Codexユーザーの利用回数が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "9 hours 25 minutes",
+        "noticeType": "Announcement",
+        "note": "To celebrate reaching 5 million active Codex users, usage counts for all paid ChatGPT/Codex users were forcibly reset."
+      }
+    }
+  },
+  {
+    "id": "local-long-session-compression-compensation-2026-05-24",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "长会话压缩过度消耗补偿重置",
+      "ja": "長セッション圧縮過剰消費補償リセット",
+      "en": "Long-session compression over-consumption compensation reset"
+    },
+    "summary": {
+      "zh": "修复 Codex 长会话压缩缓存命中率下降导致的过度消耗漏洞后，所有付费用户的使用限制均已重置。",
+      "ja": "Codex長セッション圧縮のキャッシュヒット率低下による過剰消費バグが修正され、全有料ユーザーのリセットが実施されました。",
+      "en": "After a bug causing excessive consumption due to lower cache-hit rates in Codex long-session compression was fixed, all paid users' limits were reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-05-23T20:14:00.000Z",
+    "closed_at": "2026-05-23T20:14:00.000Z",
+    "completed_at": "2026-05-23T20:14:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2058280452851638313",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2058280452851638313"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "",
+      "noticeType": "$undefined",
+      "note": {
+        "zh": "修复 Codex 长会话压缩缓存命中率下降导致的过度消耗漏洞后，所有付费用户的使用限制均已重置。",
+        "ja": "Codex長セッション圧縮のキャッシュヒット率低下による過剰消費バグが修正され、全有料ユーザーのリセットが実施されました。",
+        "en": "After a bug causing excessive consumption due to lower cache-hit rates in Codex long-session compression was fixed, all paid users' limits were reset."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "Codex長セッション圧縮のキャッシュヒット率低下による過剰消費バグが修正され、全有料ユーザーのリセットが実施されました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "",
+        "noticeType": "$undefined",
+        "note": "After a bug causing excessive consumption due to lower cache-hit rates in Codex long-session compression was fixed, all paid users' limits were reset."
+      }
+    }
+  },
+  {
+    "id": "local-sam-like-promise-reset-2026-05-20",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "Sam 点赞承诺重置",
+      "ja": "Samいいね約束リセット",
+      "en": "Sam's promised like milestone reset"
+    },
+    "summary": {
+      "zh": "Sam Altman 的推文获得 1 个赞后，Tibo 立即重置了 Codex 使用限制。",
+      "ja": "Sam Altman氏のツイート1いいね達成に伴い、Tibo氏によって即座にCodex利用上限がリセットされました。",
+      "en": "After Sam Altman's tweet reached one like, Tibo immediately reset the Codex usage limit."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-05-20T03:31:00+09:00",
+    "closed_at": "2026-05-19T18:39:18.000Z",
+    "completed_at": "2026-05-19T18:39:18.000Z",
+    "source_url": "https://x.com/bossnayamoss/status/2056806923391877438",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2056806923391877438"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "庆祝重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "8分钟",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "Sam Altman 的推文获得 1 个赞后，Tibo 立即重置了 Codex 使用限制。",
+        "ja": "Sam Altman氏のツイート1いいね達成に伴い、Tibo氏によって即座にCodex利用上限がリセットされました。",
+        "en": "After Sam Altman's tweet reached one like, Tibo immediately reset the Codex usage limit."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "ご祝儀リセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "8分",
+        "noticeType": "告知あり",
+        "note": "Sam Altman氏のツイート1いいね達成に伴い、Tibo氏によって即座にCodex利用上限がリセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Celebration reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "8 minutes",
+        "noticeType": "Announcement",
+        "note": "After Sam Altman's tweet reached one like, Tibo immediately reset the Codex usage limit."
+      }
+    }
+  },
+  {
+    "id": "local-gpt-55-degradation-compensation-2026-05-17",
+    "recordKind": "confirmed_global",
+    "title": {
+      "zh": "GPT-5.5 性能退化补偿重置",
+      "ja": "GPT-5.5能力退化補償リセット",
+      "en": "GPT-5.5 performance degradation compensation reset"
+    },
+    "summary": {
+      "zh": "随着 GPT-5.5 模型暂时性能力退化问题得到解决，所有付费套餐的使用次数已被强制重置。",
+      "ja": "GPT-5.5モデルの能力一時退化不具合が解消されたことに伴い、全有料プランの利用回数が強制リセットされました。",
+      "en": "Following the resolution of a temporary GPT-5.5 performance-degradation issue, usage counts for all paid plans were forcibly reset."
+    },
+    "kind": "reset_completed",
+    "status": "closed",
+    "opened_at": "2026-05-16T09:31:00+09:00",
+    "closed_at": "2026-05-16T17:51:00.000Z",
+    "completed_at": "2026-05-16T17:51:00.000Z",
+    "source_url": "https://x.com/thsottiaux/status/2055707616605835333",
+    "sourceKind": "direct_post",
+    "sourceTweetIds": [
+      "2055707616605835333"
+    ],
+    "scope": "全有料プラン",
+    "details": {
+      "cycleType": "ランダムリセット",
+      "reasonType": "故障补偿重置",
+      "resetMethod": "强制重置",
+      "scope": "全有料プラン",
+      "noticeToExecution": "17小时20分",
+      "noticeType": "有告知",
+      "note": {
+        "zh": "随着 GPT-5.5 模型暂时性能力退化问题得到解决，所有付费套餐的使用次数已被强制重置。",
+        "ja": "GPT-5.5モデルの能力一時退化不具合が解消されたことに伴い、全有料プランの利用回数が強制リセットされました。",
+        "en": "Following the resolution of a temporary GPT-5.5 performance-degradation issue, usage counts for all paid plans were forcibly reset."
+      }
+    },
+    "executionTimePrecision": "announcement_fallback",
+    "randomResetTargetScope": "broad",
+    "importedFrom": "https://codex.gussuriworks.com/zh/history",
+    "localizedDetails": {
+      "ja": {
+        "cycleType": "ランダムリセット",
+        "reasonType": "詫びリセット",
+        "resetMethod": "強制リセット",
+        "scope": "全有料プラン",
+        "noticeToExecution": "17時間20分",
+        "noticeType": "告知あり",
+        "note": "GPT-5.5モデルの能力一時退化不具合が解消されたことに伴い、全有料プランの利用回数が強制リセットされました。"
+      },
+      "en": {
+        "cycleType": "Random reset",
+        "reasonType": "Compensation reset",
+        "resetMethod": "Hard Reset",
+        "scope": "All paid plans",
+        "noticeToExecution": "17 hours 20 minutes",
+        "noticeType": "Announcement",
+        "note": "Following the resolution of a temporary GPT-5.5 performance-degradation issue, usage counts for all paid plans were forcibly reset."
+      }
+    }
+  }
+]

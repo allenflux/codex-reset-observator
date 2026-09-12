@@ -1,0 +1,36 @@
+{
+  "sourceUrl": "https://codex.gussuriworks.com/zh/history",
+  "fetchedAt": "2026-09-12T02:21:11.900449+00:00",
+  "sourceSha256": "8937808a4f63a666cb542b87114da9001e869d5c4dd0b34f4b60a81d66749004",
+  "recordCount": 43,
+  "translations": {
+    "ja": {
+      "sourceUrl": "https://codex.gussuriworks.com/history",
+      "status": "ok",
+      "matchedRecords": 43,
+      "sourceSha256": "f8418886c931131b59f4260cd0a4743423edf5db0f762e7999767f2c4f6460f9",
+      "recordCount": 43
+    },
+    "en": {
+      "sourceUrl": "https://codex.gussuriworks.com/en/history",
+      "status": "ok",
+      "matchedRecords": 43,
+      "sourceSha256": "e9bdbd6e3a26043924f70a556c2ad305b37f258d1cf858b4579b3b46df4ce54d",
+      "recordCount": 43
+    }
+  },
+  "recordKinds": {
+    "banked_distribution": 10,
+    "confirmed_global": 28,
+    "regular_completed": 2,
+    "reference": 3
+  },
+  "earliestEventAt": "2026-05-16T17:51:00.000Z",
+  "latestEventAt": "2026-09-09T18:23:34.000Z",
+  "scope": "Complete public history list; no private database fields",
+  "limitations": [
+    "Published execution timestamps may be estimates or later corrections.",
+    "Historical detection timestamps and complete collection coverage are unavailable.",
+    "Source records were not independently verified against every linked social post."
+  ]
+}

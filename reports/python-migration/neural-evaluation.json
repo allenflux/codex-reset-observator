@@ -1,0 +1,282 @@
+{
+  "modelVersion": "reset-mlp-8-tanh-v1",
+  "trainedAt": "2026-09-12T02:22:12.092237+00:00",
+  "observedUntil": "2026-09-12T02:21:11.900449+00:00",
+  "dataQuality": {
+    "inputRecords": 43,
+    "eligibleRandomEvents": 35,
+    "excluded": {
+      "limited_scope": 2,
+      "reference_or_regular": 5,
+      "non_random_cycle": 1
+    },
+    "firstEventAt": "2026-05-16T17:51:00+00:00",
+    "lastEventAt": "2026-09-08T04:06:57.741000+00:00",
+    "eligibleEventIds": [
+      "banked-reset-2090766694897619318",
+      "banked-reset-2095651088502591861",
+      "banked-reset-2095651088502591861-observation-20260904T234601897Z",
+      "local-5m-users-celebration-2026-05-31",
+      "local-codex-10m-users-reset-2026-07-22",
+      "local-codex-6m-users-reset-2026-07-13",
+      "local-codex-8m-users-reset-2026-07-15",
+      "local-codex-9m-users-reset-2026-07-16",
+      "local-codex-chatgpt-work-adoption-reset-2026-07-28",
+      "local-codex-forced-comp-reset-2026-06-29",
+      "local-codex-forced-reset-2026-06-30",
+      "local-codex-gpt-5-6-release-reset-2026-07-10",
+      "local-codex-gpt-5-6-sol-release-reset-2-2026-07-11",
+      "local-codex-gpt-5-6-sol-release-reset-3-2026-07-11",
+      "local-codex-gpt-5-6-sol-release-reset-4-2026-07-18",
+      "local-codex-gpt56-sol-efficiency-reset-2026-07-29",
+      "local-codex-outage-compensation-reset-2026-07-26",
+      "local-codex-reliability-compensation-2026-06-04",
+      "local-codex-rolling-notice-reset-2026-09-08",
+      "local-gpt-55-degradation-compensation-2026-05-17",
+      "local-long-session-compression-compensation-2026-05-24",
+      "local-luna-100k-threads-efficiency-reset-2026-08-01",
+      "local-sam-like-promise-reset-2026-05-20",
+      "personal-codex-reset-button-aie-2026-07-02",
+      "personal-compensation-reset-credit-2026-06-18",
+      "personal-compensation-reset-credit-2026-06-27",
+      "personal-tibo-7m-users-banked-reset-2026-07-14",
+      "tibo-reset-2086188036493344823",
+      "tibo-reset-2086972933566857393",
+      "tibo-reset-2087706104814023111",
+      "tibo-reset-2091412393368945027",
+      "tibo-reset-2092058556707344708",
+      "tibo-reset-2093014447833116908",
+      "tibo-reset-2093811840258293947",
+      "usage-reset-41c8ec4e-f752-4e5b-b685-4af67a1e6925"
+    ]
+  },
+  "sampleCount": 102,
+  "featureNames": [
+    "log_days_since_reset",
+    "log_previous_interval_days",
+    "log_mean_last_3_intervals_days",
+    "resets_last_7_days",
+    "resets_last_30_days",
+    "weekday_sin",
+    "weekday_cos"
+  ],
+  "target": "At least one broad-scope random reset or banked distribution in the next 24/48 hours",
+  "architecture": "7 inputs -> 8 tanh neurons -> 3 softmax classes (none/0-24h/24-48h)",
+  "selectedAlpha": 100.0,
+  "randomSeed": 42,
+  "originStepHours": 24,
+  "purgeHours": 48,
+  "splits": {
+    "train": {
+      "count": 59,
+      "start": "2026-06-01T00:00:00+00:00",
+      "end": "2026-07-29T00:00:00+00:00",
+      "positives24h": 18,
+      "positives48h": 28
+    },
+    "validation": {
+      "count": 18,
+      "start": "2026-08-01T00:00:00+00:00",
+      "end": "2026-08-18T00:00:00+00:00",
+      "positives24h": 4,
+      "positives48h": 7
+    },
+    "test": {
+      "count": 21,
+      "start": "2026-08-21T00:00:00+00:00",
+      "end": "2026-09-10T00:00:00+00:00",
+      "positives24h": 8,
+      "positives48h": 15
+    }
+  },
+  "validationCandidates": [
+    {
+      "alpha": 1.0,
+      "brier24h": 0.27127376790518914,
+      "logLoss24h": 0.7609310064408298,
+      "brier48h": 0.31148220029846235,
+      "logLoss48h": 1.0463299125628314,
+      "meanBrier": 0.29137798410182575
+    },
+    {
+      "alpha": 10.0,
+      "brier24h": 0.19412758415385542,
+      "logLoss24h": 0.5788898604367947,
+      "brier48h": 0.2683702358335365,
+      "logLoss48h": 0.7302700081048623,
+      "meanBrier": 0.23124890999369596
+    },
+    {
+      "alpha": 100.0,
+      "brier24h": 0.17970489001326415,
+      "logLoss24h": 0.5468968594892795,
+      "brier48h": 0.24499565635296527,
+      "logLoss48h": 0.6831304089348403,
+      "meanBrier": 0.21235027318311472
+    }
+  ],
+  "neural": {
+    "brier24h": 0.2463279618517609,
+    "logLoss24h": 0.6890664004961792,
+    "brier48h": 0.27094925077627724,
+    "logLoss48h": 0.7351610139196241,
+    "meanBrier": 0.2586386063140191
+  },
+  "baselines": {
+    "empirical_frequency": {
+      "brier24h": 0.24592079544488823,
+      "logLoss24h": 0.6880554140162745,
+      "brier48h": 0.2670179315033569,
+      "logLoss48h": 0.7272463806259029,
+      "meanBrier": 0.2564693634741226
+    },
+    "poisson_rate": {
+      "brier24h": 0.2626903596287468,
+      "logLoss24h": 0.7334220959452271,
+      "brier48h": 0.31120052691324995,
+      "logLoss48h": 0.8179253171208016,
+      "meanBrier": 0.28694544327099836
+    }
+  },
+  "bestBaseline": "empirical_frequency",
+  "relativeBrierImprovement": -0.008458097335728665,
+  "beatsBaselineBothHorizons": false,
+  "eligibleForUse": false,
+  "deploymentStatus": "experimental",
+  "limitations": [
+    "Only a few dozen independent reset events; daily rows are not independent new events.",
+    "48h labels overlap; aggregate holdout metrics are descriptive, not significance tests.",
+    "Published history may include retrospective corrections; no point-in-time discovery log is available.",
+    "No event in a period is treated as a negative assuming site coverage is complete, which is unverified.",
+    "No causal relation or exact next-reset time can be inferred from these records.",
+    "Automatic adoption requires prospective verification on newly collected data."
+  ],
+  "holdoutPredictions": [
+    {
+      "origin": "2026-08-21T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.2784814218569759,
+      "probability48h": 0.45569797658646494
+    },
+    {
+      "origin": "2026-08-22T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.27848142187527075,
+      "probability48h": 0.45569797661676803
+    },
+    {
+      "origin": "2026-08-23T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.27848142189223013,
+      "probability48h": 0.45569797664862444
+    },
+    {
+      "origin": "2026-08-24T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.2784814218102053,
+      "probability48h": 0.45569797650419386
+    },
+    {
+      "origin": "2026-08-25T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.2784814218233928,
+      "probability48h": 0.45569797652476407
+    },
+    {
+      "origin": "2026-08-26T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.27848142177514507,
+      "probability48h": 0.45569797644337035
+    },
+    {
+      "origin": "2026-08-27T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.27848142177651675,
+      "probability48h": 0.4556979764469592
+    },
+    {
+      "origin": "2026-08-28T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.2784814217396507,
+      "probability48h": 0.45569797638312
+    },
+    {
+      "origin": "2026-08-29T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.2784814217769586,
+      "probability48h": 0.4556979764446846
+    },
+    {
+      "origin": "2026-08-30T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.2784814217705588,
+      "probability48h": 0.45569797643356047
+    },
+    {
+      "origin": "2026-08-31T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.2784814217966525,
+      "probability48h": 0.45569797647611854
+    },
+    {
+      "origin": "2026-09-01T00:00:00+00:00",
+      "label": 0,
+      "probability24h": 0.2784814217570338,
+      "probability48h": 0.4556979764061322
+    },
+    {
+      "origin": "2026-09-02T00:00:00+00:00",
+      "label": 0,
+      "probability24h": 0.27848142175669155,
+      "probability48h": 0.45569797640756815
+    },
+    {
+      "origin": "2026-09-03T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.2784814217525685,
+      "probability48h": 0.4556979764022471
+    },
+    {
+      "origin": "2026-09-04T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.27848142176931223,
+      "probability48h": 0.4556979764328979
+    },
+    {
+      "origin": "2026-09-05T00:00:00+00:00",
+      "label": 0,
+      "probability24h": 0.2784814217119539,
+      "probability48h": 0.4556979763353408
+    },
+    {
+      "origin": "2026-09-06T00:00:00+00:00",
+      "label": 0,
+      "probability24h": 0.27848142175102103,
+      "probability48h": 0.45569797639977344
+    },
+    {
+      "origin": "2026-09-07T00:00:00+00:00",
+      "label": 2,
+      "probability24h": 0.27848142176408597,
+      "probability48h": 0.4556979764193103
+    },
+    {
+      "origin": "2026-09-08T00:00:00+00:00",
+      "label": 1,
+      "probability24h": 0.2784814217757199,
+      "probability48h": 0.45569797643925614
+    },
+    {
+      "origin": "2026-09-09T00:00:00+00:00",
+      "label": 0,
+      "probability24h": 0.2784814217696207,
+      "probability48h": 0.4556979764336384
+    },
+    {
+      "origin": "2026-09-10T00:00:00+00:00",
+      "label": 0,
+      "probability24h": 0.2784814217686945,
+      "probability48h": 0.4556979764335011
+    }
+  ]
+}

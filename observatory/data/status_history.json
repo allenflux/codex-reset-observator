@@ -1,0 +1,57 @@
+[
+  {
+    "id": "01KTW7QY5W9DDYT0ETXX6MPVSY",
+    "title": "Elevated error rates for GPT 5.5 in Codex",
+    "status": "resolved",
+    "impact": "minor",
+    "createdAt": "2026-06-11T20:59:52Z",
+    "updatedAt": "2026-06-11T22:28:09Z",
+    "resolvedAt": "2026-06-11T22:28:09Z",
+    "source": "openai_status",
+    "url": "https://status.openai.com/incidents/01KTW7QY5W9DDYT0ETXX6MPVSY"
+  },
+  {
+    "id": "01KT890WC7YQYMX39GY5VG9QAB",
+    "title": "Increased latency for Codex compaction for a subset of users",
+    "status": "resolved",
+    "impact": "minor",
+    "createdAt": "2026-06-04T02:57:25Z",
+    "updatedAt": "2026-06-04T04:37:16Z",
+    "resolvedAt": "2026-06-04T04:37:16Z",
+    "source": "openai_status",
+    "url": "https://status.openai.com/incidents/01KT890WC7YQYMX39GY5VG9QAB"
+  },
+  {
+    "id": "01KT5XJ5ATD6RMYP908WS69FVD",
+    "title": "Elevated error rates on Codex, ChatGPT and Responses API",
+    "status": "resolved",
+    "impact": "major",
+    "createdAt": "2026-06-03T04:58:40Z",
+    "updatedAt": "2026-06-03T11:09:42Z",
+    "resolvedAt": "2026-06-03T11:09:42Z",
+    "source": "openai_status",
+    "url": "https://status.openai.com/incidents/01KT5XJ5ATD6RMYP908WS69FVD"
+  },
+  {
+    "id": "01KT5B2V94YX1T1M88BVQHB58J",
+    "title": "codex-gpt-image-2-does-not-exist-errors",
+    "status": "resolved",
+    "impact": "minor",
+    "createdAt": "2026-06-02T23:35:44Z",
+    "updatedAt": "2026-06-03T00:13:15Z",
+    "resolvedAt": "2026-06-03T00:13:15Z",
+    "source": "openai_status",
+    "url": "https://status.openai.com/incidents/01KT5B2V94YX1T1M88BVQHB58J"
+  },
+  {
+    "id": "01KSN9ATSF1WCJ5ZTQSR1H9CC7",
+    "title": "Codex Context Compaction Latency",
+    "status": "resolved",
+    "impact": "minor",
+    "createdAt": "2026-05-27T17:57:17Z",
+    "updatedAt": "2026-05-28T06:59:35Z",
+    "resolvedAt": "2026-05-28T06:59:35Z",
+    "source": "openai_status",
+    "url": "https://status.openai.com/incidents/01KSN9ATSF1WCJ5ZTQSR1H9CC7"
+  }
+]

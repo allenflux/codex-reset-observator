@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "macros.html" import history %}
+{% block content %}
+<section class="panel">
+  <div class="section-heading"><h2>{{ t.history_heading }}</h2><span class="record-count">{{ history_items | length }} {{ t.records }}</span></div>
+  <div class="history-filters"><label for="history-search">{{ t.search_history }}<input id="history-search" type="search" placeholder="{{ t.search_history }}" autocomplete="off"></label><label for="history-kind">{{ t.filter_history }}<select id="history-kind"><option value="all">{{ t.all_records }}</option>{% for kind in ['confirmed_global', 'banked_distribution', 'regular_completed', 'reference'] %}<option value="{{ kind }}">{{ t['record_' + kind] }}</option>{% endfor %}</select></label></div>
+  {{ history(history_items, t) }}
+  <p id="history-no-matches" class="empty-state" hidden>{{ t.no_matches }}</p>
+</section>
+{% include "heatmap.html" %}
+{% endblock %}

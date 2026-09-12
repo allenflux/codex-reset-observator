@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel faq-list">{% for faq in faqs %}<article {% if faq.id %}id="{{ faq.id }}"{% endif %}><h2>{{ faq.question }}</h2><p>{{ faq.answer }}</p></article>{% endfor %}</section>
+{% endblock %}

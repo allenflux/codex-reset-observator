@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-06-21T10:38:44.961Z",
+  "sources": [
+    "r/OpenAI",
+    "r/ChatGPT",
+    "r/codex"
+  ],
+  "fetchResults": [
+    {
+      "subreddit": "OpenAI",
+      "method": "reddit_rss_fallback",
+      "ok": false,
+      "status": 429,
+      "count": 0,
+      "jsonError": "403 Blocked",
+      "rssError": "429 Too Many Requests"
+    },
+    {
+      "subreddit": "ChatGPT",
+      "method": "reddit_rss_fallback",
+      "ok": false,
+      "status": 429,
+      "count": 0,
+      "jsonError": "403 Blocked",
+      "rssError": "429 Too Many Requests"
+    },
+    {
+      "subreddit": "codex",
+      "method": "reddit_rss_fallback",
+      "ok": false,
+      "status": 429,
+      "count": 0,
+      "jsonError": "403 Blocked",
+      "rssError": "429 Too Many Requests"
+    }
+  ],
+  "windows": {
+    "relatedPosts6h": 0,
+    "relatedPosts24h": 0,
+    "signalScore24h": 0,
+    "signalTypeCounts24h": {}
+  },
+  "baseline": {
+    "lookbackDays": 14,
+    "excludesLastHours": 24,
+    "relatedPostsPerDayAverage": 0.08,
+    "signalScorePerDayAverage": 0.54,
+    "relatedPosts24hDeltaFromAverage": -0.08,
+    "signalScore24hDeltaFromAverage": -0.54
+  },
+  "note": "Internal Reddit observation log only. Not shown on public pages and not used by reset probability logic."
+}

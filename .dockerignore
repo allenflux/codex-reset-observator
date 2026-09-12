@@ -1,0 +1,11 @@
+.git
+.venv
+.idea
+.env*
+var
+node_modules
+.next
+legacy
+reports
+tests_python
+__pycache__

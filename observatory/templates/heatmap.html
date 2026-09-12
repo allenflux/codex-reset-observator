@@ -1,0 +1,14 @@
+<section class="panel heatmap-panel" aria-labelledby="heatmap-heading" data-heatmap>
+  <div class="section-heading"><div><p class="eyebrow">{{ t.history }}</p><h2 id="heatmap-heading">{{ t.heatmap }}</h2></div><span class="record-count"><b data-heatmap-count>{{ heatmap.count }}</b> {{ t.records }}</span></div>
+  <p class="section-description">{{ t.heatmap_note }}</p>
+  <div class="chart-controls"><label>{{ t.range }}<select data-heatmap-range><option value="all">{{ t.all_time }}</option><option value="month">{{ t.last_month }}</option></select></label><label>{{ t.timezone }}<select data-heatmap-timezone><option value="local">{{ t.local }}</option><option value="UTC" selected>UTC</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Shanghai">Asia/Shanghai</option><option value="America/Los_Angeles">America/Los_Angeles</option></select></label><span class="small-label" data-chart-zone>UTC</span></div>
+  <div class="histogram time-histogram" role="img" aria-label="{{ t.heatmap }} (UTC)">
+    {% for bin in heatmap.bins %}<div class="chart-column" title="{{ '%02d' | format(bin.hour) }}:00 · {{ bin.count }} {{ t.records }}"><span class="bar-count">{{ bin.count or '' }}</span><span class="bar-track"><span class="chart-bar" style="height: {{ bin.height }}%"></span></span><span class="bar-label">{{ '%02d' | format(bin.hour) }}</span></div>{% endfor %}
+  </div>
+  <div class="chart-accessible"><details><summary>{{ t.count }}</summary><table><caption>{{ t.heatmap }} (UTC)</caption><thead><tr><th>{{ t.timezone }}</th><th>{{ t.count }}</th></tr></thead><tbody data-heatmap-table>{% for bin in heatmap.bins %}<tr><th>{{ '%02d' | format(bin.hour) }}:00</th><td>{{ bin.count }}</td></tr>{% endfor %}</tbody></table></details></div>
+  <div class="interval-section"><h3>{{ t.intervals }}</h3><p class="section-description">{{ t.interval_note }}</p>
+    <dl class="interval-stats" data-interval-stats>{% for label, value in heatmap.stats %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}</dl><p data-interval-empty {% if heatmap.stats %}hidden{% endif %}>{{ t.no_intervals }}</p>
+    <div class="histogram interval-histogram" role="img" aria-label="{{ t.intervals }}">{% for bin in heatmap.interval_bins %}<div class="chart-column" title="{{ bin.label }} {{ t.days }} · {{ bin.count }} {{ t.records }}"><span class="bar-count">{{ bin.count or '' }}</span><span class="bar-track"><span class="chart-bar" style="height: {{ bin.height }}%"></span></span><span class="bar-label">{{ bin.label }}</span></div>{% endfor %}</div><p class="axis-label">{{ t.days }}</p>
+  </div>
+  <script type="application/json" data-heatmap-data>{{ {'events': heatmap.events, 'now': checked.iso, 'labels': {'records': t.records, 'days': t.days, 'median': t.median, 'average': t.average, 'shortest': t.shortest, 'longest': t.longest}} | tojson }}</script>
+</section>

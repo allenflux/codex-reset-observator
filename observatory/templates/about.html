@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel prose">{% for paragraph in t.about_paragraphs %}<p>{{ paragraph }}</p>{% endfor %}</section>
+<section class="panel prose"><h2>{{ t.sources_heading }}</h2><div class="source-list"><a href="https://status.openai.com/" target="_blank" rel="noopener noreferrer">{{ t.source_status }} ↗</a><a href="https://x.com/thsottiaux" target="_blank" rel="noopener noreferrer">{{ t.source_official }} ↗</a><a href="{{ routes.history }}">{{ t.history }} →</a><a href="{{ routes.faq }}#forecast-method">{{ t.method }} →</a><a href="/api/current?locale={{ locale }}">{{ t.api }} →</a></div></section>
+{% endblock %}

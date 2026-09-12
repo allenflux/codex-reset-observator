@@ -1,0 +1,378 @@
+[
+  {
+    "at": "2026-09-12T00:00:00Z",
+    "calibrated": {
+      "modelVersion": "hazard-odds-v4-logit-calibrated-prequential-v3",
+      "calculatedAt": "2026-09-12T00:00:00.000Z",
+      "rawModelVersion": "hazard-odds-v3-random-inclusive",
+      "rawProbability24h": 0.20433098498553368,
+      "rawProbability48h": 0.31831149159366656,
+      "probability24h": 0.21591356914704388,
+      "probability48h": 0.3199342243373785,
+      "alpha24h": 0.0698010616747307,
+      "alpha48h": 0.007468287615629444,
+      "calibrationSampleCount24h": 85,
+      "calibrationSampleCount48h": 84,
+      "positiveCalibrationCount24h": 17,
+      "positiveCalibrationCount48h": 28,
+      "priorStdDev": 0.5,
+      "minimumSamples": 10,
+      "lastResolvedOrigin24h": "2026-09-10T15:00:00.000Z",
+      "lastResolvedOrigin48h": "2026-09-09T15:00:00.000Z",
+      "officialNoticeOverride": false,
+      "horizonCoherenceAdjusted": false,
+      "fallbackUsed": false,
+      "evaluationMode": "prospective",
+      "pointInTimeProjectionVersion": "status-conservative-v2",
+      "pointInTimeProjectionLimitations": "Intermediate Status updates are unavailable; incidents updated after an origin are conservatively projected as investigating.",
+      "targetDefinition": "Completed broad-scope random reset events after reset-history deduplication; includes forced resets and Banked Reset distributions, while excluding regular resets, narrow-scope distributions, pending or opened-only records, rejected Tibo signals, future or invalid timestamps, and reference records."
+    },
+    "recency": {
+      "modelVersion": "hazard-odds-v3-recency-bayes-h30-r3",
+      "calculatedAt": "2026-09-12T00:00:00.000Z",
+      "targetDefinition": "Completed broad-scope random reset events after reset-history deduplication; includes forced resets and Banked Reset distributions, while excluding regular resets, narrow-scope distributions, pending or opened-only records, rejected Tibo signals, future or invalid timestamps, and reference records.",
+      "predictions": {
+        "probability12h": 0.05725549373543004,
+        "probability24h": 0.11151412579736153,
+        "probability48h": 0.19695172831422236,
+        "probability72h": 0.2733287434561439
+      },
+      "baseline": {
+        "probability12h": 0.05725549373543004,
+        "probability24h": 0.11151412579736153,
+        "probability48h": 0.19695172831422236,
+        "probability72h": 0.2733287434561439
+      },
+      "confidence": {
+        "level": "low",
+        "reason": "The available completed intervals or exposure are below the medium-confidence floor.",
+        "completedIntervalCount": 23,
+        "totalExposureDays": 53.097798816989545
+      },
+      "hazard": {
+        "globalLambdaPerHour": 0.004484515815705701,
+        "observedEventCount": 23,
+        "weightedEventCount": 5.791113841544145,
+        "completedEventCount": 24,
+        "completedIntervalCount": 23,
+        "totalExposureHours": 1274.347171607749,
+        "weightedExposureHours": 1274.347171607749,
+        "totalExposureDays": 53.097798816989545,
+        "bins": [
+          {
+            "startHour": 0,
+            "endHour": 24,
+            "exposureHours": 159.24224623709526,
+            "observedEvents": 0.46662104691865414,
+            "posteriorLambdaPerHour": 0.004097333450464615,
+            "impliedDailyProbability": 0.09365568165282512
+          },
+          {
+            "startHour": 24,
+            "endHour": 48,
+            "exposureHours": 119.29562233241975,
+            "observedEvents": 2.186426021868104,
+            "posteriorLambdaPerHour": 0.007240155695647764,
+            "impliedDailyProbability": 0.15950454756512544
+          },
+          {
+            "startHour": 48,
+            "endHour": 72,
+            "exposureHours": 93.48849003660024,
+            "observedEvents": 0.7267477642514312,
+            "posteriorLambdaPerHour": 0.005020702953613609,
+            "impliedDailyProbability": 0.11352013876306122
+          },
+          {
+            "startHour": 72,
+            "endHour": 96,
+            "exposureHours": 74.14834819913122,
+            "observedEvents": 0.46780799191344985,
+            "posteriorLambdaPerHour": 0.004728653603259618,
+            "impliedDailyProbability": 0.10728481118858157
+          },
+          {
+            "startHour": 96,
+            "endHour": 120,
+            "exposureHours": 37.766501745304176,
+            "observedEvents": 0.4050504911714087,
+            "posteriorLambdaPerHour": 0.004939713314957309,
+            "impliedDailyProbability": 0.11179536663473999
+          },
+          {
+            "startHour": 120,
+            "endHour": 144,
+            "exposureHours": 36.92305261010635,
+            "observedEvents": 0,
+            "posteriorLambdaPerHour": 0.004164193453299768,
+            "impliedDailyProbability": 0.09510887182608485
+          },
+          {
+            "startHour": 144,
+            "endHour": 168,
+            "exposureHours": 36.92305261010635,
+            "observedEvents": 0,
+            "posteriorLambdaPerHour": 0.004164193453299768,
+            "impliedDailyProbability": 0.09510887182608485
+          },
+          {
+            "startHour": 168,
+            "endHour": null,
+            "exposureHours": 716.5598578369858,
+            "observedEvents": 1.538460525421098,
+            "posteriorLambdaPerHour": 0.00308469993605843,
+            "impliedDailyProbability": 0.07135876466563451
+          }
+        ]
+      },
+      "multipliers": {
+        "recentResetMomentum": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "regularResetProximity": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "teaser": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "teaserStrength": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "statusSignal": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "officialIncidentHint": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "officialUpdate": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "communitySignal": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "usageLimitAnomaly": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "complaintPressure": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "combinedBeforeCap": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "combinedAfterCap": {
+          "probability24h": 1,
+          "probability48h": 1
+        }
+      },
+      "officialNoticeOverride": {
+        "active": false,
+        "probability12h": null,
+        "probability24h": null,
+        "probability48h": null,
+        "probability72h": null
+      },
+      "warnings": [
+        "Regular reset proximity is retained for audit input but is not applied by the random-only shadow model."
+      ]
+    }
+  },
+  {
+    "at": "2026-08-22T00:00:00Z",
+    "calibrated": {
+      "modelVersion": "hazard-odds-v4-logit-calibrated-prequential-v3",
+      "calculatedAt": "2026-08-22T00:00:00.000Z",
+      "rawModelVersion": "hazard-odds-v3-random-inclusive",
+      "rawProbability24h": 0.16888392004084074,
+      "rawProbability48h": 0.3092460616333199,
+      "probability24h": 0.20387268512674508,
+      "probability48h": 0.35763996982862084,
+      "alpha24h": 0.23129444705296448,
+      "alpha48h": 0.21802425773767217,
+      "calibrationSampleCount24h": 64,
+      "calibrationSampleCount48h": 63,
+      "positiveCalibrationCount24h": 16,
+      "positiveCalibrationCount48h": 26,
+      "priorStdDev": 0.5,
+      "minimumSamples": 10,
+      "lastResolvedOrigin24h": "2026-08-20T15:00:00.000Z",
+      "lastResolvedOrigin48h": "2026-08-19T15:00:00.000Z",
+      "officialNoticeOverride": false,
+      "horizonCoherenceAdjusted": false,
+      "fallbackUsed": false,
+      "evaluationMode": "prospective",
+      "pointInTimeProjectionVersion": "status-conservative-v2",
+      "pointInTimeProjectionLimitations": "Intermediate Status updates are unavailable; incidents updated after an origin are conservatively projected as investigating.",
+      "targetDefinition": "Completed broad-scope random reset events after reset-history deduplication; includes forced resets and Banked Reset distributions, while excluding regular resets, narrow-scope distributions, pending or opened-only records, rejected Tibo signals, future or invalid timestamps, and reference records."
+    },
+    "recency": {
+      "modelVersion": "hazard-odds-v3-recency-bayes-h30-r3",
+      "calculatedAt": "2026-08-22T00:00:00.000Z",
+      "targetDefinition": "Completed broad-scope random reset events after reset-history deduplication; includes forced resets and Banked Reset distributions, while excluding regular resets, narrow-scope distributions, pending or opened-only records, rejected Tibo signals, future or invalid timestamps, and reference records.",
+      "predictions": {
+        "probability12h": 0.05710462150774032,
+        "probability24h": 0.1109483052179381,
+        "probability48h": 0.20958708400514325,
+        "probability72h": 0.29728205745714087
+      },
+      "baseline": {
+        "probability12h": 0.057104621507740316,
+        "probability24h": 0.11094830521793808,
+        "probability48h": 0.20958708400514325,
+        "probability72h": 0.29728205745714087
+      },
+      "confidence": {
+        "level": "low",
+        "reason": "The available completed intervals or exposure are below the medium-confidence floor.",
+        "completedIntervalCount": 22,
+        "totalExposureDays": 44.4765423577816
+      },
+      "hazard": {
+        "globalLambdaPerHour": 0.006825915276592002,
+        "observedEventCount": 22,
+        "weightedEventCount": 7.924454304701425,
+        "completedEventCount": 23,
+        "completedIntervalCount": 22,
+        "totalExposureHours": 1067.4370165867583,
+        "weightedExposureHours": 1067.4370165867583,
+        "totalExposureDays": 44.4765423577816,
+        "bins": [
+          {
+            "startHour": 0,
+            "endHour": 24,
+            "exposureHours": 208.10396792462774,
+            "observedEvents": 0.7580281270998643,
+            "posteriorLambdaPerHour": 0.0058631655213852,
+            "impliedDailyProbability": 0.1312639784313231
+          },
+          {
+            "startHour": 24,
+            "endHour": 48,
+            "exposureHours": 143.21048593879982,
+            "observedEvents": 3.5518595514359967,
+            "posteriorLambdaPerHour": 0.010956649540185541,
+            "impliedDailyProbability": 0.23122703640499487
+          },
+          {
+            "startHour": 48,
+            "endHour": 72,
+            "exposureHours": 101.2866758380762,
+            "observedEvents": 1.180605226119523,
+            "posteriorLambdaPerHour": 0.007667549840975959,
+            "impliedDailyProbability": 0.16808182985033837
+          },
+          {
+            "startHour": 72,
+            "endHour": 96,
+            "exposureHours": 72.30527992043756,
+            "observedEvents": 0.7599563249325962,
+            "posteriorLambdaPerHour": 0.007308269184531823,
+            "impliedDailyProbability": 0.16087740300347242
+          },
+          {
+            "startHour": 96,
+            "endHour": 120,
+            "exposureHours": 49.754153824496875,
+            "observedEvents": 0.6580064641984937,
+            "posteriorLambdaPerHour": 0.007426927695721483,
+            "impliedDailyProbability": 0.163263660507175
+          },
+          {
+            "startHour": 120,
+            "endHour": 144,
+            "exposureHours": 48.38396666195882,
+            "observedEvents": 0,
+            "posteriorLambdaPerHour": 0.006200868193376335,
+            "impliedDailyProbability": 0.13827650965563465
+          },
+          {
+            "startHour": 144,
+            "endHour": 168,
+            "exposureHours": 48.38396666195882,
+            "observedEvents": 0,
+            "posteriorLambdaPerHour": 0.006200868193376335,
+            "impliedDailyProbability": 0.13827650965563465
+          },
+          {
+            "startHour": 168,
+            "endHour": null,
+            "exposureHours": 396.00851981640244,
+            "observedEvents": 1.0159986109149508,
+            "posteriorLambdaPerHour": 0.0048999956582371365,
+            "impliedDailyProbability": 0.11094830521793786
+          }
+        ]
+      },
+      "multipliers": {
+        "recentResetMomentum": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "regularResetProximity": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "teaser": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "teaserStrength": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "statusSignal": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "officialIncidentHint": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "officialUpdate": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "communitySignal": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "usageLimitAnomaly": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "complaintPressure": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "combinedBeforeCap": {
+          "probability24h": 1,
+          "probability48h": 1
+        },
+        "combinedAfterCap": {
+          "probability24h": 1,
+          "probability48h": 1
+        }
+      },
+      "officialNoticeOverride": {
+        "active": false,
+        "probability12h": null,
+        "probability24h": null,
+        "probability48h": null,
+        "probability72h": null
+      },
+      "warnings": [
+        "Regular reset proximity is retained for audit input but is not applied by the random-only shadow model."
+      ]
+    }
+  }
+]

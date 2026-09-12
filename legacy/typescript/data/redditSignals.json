@@ -1,0 +1,133 @@
+[
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1ub5cbu",
+    "title": "Whats the codex usage on a 20x plan vs 5x plan?",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1ub5cbu/whats_the_codex_usage_on_a_20x_plan_vs_5x_plan/",
+    "createdAt": "2026-06-20T19:32:59+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1ua73h7",
+    "title": "I’m 100% convinced ChatGPT subscription models are running heavier quantization than API models",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1ua73h7/im_100_convinced_chatgpt_subscription_models_are/",
+    "createdAt": "2026-06-19T16:47:08+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1u9cgmu",
+    "title": "[Q] Business Plan Seat Usage and Mix and Match",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1u9cgmu/q_business_plan_seat_usage_and_mix_and_match/",
+    "createdAt": "2026-06-18T17:22:34+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1u8b663",
+    "title": "GPT Codex users: at what token count does quality actually degrade for you?",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1u8b663/gpt_codex_users_at_what_token_count_does_quality/",
+    "createdAt": "2026-06-17T14:05:53+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1u84pqt",
+    "title": "Codex logging all employees out!",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1u84pqt/codex_logging_all_employees_out/",
+    "createdAt": "2026-06-17T08:50:03+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1u6m8f6",
+    "title": "OpenAI Monthly limit instead of weekly",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1u6m8f6/openai_monthly_limit_instead_of_weekly/",
+    "createdAt": "2026-06-15T16:53:48+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1u6l3mp",
+    "title": "Efficient Image validation (IST vs Plan)",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1u6l3mp/efficient_image_validation_ist_vs_plan/",
+    "createdAt": "2026-06-15T16:13:35+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex"
+    ],
+    "signalType": "noise",
+    "signalScore": 1
+  },
+  {
+    "fetchedAt": "2026-06-21T10:38:14.254Z",
+    "source": "reddit_rss",
+    "subreddit": "OpenAI",
+    "postId": "t3_1u5zp3t",
+    "title": "CODEX offered me a Rate-Limit Reset...and I'm suspicious.",
+    "url": "https://www.reddit.com/r/OpenAI/comments/1u5zp3t/codex_offered_me_a_ratelimit_resetand_im/",
+    "createdAt": "2026-06-14T23:10:20+00:00",
+    "score": null,
+    "comments": null,
+    "matchedKeywords": [
+      "codex",
+      "rate limit",
+      "reset",
+      "limit reset"
+    ],
+    "signalType": "limit_anomaly",
+    "signalScore": 7
+  }
+]

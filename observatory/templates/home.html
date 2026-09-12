@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "macros.html" import time, history %}
+{% block content %}
+<section class="snapshot-status" aria-label="{{ t.checked }}">
+  <div class="snapshot-meta"><span class="health-label {% if stale %}health-stale{% endif %}"><span class="status-dot" aria-hidden="true"></span>{{ t.stale if stale else t.healthy }}</span><span>{{ t.updated }}: {{ time(updated) }}</span><span>{{ t.checked }}: {{ time(checked) }}</span></div>
+  <button id="refresh" class="button-quiet" type="button" data-label="{{ t.refresh }}" data-loading-label="{{ t.refreshing }}">↻ {{ t.refresh }}</button>
+</section>
+<p class="data-notice" id="data-warning" role="status" {% if not stale %}hidden{% endif %}>{{ t.offline }}</p>
+<p id="refresh-status" class="data-notice" role="status" hidden data-failure="{{ t.refresh_failed }}"></p>
+<div id="radar-content">
+  <section class="forecast-panel" aria-labelledby="forecast-heading">
+    <div class="forecast-intro">
+      <p class="eyebrow">{{ t.forecast }}</p>
+      <h2 id="forecast-heading">{{ t.forecast }}</h2>
+      <p>{{ t.forecast_note }}</p>
+      <a href="{{ routes.faq }}#forecast-method">{{ t.method }} <span aria-hidden="true">↗</span></a>
+      <div class="radar-art" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
+    </div>
+    <div class="probability-grid">
+      {% for probability in probabilities %}
+      <article class="probability-card">
+        <h3>{{ probability.label }}</h3>
+        <p class="probability-value">{% if probability.value is not none %}{{ probability.value }}<span>%</span>{% else %}<span class="unknown-probability">{{ t.unknown }}</span>{% endif %}</p>
+        <div class="probability-meter" role="progressbar" aria-label="{{ probability.label }}" aria-valuemin="0" aria-valuemax="100" {% if probability.value is not none %}aria-valuenow="{{ probability.value }}"{% else %}aria-valuetext="{{ t.unknown }}"{% endif %}><span style="width: {{ probability.value or 0 }}%"></span></div>
+        <span class="probability-horizon">0<span>100%</span></span>
+      </article>
+      {% endfor %}
+    </div>
+    {% if reasoning %}<p class="reasoning">{{ reasoning }}</p>{% endif %}
+  </section>
+
+  <section class="current-status panel" aria-labelledby="notice-heading">
+    <div class="notice-body"><p class="eyebrow">{{ t.notice }}</p><h2 id="notice-heading">{{ t.notice_active if notice.active else t.no_notice }}</h2><p>{{ notice.summary }}</p>
+      {% if notice.active and notice.date.iso %}<p class="notice-date">{{ t.scheduled }}: {{ time(notice.date) }}{% if notice.end.iso %}<br>{{ t.deadline }}: {{ time(notice.end) }}{% endif %}</p>{% endif %}
+      {% if notice.overdue %}<p class="reference-note">{{ notice.overdue }}</p>{% endif %}
+      {% if notice.source %}<a class="text-link" href="{{ notice.source }}" target="_blank" rel="noopener noreferrer">{{ t.source }} ↗</a>{% endif %}
+    </div>
+    <div class="service-status"><span class="status-orbit status-{{ status }}" aria-hidden="true"><span></span></span><div><span class="small-label">{{ t.status }}</span><strong>{{ status_label }}</strong><a href="https://status.openai.com/" target="_blank" rel="noopener noreferrer">OpenAI Status ↗</a></div></div>
+  </section>
+
+  <div class="reset-grid">
+    <section class="panel reset-card"><p class="eyebrow">{{ t.last_reset }}</p><h2>{{ latest.title }}</h2><p class="reset-date">{{ time(latest.date) }}</p>{% if latest.summary %}<p>{{ latest.summary }}</p>{% endif %}{% if latest.source %}<a class="text-link" href="{{ latest.source }}" target="_blank" rel="noopener noreferrer">{{ t.source }} ↗</a>{% endif %}<p class="reset-footnote">{{ t.latest_random }}: {{ time(last_random) }}</p></section>
+    <section class="panel reset-card"><p class="eyebrow">{{ t.next_regular }}</p><h2>{{ time(regular.date) }}</h2>{% if regular.remaining %}<p class="remaining">{{ regular.remaining }}</p>{% endif %}<p>{{ t.regular_note }}</p><a class="text-link" href="{{ routes.faq }}">{{ t.faq }} ↗</a></section>
+  </div>
+
+  {% if neural is defined and neural %}{% include "neural.html" %}{% endif %}
+
+  <section class="panel" aria-labelledby="history-heading"><div class="section-heading"><div><p class="eyebrow">{{ t.history }}</p><h2 id="history-heading">{{ t.history_heading }}</h2></div><a class="text-link" href="{{ routes.history }}">{{ t.all_history }} →</a></div>{{ history(history_items[:5], t) }}</section>
+
+  {% include "heatmap.html" %}
+
+  <section class="panel post-card" aria-labelledby="activity-heading"><div class="section-heading"><div><p class="eyebrow">@thsottiaux</p><h2 id="activity-heading">{{ t.latest_post }}</h2></div>{% if activity.source %}<a class="text-link" href="{{ activity.source }}" target="_blank" rel="noopener noreferrer">{{ t.source }} ↗</a>{% endif %}</div>
+    {% if activity.available %}
+      {% if activity.reply %}<p class="small-label">{{ t.reply_context }}</p><blockquote class="reply-context">{{ activity.reply }}</blockquote>{% endif %}
+      {% if activity.text %}<blockquote>{{ activity.text }}</blockquote>{% else %}<p>{{ t.no_post }}</p>{% endif %}
+      <dl class="post-meta"><div><dt>{{ t.classification }}</dt><dd>{{ activity.classification }}</dd></div><div><dt>{{ t.posted }}</dt><dd>{{ time(activity.date) }}</dd></div></dl>
+    {% else %}<p class="empty-state">{{ t.no_post }}</p>{% endif %}
+  </section>
+</div>
+{% endblock %}

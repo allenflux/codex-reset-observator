@@ -2,114 +2,40 @@ name: Verify Supabase Migrations
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'supabase/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'tests/supabaseFoundation.test.ts'
+      - 'observatory/storage.py'
       - '.github/workflows/verify-supabase-migrations.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
-defaults:
-  run:
-    shell: pwsh
-
 jobs:
   local-migrations:
-    name: Fresh local Supabase migrations
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22.13.0
-
-      - name: Install compatible Corepack
-        run: npm install --global corepack@0.35.0
-
-      - name: Enable pinned pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install uv
+      - run: uv sync --frozen
+      - name: Start isolated local database
+        run: npx --yes supabase@2.116.0 start
+      - name: Apply complete migrations twice
         run: |
-          corepack enable
-          corepack prepare pnpm@11.18.0 --activate
-
-      - name: Install locked dependencies
-        run: corepack pnpm install --frozen-lockfile
-
-      - name: Verify local-only CLI configuration
-        run: |
-          $version = (& corepack pnpm exec supabase --version).Trim()
-          if ($version -ne '2.116.0') {
-            throw "Unexpected Supabase CLI version: $version"
-          }
-
-          foreach ($name in @(
-            'SUPABASE_ACCESS_TOKEN',
-            'SUPABASE_DB_PASSWORD',
-            'SUPABASE_SERVICE_ROLE_KEY',
-            'SUPABASE_URL'
-          )) {
-            if (-not [string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($name))) {
-              throw "Production credential environment variable is present: $name"
-            }
-          }
-
-      - name: Start local Supabase stack
-        run: corepack pnpm exec supabase start
-
-      - name: Fresh migration reset 1
-        run: corepack pnpm exec supabase db reset --local --no-seed
-
-      - name: Fresh migration reset 2
-        run: corepack pnpm exec supabase db reset --local --no-seed
-
-      - name: Focused foundation tests
-        run: corepack pnpm exec tsx --test tests/supabaseFoundation.test.ts
-
-      - name: Export local Supabase test credentials
-        run: |
-          $status = & corepack pnpm exec supabase status -o env
-          $apiUrl = $null
-          $serviceRoleKey = $null
-          foreach ($line in $status) {
-            if ($line -match '^API_URL=(.*)$') {
-              $apiUrl = $matches[1].Trim().Trim('"')
-            }
-            if ($line -match '^SERVICE_ROLE_KEY=(.*)$') {
-              $serviceRoleKey = $matches[1].Trim().Trim('"')
-            }
-          }
-          if ([string]::IsNullOrEmpty($apiUrl) -or [string]::IsNullOrEmpty($serviceRoleKey)) {
-            throw 'Local Supabase status did not expose API_URL and SERVICE_ROLE_KEY'
-          }
-          "SUPABASE_LOCAL_URL=$apiUrl" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          "SUPABASE_LOCAL_SERVICE_ROLE_KEY=$serviceRoleKey" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-
-      - name: Atomic webhook database integration tests
-        run: corepack pnpm exec tsx --test tests/integration/codexUsageAtomic.integration.test.ts
-
-      - name: Full test suite
-        run: corepack pnpm test
-
-      - name: Lint
-        run: corepack pnpm run lint
-
-      - name: Typecheck
-        run: corepack pnpm run typecheck
-
-      - name: Production build
-        run: corepack pnpm run build
-
-      - name: Check migration verification diff
+          npx --yes supabase@2.116.0 db reset --local --no-seed
+          npx --yes supabase@2.116.0 db reset --local --no-seed
+      - name: Python repository and webhook contracts
+        run: uv run pytest tests_python/test_storage.py tests_python/test_api.py
+      - name: Check generated diff
         run: git diff --check
-
-      - name: Stop local Supabase stack
+      - name: Stop local database
         if: always()
-        continue-on-error: true
-        run: corepack pnpm exec supabase stop --no-backup
+        run: npx --yes supabase@2.116.0 stop --no-backup
