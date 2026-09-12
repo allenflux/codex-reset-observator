@@ -10,13 +10,22 @@
 <div id="radar-content">
   <section class="forecast-panel" aria-labelledby="forecast-heading">
     <div class="forecast-intro">
-      <p class="eyebrow">{{ t.neural_primary if primary_neural else t.forecast }}</p>
-      <h2 id="forecast-heading">{{ t.forecast }}</h2>
-      <p>{{ t.neural_primary_note if primary_neural else t.forecast_note }}</p>
+      <p class="eyebrow">{{ t.notice if notice.active else t.neural_primary if primary_neural else t.forecast }}</p>
+      <h2 id="forecast-heading">{{ t.announced if notice.active else t.forecast }}</h2>
+      <p>{{ t.announced_note if notice.active else t.neural_primary_note if primary_neural else t.forecast_note }}</p>
+      {% if notice.active and notice.source %}<a href="{{ notice.source }}" target="_blank" rel="noopener noreferrer">{{ t.source }} ↗</a>{% else %}
       <a href="{{ routes.faq }}#forecast-method">{{ t.method }} <span aria-hidden="true">↗</span></a>
+      {% endif %}
       <div class="radar-art" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
     </div>
-    <div class="probability-grid">
+    {% if notice.active %}
+    <article class="announcement-card">
+      <blockquote>{{ notice.excerpt or notice.summary }}</blockquote>
+      {% if notice.timing %}<p>{{ t.notice_timing }}: <strong>{{ notice.timing }}</strong></p>{% endif %}
+      {% if notice.timing_unresolved %}<p>{{ t.notice_timezone_unknown }}</p>{% endif %}
+      {% if notice.date.iso %}<p>{{ t.scheduled }}: {{ time(notice.date) }}</p>{% endif %}
+    </article>
+    {% else %}<div class="probability-grid">
       {% for probability in probabilities %}
       <article class="probability-card">
         <h3>{{ probability.label }}</h3>
@@ -25,8 +34,8 @@
         <span class="probability-horizon">0<span>100%</span></span>
       </article>
       {% endfor %}
-    </div>
-    {% if reasoning %}<p class="reasoning">{{ reasoning }}</p>{% endif %}
+    </div>{% endif %}
+    {% if notice.active %}<p class="reasoning">{{ t.historical_forecast_note }}</p>{% elif reasoning %}<p class="reasoning">{{ reasoning }}</p>{% endif %}
   </section>
 
   <section class="current-status panel" aria-labelledby="notice-heading">
@@ -54,7 +63,7 @@
       {% if activity.mirrored %}<p class="small-label">{{ t.social_source }}</p>{% endif %}
       {% if activity.reply %}<p class="small-label">{{ t.reply_context }}{% for handle in activity.reply_handles %} · @{{ handle.lstrip('@') }}{% endfor %}</p><blockquote class="reply-context">{{ activity.reply }}</blockquote>{% endif %}
       {% if activity.text %}<blockquote>{{ activity.text }}</blockquote>{% else %}<p>{{ t.no_post }}</p>{% endif %}
-      <dl class="post-meta"><div><dt>{{ t.classification }}</dt><dd>{{ t.social_no_analysis if activity.mirrored else activity.classification }}</dd></div><div><dt>{{ t.posted }}</dt><dd>{{ time(activity.date) }}</dd></div></dl>
+      <dl class="post-meta"><div><dt>{{ t.classification }}</dt><dd>{{ activity.classification }}</dd></div><div><dt>{{ t.posted }}</dt><dd>{{ time(activity.date) }}</dd></div></dl>
     {% else %}<p class="empty-state">{{ t.no_post }}</p>{% endif %}
   </section>
 </div>

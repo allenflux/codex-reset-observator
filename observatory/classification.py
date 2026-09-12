@@ -57,7 +57,7 @@ def _current_execution(text: str) -> bool:
     return bool(CURRENT_USAGE_RESET_ANNOUNCEMENT_PATTERN.search(text) or any(pattern.search(text) for pattern in CURRENT_EXECUTION_PATTERNS) or reconsidered)
 
 
-def classify_post(text: str, url: str = "", is_reply: bool | None = None, is_quote: bool | None = None, **kwargs: object) -> dict:
+def legacy_classify_post(text: str, url: str = "", is_reply: bool | None = None, is_quote: bool | None = None, **kwargs: object) -> dict:
     """Classify English source text without an LLM; return persisted signal fields.
 
     Existing Gemini translations/classifications are preserved as input data but
@@ -108,6 +108,125 @@ def classify_post(text: str, url: str = "", is_reply: bool | None = None, is_quo
     return {"signal_type": candidate, "confidence": confidence, "classification_reason": reason,
             "classification_source": "rules-python-v1", "teaser_strength": "weak" if candidate == "teaser" else "none",
             "is_reply": reply, "is_quote": quote}
+
+
+_NOTICE_PREFIX = re.compile(r"^(?:(?:and|also)\s+)?(?:of\s+course,?\s+)?(?:p\.?s\.?\s*:\s*)?", re.I)
+_NOTICE_ASSERTION = re.compile(
+    r"^(?:(?:(?:a|the|another|one|full|global)\s+)?reset(?:s)?\s+"
+    r"(?:(?:is|are)\s+(?:also\s+)?(?:landing|coming|scheduled|planned)\b|"
+    r"(?:will|shall)\s+(?:also\s+)?(?:land|arrive|happen|roll\s+out|be\s+(?:rolled\s+out|performed|issued))\b)|"
+    r"(?:i|we)\s+(?:will|shall|(?:am|are)\s+going\s+to)\s+(?:also\s+)?"
+    r"(?:reset\s+(?:(?:the|our|all)\s+)?(?:usage(?:\s+(?:limits?|allowances?))?|rate\s+limits?|quotas?|allowances?)\b|"
+    r"(?:do|perform|issue)\s+(?:a\s+|another\s+)?reset\b))", re.I,
+)
+_NOTICE_TIME = re.compile(
+    r"\b(?:(?:by|before|at)\s+(?:midnight|noon|\d{1,2}(?::\d{2})?\s*(?:am|pm)?)"
+    r"(?:\s+(?:today|tonight|tomorrow))?(?:\s+(?:UTC|GMT|PST|PDT|EST|EDT|JST))?|"
+    r"(?:in|within)\s+(?:an?|one|two|three|four|\d+)\s+(?:hours?|minutes?|days?)|"
+    r"later\s+today|this\s+evening|today|tonight|tomorrow|soon)\b", re.I,
+)
+_NOTICE_UNCERTAIN = re.compile(
+    r"\b(?:no|not|never|won't|wont|would|could|might|may|if|unless|maybe|perhaps|hopefully|"
+    r"hypothetical|example|quote|quoted|quoting|joke|joking|rumou?r|unconfirmed)\b", re.I,
+)
+_NOTICE_OTHER_OBJECT = re.compile(
+    r"\b(?:caches?|servers?|benchmarks?|models?|conversations?|chats?|threads?|laptops?|"
+    r"databases?|db|ui|interfaces?|apps?|applications?|banked|credits?)\b", re.I,
+)
+_NOTICE_CANCEL = re.compile(
+    r"\b(?:reset|resets)\b[^.!?\n]{0,160}\b(?:cancel(?:led|ed)?|scrapped|postponed|delayed|"
+    r"no\s+longer|not\s+(?:happening|coming|landing)|won't|will\s+not)\b|"
+    r"\b(?:cancel(?:led|ed)?|scrapped|postponed|delayed|no\s+longer)\b[^.!?\n]{0,100}\breset(?:s)?\b|"
+    r"\b(?:no|not|never)\s+(?:a\s+|any\s+)?reset(?:s)?\b|"
+    r"\b(?:won't|wont|will\s+not|not\s+going\s+to)\b[^.!?\n]{0,60}\breset(?:s)?\b", re.I,
+)
+
+
+def _notice_clauses(text: str) -> list[str]:
+    """Exclude quoted/code material; retain only the author's own clauses."""
+    text = re.sub(r"```[\s\S]*?```|`[^`]*`", " ", text)
+    text = re.sub(r'"[^"\n]*"|“[^”]*”|‘[^’]*’|(?<!\w)\'[^\'\n]+\'(?!\w)', " ", text)
+    lines = []
+    reported_block = False
+    for line in text.splitlines():
+        if not line.strip():
+            reported_block = False
+        if re.search(r"\b(?:said|says|wrote|quote|example)\b[^.!?]*:\s*$", line, re.I):
+            reported_block = True
+        if not reported_block and not line.lstrip().startswith(">"):
+            lines.append(line)
+    return [part.strip() for line in lines
+            for part in re.split(r"(?<=[.!?。！？])\s+", line) if part.strip()]
+
+
+def notice_cancelled(text: str) -> bool:
+    """Recognize an explicit reset withdrawal, without interpreting its date."""
+    withdrawn = False
+    for clause in _notice_clauses(str(text)):
+        normalized = clause.lower().replace("’", "'")
+        if ("?" in clause or "？" in clause or PURE_HYPOTHETICAL_PATTERN.search(normalized)
+                or re.search(r"\b(?:if|unless|maybe|perhaps|rumou?r|quoted?|said|says|asked)\b", normalized)
+                or re.search(r"\b(?:not|never|haven't|hasn't|wasn't|isn't)\s+(?:been\s+)?"
+                             r"(?:cancel(?:led|ed)?|scrapped|postponed|delayed)\b", normalized)
+                or HISTORICAL_RESET_PATTERN.search(normalized)
+                or _NOTICE_OTHER_OBJECT.search(normalized)):
+            continue
+        if _NOTICE_CANCEL.search(normalized):
+            withdrawn = True
+        elif (not _NOTICE_UNCERTAIN.search(normalized)
+              and _NOTICE_ASSERTION.search(_NOTICE_PREFIX.sub("", normalized))):
+            withdrawn = False
+    return withdrawn
+
+
+def explicit_notice(text: str) -> dict[str, str] | None:
+    """Extract a narrow, affirmative future reset announcement using local rules.
+
+    Relative timing is returned verbatim. Publication or browser time zones never
+    establish which midnight an author meant, and this is not execution evidence.
+    A later explicit withdrawal in the same post suppresses an earlier promise.
+    """
+    clauses = _notice_clauses(str(text))
+    result = None
+    for clause in clauses:
+        normalized = clause.lower().replace("’", "'")
+        if notice_cancelled(clause):
+            result = None
+            continue
+        if (result and "?" not in clause and not re.search(r"\b(?:if|unless)\b", normalized)
+                and re.search(r"\b(?:scratch\s+that|changed\s+my\s+mind|never\s+mind|"
+                              r"(?:it|that)\s+(?:is\s+)?cancel(?:led|ed))\b", normalized)):
+            result = None
+            continue
+        if ("?" in clause or "？" in clause or _NOTICE_UNCERTAIN.search(normalized)
+                or HISTORICAL_RESET_PATTERN.search(normalized) or _NOTICE_OTHER_OBJECT.search(normalized)):
+            continue
+        assertion = _NOTICE_PREFIX.sub("", normalized)
+        if not _NOTICE_ASSERTION.search(assertion):
+            continue
+        timing = _NOTICE_TIME.search(clause)
+        result = {"excerpt": clause, "timePhrase": timing.group(0) if timing else ""}
+    return result
+
+
+def classify_post(text: str, url: str = "", is_reply: bool | None = None,
+                  is_quote: bool | None = None, **kwargs: object) -> dict:
+    """Preserve V1 for migration checks and add explicit future-notice rules."""
+    result = legacy_classify_post(text, url, is_reply, is_quote, **kwargs)
+    notice = explicit_notice(text)
+    if notice and not result["is_reply"] and not result["is_quote"]:
+        result.update(signal_type="official_notice", confidence=.96, teaser_strength="none",
+                      classification_source="rules-python-v2",
+                      classification_reason="Explicit future reset announcement matched by local rules.")
+    elif result["signal_type"] == "official_notice" and (
+            notice_cancelled(text)
+            or (notice is None and any(_NOTICE_ASSERTION.search(_NOTICE_PREFIX.sub(
+                "", clause.lower().replace("’", "'"))) for clause in _notice_clauses(text)))
+            or not any(re.search(r"\breset\b", clause, re.I) for clause in _notice_clauses(text))):
+        result.update(signal_type="irrelevant", confidence=.2, teaser_strength="none",
+                      classification_source="rules-python-v2",
+                      classification_reason="Quoted or withdrawn text is not an active notice.")
+    return result
 
 
 def is_global_reset_signal(signal: dict) -> bool:

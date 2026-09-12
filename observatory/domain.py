@@ -7,6 +7,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from .classification import classify_post as classify_post
+from .classification import explicit_notice
 from .domain_utils import UTC, iso, number, records, timestamp
 from .domain_utils import localize as _localize
 from .domain_utils import safe_url as safe_url
@@ -216,6 +217,14 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
               "isOverduePending": overdue, "overdueText": _text(locale, "実施確認待ち", "Awaiting confirmation", "等待执行确认") if overdue else None}
     if notice:
         active["noticeKind"] = "banked" if "banked" in str(notice.get("text", "")).lower() else "forced"
+        evidence = explicit_notice(str(notice.get("text") or ""))
+        if evidence:
+            active.update(announcementText=evidence["excerpt"], timingText=evidence["timePhrase"],
+                          timingUnresolved=notice.get("temporal_resolution_status") != "resolved",
+                          evidenceKind="explicit_text_rule", executionConfirmed=False,
+                          summary=_text(locale, "開発者がリセットを予告しています。実施は未確認です。",
+                                        "The developer has announced a reset. Execution has not been confirmed.",
+                                        "开发者已明确公告将进行重置，尚未确认执行。"))
     p24, p48 = primary["probability24h"], primary["probability48h"]
     level = "very_high" if p24 >= .8 or p48 >= .85 else "high" if p24 >= .61 or p48 >= .61 else "medium" if p24 >= .3 or p48 >= .3 else "low"
     expectations = {"low": ("低", "Low", "低"), "medium": ("中", "Moderate", "中"), "high": ("高", "High", "高"), "very_high": ("非常に高い", "Very high", "很高")}
@@ -238,6 +247,9 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
         if signal.get("source_kind") == "upstream_public_snapshot":
             latest_activity.update(sourceKind="upstream_public_snapshot", classification="unknown", teaserStrength=None,
                                    classificationSource="none", semanticAnalysisPerformed=False)
+            if (signal.get("signal_type") == "official_notice" and not signal.get("is_reply")
+                    and not signal.get("is_quote") and explicit_notice(str(signal.get("text") or ""))):
+                latest_activity.update(classification="official_notice", classificationSource="explicit_text_rule")
     public_history = [_history_view(event, locale) for event in history]
     latest = public_history[0] if public_history else {}
     latest_window = {"kind": "regular" if latest.get("recordKind") == "regular_completed" else "observed",
@@ -264,7 +276,8 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
     from .probability import MODEL_VERSION as baseline_version
     view_model["primaryForecast"] = {"kind": "neural" if neural else "statistical_fallback",
                                     "modelVersion": neural["modelVersion"] if neural else baseline_version,
-                                    "experimental": bool(neural)}
+                                    "experimental": bool(neural), "includesAnnouncement": bool(notice and not neural)}
+    view_model["displayPriority"] = "official_notice" if notice else "forecast"
     if neural:
         view_model["displayReasoningSummary"] = _text(
             locale, "過去のリセット時刻で学習した実験的なニューラルネットワーク予測です。投稿の意味解析は行いません。",

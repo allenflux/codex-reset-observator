@@ -7,8 +7,10 @@ see docs/python-model-parity.md for parity evidence and deliberate boundaries.
 from __future__ import annotations
 
 import math
+import re
 from datetime import datetime, timedelta, timezone
 
+from .classification import explicit_notice, notice_cancelled
 from .domain_utils import UTC, clamp, iso, number, records, timestamp
 from .history import all_signals, canonical_history, random_events, schedule_anchor
 
@@ -187,13 +189,27 @@ def _after_boundary(signal: dict, boundary: datetime | None) -> bool:
 
 def active_notice(data: dict, now: datetime, boundary: datetime | None = None) -> dict | None:
     candidates = []
-    for signal in all_signals(data, now):
-        if signal.get("signal_type") != "official_notice" or number(signal.get("confidence")) < .95 or signal.get("verification_status") == "rejected" or signal.get("is_reply") or not _after_boundary(signal, boundary):
+    signals = all_signals(data, now)
+    withdrawals = [created for signal in signals
+                   if not signal.get("is_reply") and not signal.get("is_quote")
+                   and signal.get("verification_status") != "rejected"
+                   and (created := timestamp(signal.get("tweet_created_at")))
+                   and notice_cancelled(str(signal.get("text") or ""))]
+    withdrawn_at = max(withdrawals, default=None)
+    for signal in signals:
+        if signal.get("signal_type") != "official_notice" or number(signal.get("confidence")) < .95 or signal.get("verification_status") == "rejected" or signal.get("is_reply") or signal.get("is_quote") or not _after_boundary(signal, boundary):
             continue
         created = timestamp(signal.get("tweet_created_at"))
-        if created is None:
+        if created is None or (withdrawn_at and created <= withdrawn_at):
             continue
         expires = timestamp(signal.get("expires_at"))
+        evidence = explicit_notice(str(signal.get("text") or ""))
+        if evidence and signal.get("temporal_resolution_status") != "resolved":
+            phrase = evidence["timePhrase"].lower()
+            # Expiry is a conservative observation limit, not a resolved deadline.
+            hours = 48 if "tomorrow" in phrase else 24 if re.search(r"\b(today|tonight|midnight)\b", phrase) else 48
+            ceiling = created + timedelta(hours=hours)
+            expires = min(expires, ceiling) if expires else ceiling
         if expires and expires > now:
             candidates.append(signal)
     for local in records(data, "observation_signals"):

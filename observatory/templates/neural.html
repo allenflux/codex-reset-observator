@@ -1,6 +1,7 @@
 <section class="panel neural-card" aria-labelledby="neural-heading">
   <div class="section-heading"><div><p class="eyebrow">{{ neural.t.label }}</p><h2 id="neural-heading">{{ neural.t.heading }}</h2></div></div>
   <p class="neural-note">{{ neural.t.note }}</p>
+  {% if notice.active %}<p class="reference-note">{{ t.historical_forecast_note }}</p>{% endif %}
   <dl class="neural-values">{% for probability in neural.probabilities %}<div><dt>{{ probability.label }}</dt><dd>{% if probability.value is not none %}{{ probability.value }}%{% else %}{{ t.unknown }}{% endif %}</dd></div>{% endfor %}</dl>
   <p class="neural-note"><strong>{{ neural.t.active if neural.eligible else neural.t.experimental }}</strong></p>
   {% if neural.scores %}<p class="neural-meta">{{ neural.t.evaluation }}: {% for label, score in neural.scores %}{{ label }} <strong>{{ score }}</strong>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}

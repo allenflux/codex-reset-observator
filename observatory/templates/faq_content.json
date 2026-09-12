@@ -11,7 +11,7 @@
     },
     {
       "question": "リセット匂わせ投稿は予測にどう反映されますか？",
-      "answer": "投稿本文は現在のニューラル予測の入力には含まれません。元サイトが選んだ公開投稿の本文、時刻、出典、返信文脈を同期し、LLMの呼び出しや上流の意味分類の取り込みは行いません。同期した投稿を自動で確認済みリセットに変換しません。完全なXタイムラインではありません。",
+      "answer": "投稿本文は現在のニューラル予測の入力には含まれません。元サイトが選んだ公開投稿の本文、時刻、出典、返信文脈を同期し、LLMの呼び出しや上流の意味分類の取り込みは行いません。同期した投稿を自動で確認済みリセットに変換しません。完全なXタイムラインではありません。 明確なリセット予告はローカルルールで検出し、主カードに優先表示します。ニューラル確率は予告を考慮しない過去の履歴による参考値として残します。予告は実施確認ではなく、未解決の時刻から現地時刻のカウントダウンは生成しません。",
       "id": "teaser-forecast-method"
     },
     {
@@ -121,7 +121,7 @@
     },
     {
       "question": "How are reset teaser posts reflected in the forecast?",
-      "answer": "Post text does not currently enter the neural forecast. We sync the original site’s curated public post, its time, source and reply context without calling an LLM or importing its semantic labels. Mirrored posts do not automatically become confirmed resets. This source does not provide a complete X timeline.",
+      "answer": "Post text does not currently enter the neural forecast. We sync the original site’s curated public post, its time, source and reply context without calling an LLM or importing its semantic labels. Mirrored posts do not automatically become confirmed resets. This source does not provide a complete X timeline. An explicit announcement of an upcoming reset is detected with local rules and takes priority on the main card. The neural forecast remains a historical reference that does not incorporate the announcement. A notice is not confirmation of execution, and unresolved timing is not converted into a local countdown.",
       "id": "teaser-forecast-method"
     },
     {
@@ -177,7 +177,7 @@
     },
     {
       "question": "重置暗示帖如何影响预测？",
-      "answer": "帖子文本目前不参与神经网络预测。我们同步原站挑选的公开帖文、时间、来源和回复上下文，不调用 LLM，也不沿用原站的语义分类。同步帖子不会自动变成已确认的重置记录；该来源不提供完整 X 时间线。",
+      "answer": "帖子文本目前不参与神经网络预测。我们同步原站挑选的公开帖文、时间、来源和回复上下文，不调用 LLM，也不沿用原站的语义分类。同步帖子不会自动变成已确认的重置记录；该来源不提供完整 X 时间线。 对于明确宣布即将重置的原文，本地规则会识别公告，主卡优先显示“已公告、待执行”。下方仍保留神经网络的历史概率，并注明它没有考虑这条公告。公告不等于已经执行；缺少时区时不生成本地倒计时。",
       "id": "teaser-forecast-method"
     },
     {

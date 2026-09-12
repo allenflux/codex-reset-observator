@@ -42,7 +42,8 @@ def test_neural_is_primary_and_baseline_remains_separate(monkeypatch):
     assert (view["probability24h"], view["probability48h"]) == (.2, .4)
     assert view["probability12h"] is None and view["probability72h"] is None
     assert view["statisticalBaseline"]["probability24h"] == calculate_probability(data, NOW)["probability24h"]
-    assert view["primaryForecast"] == {"kind": "neural", "modelVersion": "test-neural", "experimental": True}
+    assert view["primaryForecast"] == {"kind": "neural", "modelVersion": "test-neural", "experimental": True,
+                                       "includesAnnouncement": False}
 
 
 def test_unavailable_neural_model_falls_back_to_statistical_forecast(monkeypatch):
@@ -70,6 +71,52 @@ def test_mirrored_post_does_not_create_a_reset_or_change_neural_forecast():
     assert after["viewModel"]["neuralForecast"] == before["viewModel"]["neuralForecast"]
     assert after["latestTiboActivity"]["semanticAnalysisPerformed"] is False
     assert after["latestTiboActivity"]["classification"] == "unknown"
+
+
+def explicit_signal(at=NOW, **changes):
+    text = "We fixed previous model quality problems. And of course, a reset is also landing by midnight today."
+    return {"tweet_id": "2098612714704891959", "text": text, **classify_post(text),
+            "tweet_url": "https://x.com/thsottiaux/status/2098612714704891959",
+            "tweet_created_at": iso(at), "detected_at": iso(at), "expires_at": iso(at + timedelta(hours=72)),
+            "formal_adoption_allowed": False, "source_kind": "upstream_public_snapshot", **changes}
+
+
+def test_explicit_notice_takes_display_priority_without_faking_neural_or_execution():
+    data = load_data()
+    now = NOW + timedelta(hours=12)
+    before = build_snapshot(data, "zh", now)
+    data["tibo_signals"] = [explicit_signal()]
+    after = build_snapshot(data, "zh", now)
+    view = after["viewModel"]
+    assert view["displayPriority"] == "official_notice"
+    notice = view["activeWindow"]
+    assert notice["kind"] == "official" and notice["executionConfirmed"] is False
+    assert notice["timingText"] == "by midnight today" and notice["timingUnresolved"] is True
+    assert notice["expectedAt"] is None and notice["expectedTimeZone"] is None
+    assert view["neuralForecast"] == before["viewModel"]["neuralForecast"]
+    assert view["probability24h"] == before["viewModel"]["probability24h"]
+    assert view["primaryForecast"]["includesAnnouncement"] is False
+    assert after["lastRandomResetAt"] == before["lastRandomResetAt"]
+    assert view["recentHistory"] == before["viewModel"]["recentHistory"]
+    assert after["latestTiboActivity"]["classificationSource"] == "explicit_text_rule"
+
+
+def test_relative_notice_does_not_survive_by_repeated_polling_and_closes_after_completion():
+    notice = explicit_signal()
+    assert active_notice({"signals": [notice]}, NOW + timedelta(hours=23))
+    assert active_notice({"signals": [notice]}, NOW + timedelta(hours=24)) is None
+    assert active_notice({"signals": [notice]}, NOW + timedelta(hours=1), NOW + timedelta(minutes=30)) is None
+    assert active_notice({"signals": [{**notice, "is_quote": True}]}, NOW + timedelta(hours=1)) is None
+
+
+def test_later_withdrawal_closes_notice_until_a_new_explicit_announcement():
+    notice = explicit_signal()
+    cancelled = explicit_signal(NOW + timedelta(hours=1), tweet_id="cancel", text="The reset is cancelled.",
+                                signal_type="irrelevant")
+    assert active_notice({"signals": [notice, cancelled]}, NOW + timedelta(hours=2)) is None
+    renewed = explicit_signal(NOW + timedelta(hours=3), tweet_id="new-announcement")
+    assert active_notice({"signals": [notice, cancelled, renewed]}, NOW + timedelta(hours=4)) == renewed
+    assert active_notice({"signals": [notice, {**cancelled, "is_quote": True}]}, NOW + timedelta(hours=2)) == notice
 
 
 def test_current_calibrated_and_recency_math_matches_typescript_golden():

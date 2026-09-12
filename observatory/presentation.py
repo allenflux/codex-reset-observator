@@ -110,6 +110,12 @@ COPY: dict[str, dict[str, Any]] = {
         "latest_post": "Related Tibo post",
         "social_source": "Synced through the original site’s public API",
         "social_no_analysis": "Post text has not been semantically analyzed",
+        "social_rule_notice": "Explicit reset announcement (local rules)",
+        "announced": "Reset announced · awaiting execution",
+        "announced_note": "A developer announcement takes priority over the historical forecast. It does not confirm that a reset has happened.",
+        "notice_timing": "Timing in the original post",
+        "notice_timezone_unknown": "The time has not been resolved reliably; no local countdown is shown.",
+        "historical_forecast_note": "The neural probabilities below use historical timing only and do not incorporate this announcement. They are not the probability that the announcement will be fulfilled.",
         "no_post": "No public post is available in this snapshot.",
         "classification": "Observed classification",
         "posted": "Posted",
@@ -227,6 +233,12 @@ COPY: dict[str, dict[str, Any]] = {
         "latest_post": "Tiboの関連投稿",
         "social_source": "元サイトの公開API経由で同期",
         "social_no_analysis": "投稿本文の意味解析は未実施",
+        "social_rule_notice": "明確なリセット予告（ローカルルール）",
+        "announced": "リセット予告あり・実施確認待ち",
+        "announced_note": "開発者の予告を過去の履歴による予測より優先して表示します。実施済みという意味ではありません。",
+        "notice_timing": "原文の時期表現",
+        "notice_timezone_unknown": "時刻を確実に解決できないため、現地時刻のカウントダウンは表示しません。",
+        "historical_forecast_note": "下のニューラル確率は過去のリセット時刻だけを使い、この予告を考慮していません。予告が実現する確率ではありません。",
         "no_post": "このデータでは公開投稿を取得できていません。",
         "classification": "観測上の分類",
         "posted": "投稿時刻",
@@ -344,6 +356,12 @@ COPY: dict[str, dict[str, Any]] = {
         "latest_post": "Tibo 相关帖子",
         "social_source": "通过原站公开接口同步",
         "social_no_analysis": "未进行帖文语义分析",
+        "social_rule_notice": "明确重置公告（本地规则识别）",
+        "announced": "已公告重置 · 等待执行",
+        "announced_note": "开发者已明确公告将进行重置，优先于历史概率展示。公告尚不代表重置已经发生。",
+        "notice_timing": "原帖时间表达",
+        "notice_timezone_unknown": "暂未可靠确定对应时刻，不转换为本地倒计时。",
+        "historical_forecast_note": "下方神经网络概率仅依据历史重置时间，未考虑本条公告，不代表公告兑现的概率。",
         "no_post": "当前数据中暂无公开帖子。",
         "classification": "观测分类",
         "posted": "发布时间",
@@ -622,6 +640,9 @@ def page_context(
             "end": date_display(active.get("expectedEndAt"), copy["unknown"]),
             "source": safe_url(active.get("source")),
             "overdue": localized(active.get("overdueText"), locale),
+            "excerpt": localized(active.get("announcementText"), locale),
+            "timing": localized(active.get("timingText"), locale),
+            "timing_unresolved": bool(active.get("timingUnresolved")),
         },
         "probabilities": [
             {
@@ -654,7 +675,9 @@ def page_context(
             "reply": localized(activity.get("replyContextText"), locale),
             "date": date_display(activity.get("createdAt"), copy["unknown"]),
             "source": safe_url(activity.get("sourceUrl")),
-            "classification": (copy["social_no_analysis"]
+            "classification": (copy["social_rule_notice"]
+                               if activity.get("classificationSource") == "explicit_text_rule"
+                               else copy["social_no_analysis"]
                                if activity.get("sourceKind") == "upstream_public_snapshot"
                                else copy.get(f"classification_{classification}", copy["unknown"])),
         },

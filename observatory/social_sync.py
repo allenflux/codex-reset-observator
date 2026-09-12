@@ -15,7 +15,7 @@ from typing import Any
 
 import httpx
 
-from observatory.classification import classify_post
+from observatory.classification import classify_post, legacy_classify_post
 from observatory.collection_config import CollectionSettings
 from observatory.storage import Record, Repository, SQLiteRepository, StorageError
 from observatory.webhooks import iso, timestamp, validate_tibo
@@ -134,9 +134,10 @@ def fetch_public_social(*, client: httpx.Client | None = None,
             client.close()
 
 
-def _rules(row: Record) -> Record:
-    return classify_post(row["text"], url=row["tweet_url"],
-                         is_reply=row.get("is_reply"), is_quote=row.get("is_quote"))
+def _rules(row: Record, *, legacy: bool = False) -> Record:
+    classify = legacy_classify_post if legacy else classify_post
+    return classify(row["text"], url=row["tweet_url"],
+                    is_reply=row.get("is_reply"), is_quote=row.get("is_quote"))
 
 
 def _validated_source(row: Any, now: datetime) -> Record:
@@ -172,9 +173,15 @@ def _owned_unmodified(row: Record | None) -> bool:
     if row.get("verification_status") != "auto_unverified":
         return False
     source = row.get("imported_source_fields")
+    if not isinstance(source, dict):
+        return False
+    # Recompute v1 for records created before classification snapshots existed.
+    # A changed classifier must not make untouched owned records un-updatable.
+    classified = row.get("imported_classification_fields") or _rules(source, legacy=True)
     return bool(isinstance(source, dict) and row.get("import_source_hash") == _digest(source)
                 and all(row.get(key) == value for key, value in source.items())
-                and all(row.get(key) == value for key, value in _rules(source).items())
+                and isinstance(classified, dict)
+                and all(row.get(key) == value for key, value in classified.items())
                 and row.get("formal_adoption_allowed") is False)
 
 
@@ -245,15 +252,18 @@ def collect_social_once(
                     "first_observed_at": iso(observed_at), "source": SOURCE_ID,
                     "source_url": SOURCE_URL + "?locale=en",
                 }, once=True))
-                row = {**source, **_rules(source), "verification_status": "auto_unverified",
+                classified = _rules(source)
+                row = {**source, **classified, "verification_status": "auto_unverified",
                        "source_kind": "upstream_public_snapshot",
                        "import_source": SOURCE_ID, "import_source_hash": content_hash,
+                       "imported_classification_fields": classified, "classified_at": iso(observed_at),
                        "imported_source_fields": source, "formal_adoption_allowed": False,
                        "first_seen_at": iso(observed_at), "detected_at": iso(observed_at),
                        "expires_at": iso(observed_at + timedelta(hours=72))}
                 if existing is None:
                     inserted += int(repository.put("tibo_signals", row, once=True))
-                elif owned and existing.get("import_source_hash") != content_hash:
+                elif owned and (existing.get("import_source_hash") != content_hash
+                                or any(existing.get(key) != value for key, value in classified.items())):
                     for field in ("first_seen_at", "detected_at", "expires_at"):
                         row[field] = existing[field]
                     preserved = {key: value for key, value in existing.items()

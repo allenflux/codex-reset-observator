@@ -180,6 +180,27 @@ def test_revision_archives_old_content_and_keeps_original_observation_and_expiry
     assert {row["source_fields"]["text"] for row in versions} == {old["text"], new["text"]}
 
 
+def test_classifier_upgrade_refreshes_untouched_legacy_post_without_new_source_version():
+    repo = SQLiteRepository()
+    response = fetched(text="And of course, a reset is also landing by midnight today.", isReply=False)
+    collect(repo, response)
+    old = repo.get("tibo_signals", POST_ID)
+    old.update(social_sync._rules(old["imported_source_fields"], legacy=True))
+    old.pop("imported_classification_fields")
+    repo.put("tibo_signals", old)
+    assert old["signal_type"] == "irrelevant"
+    result = collect(repo, response, now=NOW + timedelta(hours=1))
+    new = repo.get("tibo_signals", POST_ID)
+    assert result["updatedPosts"] == 1 and result["newVersions"] == 0
+    assert new["signal_type"] == "official_notice"
+    assert new["classification_source"] == "rules-python-v2"
+    assert new["formal_adoption_allowed"] is False
+    assert new["first_seen_at"] == old["first_seen_at"]
+    assert new["expires_at"] == old["expires_at"]
+    assert len(repo.list_records("social_post_versions")) == 1
+    assert collect(repo, response, now=NOW + timedelta(hours=2))["updatedPosts"] == 0
+
+
 @pytest.mark.parametrize("change", [
     {"verification_status": "verified"}, {"verification_status": "rejected"},
     {"import_source": "browser"}, {"classification_source": "manual"},

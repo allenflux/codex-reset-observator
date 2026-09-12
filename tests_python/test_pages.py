@@ -32,6 +32,25 @@ def render(snapshot: dict[str, Any], locale: str = "en", page: str = "home") -> 
     return environment.get_template(f"{page}.html").render(**page_context(snapshot, locale, page))
 
 
+@pytest.mark.parametrize("locale", ["zh", "en", "ja"])
+def test_active_notice_replaces_primary_percentage_cards_but_keeps_historical_model(snapshot, locale):
+    view = snapshot["viewModel"]
+    view["activeWindow"] = {"active": True, "kind": "official", "summary": "Reset announced",
+                            "announcementText": "A reset is landing by midnight today.",
+                            "timingText": "by midnight today", "timingUnresolved": True,
+                            "source": "https://x.com/thsottiaux/status/123456789"}
+    view["neuralForecast"] = {"probability24h": .29, "probability48h": .5, "modelVersion": "test"}
+    snapshot["latestTiboActivity"] = {"sourceKind": "upstream_public_snapshot",
+                                      "classificationSource": "explicit_text_rule", "classification": "official_notice"}
+    html = render(snapshot, locale)
+    assert COPY[locale]["announced"] in html
+    assert 'class="probability-grid"' not in html
+    assert 'class="announcement-card"' in html
+    assert COPY[locale]["historical_forecast_note"] in html
+    assert COPY[locale]["social_rule_notice"] in html
+    assert "29%" in html and "50%" in html
+
+
 @pytest.fixture
 def snapshot() -> dict[str, Any]:
     return {
