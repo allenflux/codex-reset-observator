@@ -14,7 +14,7 @@ from statistics import mean, median
 from typing import Any
 from urllib.parse import urlsplit
 
-SITE_URL = "http://allenflux.tech"
+SITE_URL = "http://localhost:9090"
 SITE_AUTHOR = "allen flux"
 REPOSITORY_URL = "https://github.com/allenflux/codex-reset-observator"
 VISIBLE_RECORD_KINDS = {"confirmed_global", "banked_distribution", "reference", "regular_completed"}
@@ -423,10 +423,10 @@ def safe_url(value: Any) -> str | None:
         return None
 
 
-def get_site_origin(value: Any = SITE_URL) -> str:
+def get_site_origin(value: Any = SITE_URL, *, fallback: str = SITE_URL) -> str:
     """Keep configured metadata on an HTTP(S) origin, without paths or secrets."""
     if not safe_url(value) or "\\" in value:
-        return SITE_URL
+        return fallback
     parsed = urlsplit(value)
     return f"{parsed.scheme.lower()}://{parsed.netloc}"
 

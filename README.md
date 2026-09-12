@@ -28,7 +28,7 @@
 
 ```dotenv
 PORT=9090
-SITE_URL=http://allenflux.tech
+SITE_URL=
 ```
 
 ```bash
@@ -37,26 +37,9 @@ docker compose ps
 docker compose exec collector observatory collection-status --check-fresh
 ```
 
-Compose 运行 `web` 和 `collector` 两个服务：网站默认映射到宿主机 `9090` 端口，容器内仍使用 `8000`；采集器启动时同步一次，此后默认每小时同步。MySQL 自动创建独立的 `cro_*` 表，保存累计数据；修改 `COLLECTION_INTERVAL_SECONDS` 可调整采集间隔。**必须保持采集器运行，数据才会持续积累。**只启动网页不会自动采集。
+Compose 运行 `web` 和 `collector` 两个服务：网站在容器内监听 `0.0.0.0:9090`，默认发布到宿主机 `0.0.0.0:9090`；采集器启动时同步一次，此后默认每小时同步。MySQL 自动创建独立的 `cro_*` 表，保存累计数据；修改 `COLLECTION_INTERVAL_SECONDS` 可调整采集间隔。**必须保持采集器运行，数据才会持续积累。**只启动网页不会自动采集。
 
-要通过 [allenflux.tech](http://allenflux.tech/) 直接访问，需要把域名 DNS 指向部署服务器，并配置宿主机反向代理，将 HTTP `80` 端口转发至 `127.0.0.1:9090`。例如 Nginx：
-
-```nginx
-server {
-    listen 80;
-    server_name allenflux.tech;
-
-    location / {
-        proxy_pass http://127.0.0.1:9090;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-将该配置加入服务器的 Nginx 站点配置后，先运行 `sudo nginx -t`，通过后再运行 `sudo systemctl reload nginx`。DNS 和反向代理需在服务器上配置，Compose 不会自动设置。直接检查应用可访问服务器的 `9090` 端口；本地执行 `observatory serve` 的默认端口仍为 `8000`。
+部署后访问 [allenflux.tech:9090](http://allenflux.tech:9090/)，也可直接访问 `http://服务器IP:9090/zh`；本机部署访问 [中文页面](http://localhost:9090/zh)。`0.0.0.0` 表示监听所有网络接口，浏览器使用上述实际访问地址。应用无需绑定域名；`SITE_URL` 留空时，页面链接使用当前访问地址。`PORT` 可调整宿主机发布端口，容器内端口保持 `9090`；本地直接运行 `observatory serve` 的默认端口仍为 `8000`。
 
 网站读取最近一次成功采集的完整历史。未成功采集或数据库不可用时，会标记数据状态异常；仓库内快照只用于回退展示。运行中的采集不会修改 `observatory/data`，也不会自动训练或替换模型。
 

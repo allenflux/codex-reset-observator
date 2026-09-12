@@ -99,7 +99,10 @@ def create_app(
     collection_factory: Callable[[], Any] | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_env()
-    site_origin = get_site_origin(settings.site_url)
+    def request_origin(request: Request) -> str:
+        origin = get_site_origin(str(request.base_url))
+        return get_site_origin(settings.site_url, fallback=origin)
+
     owned_repository = repository is None
     if repository is None:
         if settings.collection and settings.collection.backend == "mysql":
@@ -370,12 +373,13 @@ def create_app(
         return {"status": "ok", "runtime": "python"}
 
     @application.get("/robots.txt", response_class=PlainTextResponse)
-    def robots() -> str:
-        return "User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: " + site_origin + "/sitemap.xml\n"
+    def robots(request: Request) -> str:
+        return "User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: " + request_origin(request) + "/sitemap.xml\n"
 
     @application.get("/sitemap.xml")
-    def sitemap() -> Response:
+    def sitemap(request: Request) -> Response:
         from xml.sax.saxutils import escape
+        site_origin = request_origin(request)
         urls = [site_origin + ("" if locale == "ja" else "/" + locale) + (suffix or ("/" if locale == "ja" else "")) for locale in ("ja", "en", "zh")
                 for suffix in ("", "/history", "/about", "/faq")]
         content = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
@@ -390,7 +394,7 @@ def create_app(
         data = read_data()
         snapshot = snapshot_builder(data, locale=locale, now=clock())
         snapshot["randomResetEventTimes"] = get_heatmap_event_times(data, clock())
-        context = {"request": request, **page_context(snapshot, locale, page_name, settings.site_url)}
+        context = {"request": request, **page_context(snapshot, locale, page_name, request_origin(request))}
         return templates.TemplateResponse(request=request, name=page_name + ".html", context=context)
 
     @application.get("/", response_class=HTMLResponse)

@@ -17,7 +17,7 @@ class Settings:
     supabase_url: str = ""
     supabase_service_role_key: str = field(default="", repr=False)
     fetch_live_status: bool = False
-    site_url: str = "http://localhost:8000"
+    site_url: str = ""
     max_body_bytes: int = 65_536
     collection: CollectionSettings | None = None
 
@@ -31,6 +31,6 @@ class Settings:
             supabase_url=os.environ.get("SUPABASE_URL", "").rstrip("/"),
             supabase_service_role_key=os.environ.get("SUPABASE_SERVICE_ROLE_KEY", ""),
             fetch_live_status=os.environ.get("FETCH_LIVE_STATUS", "false").lower() == "true",
-            site_url=os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/"),
+            site_url=os.environ.get("SITE_URL", "").strip().rstrip("/"),
             collection=CollectionSettings.from_env(),
         )

@@ -67,7 +67,8 @@ def snapshot() -> dict[str, Any]:
 
 @pytest.fixture
 def client():
-    with TestClient(create_app(Settings(database_path=":memory:"), clock=lambda: NOW)) as browser:
+    with TestClient(create_app(Settings(database_path=":memory:"), clock=lambda: NOW),
+                    base_url="http://localhost:8000") as browser:
         yield browser
 
 
@@ -239,11 +240,12 @@ def test_static_assets_are_served_and_unknown_routes_are_rejected(client):
 @pytest.mark.parametrize(
     "configured,origin",
     [
-        ("http://allenflux.tech/", "http://allenflux.tech"),
+        ("", "http://testserver"),
+        ("http://192.0.2.10:9090/", "http://192.0.2.10:9090"),
         ("https://my-observatory.example/", "https://my-observatory.example"),
         ("http://localhost:9000/unused/path?query=discarded#fragment", "http://localhost:9000"),
-        ("javascript:alert(1)", "http://allenflux.tech"),
-        ("https://user:secret@example.org/", "http://allenflux.tech"),
+        ("javascript:alert(1)", "http://testserver"),
+        ("https://user:secret@example.org/", "http://testserver"),
     ],
 )
 def test_configured_origin_is_consistent_across_page_metadata_and_discovery(configured, origin):
@@ -262,4 +264,18 @@ def test_configured_origin_is_consistent_across_page_metadata_and_discovery(conf
 
 
 def test_standalone_presentation_retains_default_origin(snapshot):
-    assert page_context(snapshot, "en")["canonical"] == "http://allenflux.tech/en"
+    assert page_context(snapshot, "en")["canonical"] == "http://localhost:9090/en"
+
+
+def test_unconfigured_origin_follows_each_request_address():
+    app = create_app(Settings(database_path=":memory:"), clock=lambda: NOW)
+    with TestClient(app) as client:
+        for origin in ("http://allenflux.tech:9090", "http://192.0.2.10:9090",
+                       "http://localhost:9090", "http://[::1]:9090"):
+            headers = {"Host": origin.removeprefix("http://")}
+            html = client.get("/zh", headers=headers).text
+            assert f'<link rel="canonical" href="{origin}/zh">' in html
+            assert f'<meta property="og:url" content="{origin}/zh">' in html
+            assert f'hreflang="en" href="{origin}/en"' in html
+            assert f"Sitemap: {origin}/sitemap.xml" in client.get("/robots.txt", headers=headers).text
+            assert f"<loc>{origin}/zh/history</loc>" in client.get("/sitemap.xml", headers=headers).text

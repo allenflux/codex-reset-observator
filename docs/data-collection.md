@@ -12,7 +12,7 @@ docker compose ps
 docker compose exec collector observatory collection-status --check-fresh
 ```
 
-Compose 只启动 `web` 和 `collector`，连接已有 MySQL；不包含 Redis、数据库容器或训练服务。网站默认使用主机 `9090` 端口，映射到容器内 `8000`，可用 `PORT` 调整。公开地址通过 `SITE_URL=http://allenflux.tech` 配置；不带端口的域名访问需要反向代理将 `80` 端口转发到 `9090`，配置示例见 README。两个服务使用相同 MySQL 配置。
+Compose 只启动 `web` 和 `collector`，连接已有 MySQL；不包含 Redis、数据库容器或训练服务。网站在容器内监听 `0.0.0.0:9090`，默认发布到宿主机 `0.0.0.0:9090`，可用 `PORT` 调整宿主机端口。线上访问 [allenflux.tech:9090](http://allenflux.tech:9090/)，也可直接访问 `http://服务器IP:9090/zh`；本机部署访问 [中文页面](http://localhost:9090/zh)。`0.0.0.0` 是监听地址，浏览器使用上述实际访问地址。应用无需绑定域名；`SITE_URL` 留空时自动使用当前请求地址。两个服务使用相同 MySQL 配置。
 
 如设置 `MYSQL_SSL_CA`，本机训练进程需要能读取该证书；Docker 部署还需通过 Compose 覆盖配置，把证书以只读方式挂载到两个容器中对应的路径。
 
