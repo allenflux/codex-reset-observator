@@ -58,6 +58,7 @@ def eligible_events(rows: list[dict[str, Any]], now: datetime) -> tuple[list[dat
                 reason = "limited_scope"
             elif (row.get("scope") or details.get("scope")) not in {
                 "全有料プラン", "全ユーザー", "所有付费套餐", "所有用户", "All paid plans", "All users",
+                "Codex / ChatGPT Work",
             }:
                 reason = "limited_or_unknown_scope"
         if reason:

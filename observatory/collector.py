@@ -1,4 +1,4 @@
-"""Hourly collection worker; durable data goes to the configured database only."""
+"""Periodic collection worker; durable data goes to the configured database only."""
 
 from __future__ import annotations
 
@@ -122,6 +122,10 @@ def run_collector(settings: CollectionSettings) -> None:
             print(json.dumps({"event": "social_collection", **result}), flush=True)
             delay = settings.social_interval_seconds if result["ok"] else min(60, settings.social_interval_seconds)
             next_social = time.monotonic() + delay
+            if result["ok"] and (result.get("newPosts", 0) or result.get("updatedPosts", 0)):
+                # A changed post prompts an authoritative history fetch; its
+                # text/classification does not itself confirm a reset.
+                next_history = 0.0
         if stopping.is_set():
             break
         if time.monotonic() >= next_history:

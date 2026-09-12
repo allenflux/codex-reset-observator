@@ -98,7 +98,8 @@ def normalize_history(rows: list[dict[str, Any]], fetched_at: datetime) -> list[
         source = row.get("source")
         if source and (not isinstance(source, str) or urlparse(source).scheme not in {"http", "https"}):
             raise ValueError("invalid_source_url")
-        broad = details["scope"] in {"全有料プラン", "全ユーザー"}
+        broad = (details["scope"] in {"全有料プラン", "全ユーザー", "Codex / ChatGPT Work"}
+                 and row.get("randomResetTargetScope") != "conditional")
         source_id = re.search(r"/status/(\d+)", source or "")
         output.append({
             "id": key,

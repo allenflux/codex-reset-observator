@@ -18,7 +18,7 @@ Compose 只启动 `web` 和 `collector`，连接已有 MySQL；不包含 Redis�
 
 如设置 `MYSQL_SSL_CA`，本机训练进程需要能读取该证书；Docker 部署还需通过 Compose 覆盖配置，把证书以只读方式挂载到两个容器中对应的路径。
 
-`collector` 启动时采集历史和社交帖子；历史成功后每 `COLLECTION_INTERVAL_SECONDS` 秒继续采集，默认 `3600` 秒。社交默认开启，每 `SOCIAL_COLLECTION_INTERVAL_SECONDS` 秒同步一次（默认 `300`，最低 `60`）；设置 `SOCIAL_COLLECTION_ENABLED=false` 可关闭。两种采集分别记录结果、计算下一次运行时间。只运行网站不会触发采集。需要确认采集器持续运行：MySQL 能保留已有数据，但不能代替停止的采集进程产生新观测。
+`collector` 启动时采集历史和社交帖子；历史成功后每 `COLLECTION_INTERVAL_SECONDS` 秒继续采集，默认 `300` 秒（约 5 分钟）。社交默认开启，每 `SOCIAL_COLLECTION_INTERVAL_SECONDS` 秒同步一次（默认 `300`，最低 `60`）；设置 `SOCIAL_COLLECTION_ENABLED=false` 可关闭。两种采集分别记录结果、计算下一次运行时间；社交采集发现新增或更新的帖子时，会立即检查权威历史页，确认是否已收录新事件，不自动将帖子确认为重置。已有环境显式配置的 `COLLECTION_INTERVAL_SECONDS=3600` 仍保留；需要改为 `300` 并重新创建容器才能改用每 5 分钟定时采集。只运行网站不会触发采集。需要确认采集器持续运行：MySQL 能保留已有数据，但不能代替停止的采集进程产生新观测。
 
 不使用 Docker 时，可在单独的终端或进程管理器中运行：
 
@@ -34,7 +34,7 @@ uv run --env-file .env observatory collect --once
 uv run --env-file .env observatory collection-status --check-fresh
 ```
 
-`sync-history` 与 `collect --once` 同样写数据库，不再覆盖包内 `observatory/data/online_history.json`。状态包含成功／失败采集次数、当前事件数、历史事件版本数、预测数、最近成功时间。`--check-fresh` 在没有成功采集或成功记录过期时返回非零退出码，便于监控；默认每小时采集时，新鲜度窗口为 3 小时。
+`sync-history` 与 `collect --once` 同样写数据库，不再覆盖包内 `observatory/data/online_history.json`。状态包含成功／失败采集次数、当前事件数、历史事件版本数、预测数、最近成功时间。`--check-fresh` 在没有成功采集或成功记录过期时返回非零退出码，便于监控；默认每 5 分钟采集时，新鲜度窗口为 15 分钟。
 
 ## 社交数据范围
 
@@ -108,6 +108,6 @@ uv run --env-file .env observatory score-forecasts
 
 采集来源是第三方整理的 [公开重置历史](https://codex.gussuriworks.com/zh/history)，不是 OpenAI 官方的完整事件日志。记录的依据可来自社交媒体公告或用量观测，执行时间有精确值和估计值之分。采集完整页面只能说明我们完整读取了该页，无法保证原站没有漏报。
 
-项目初始快照有 43 条记录，其中 35 次符合广泛随机重置训练目标。这个规模不足以证明神经网络能稳定预测；初始评估中神经网络也未胜过简单基线。每小时轮询让观察过程更完整，但相同事件被读取 100 次仍然只是一件事件，日级样本与重叠 48 小时标签也不是独立新事件。
+项目初始快照有 43 条记录，其中 35 次符合广泛随机重置训练目标。这个规模不足以证明神经网络能稳定预测；初始评估中神经网络也未胜过简单基线。持续轮询让观察过程更完整，但相同事件被读取 100 次仍然只是一件事件，日级样本与重叠 48 小时标签也不是独立新事件。
 
 持续采集的价值是增加后续独立事件，保留无事件时段的来源覆盖，并能核查“当时知道什么、当时预测什么、之后观察到什么”。是否采用新模型，需要基于后来积累的数据与基线比较决定。

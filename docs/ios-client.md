@@ -75,7 +75,7 @@ docker compose exec collector observatory collection-status --check-fresh
 
 保持 `web`、`collector` 和 MySQL 运行。通知去重与发送状态保存在数据库中，正常重启容器会保留；删除数据库会重建通知基线。每次修改 `.env` 后都需要重新创建相关容器。
 
-历史采集默认每小时一次；上面的 `COLLECTION_INTERVAL_SECONDS=300` 将其改为约每 5 分钟一次。`NOTIFICATION_INTERVAL_SECONDS=30` 是检查待发送通知的间隔，不能让上游历史提前更新。实际通知延迟还包括上游公布、采集请求和 Telegram 消息传递时间。
+历史采集默认约每 5 分钟一次（`COLLECTION_INTERVAL_SECONDS=300`）。已有环境若显式设置为 `3600`，需改为 `300` 并重新创建容器。社交采集发现新增或更新的帖子时，也会立即检查权威历史页；帖子本身不直接触发重置通知。`NOTIFICATION_INTERVAL_SECONDS=30` 是检查待发送通知的间隔，不能让上游历史提前更新。实际通知延迟还包括上游公布、采集请求和 Telegram 消息传递时间。
 
 ## 5. 在手机测试 Telegram 通知
 

@@ -23,7 +23,7 @@ def clean_collection_environment(monkeypatch):
 def test_unconfigured_defaults_do_not_silently_create_sqlite():
     settings = from_env()
     assert settings.backend == "unconfigured"
-    assert settings.interval_seconds == 3600
+    assert settings.interval_seconds == CollectionSettings().interval_seconds == 300
     assert settings.social_enabled is True
     assert settings.social_interval_seconds == 300
     assert settings.collect_history is False
@@ -113,6 +113,11 @@ def test_invalid_config_fails_with_sanitized_errors(monkeypatch, key, value):
 def test_interval_can_be_exact_minimum(monkeypatch):
     monkeypatch.setenv("COLLECTION_INTERVAL_SECONDS", "300")
     assert from_env().interval_seconds == 300
+
+
+def test_explicit_hourly_history_interval_is_preserved(monkeypatch):
+    monkeypatch.setenv("COLLECTION_INTERVAL_SECONDS", "3600")
+    assert from_env().interval_seconds == 3600
 
 
 def test_social_collection_can_be_disabled_or_run_at_minimum_interval(monkeypatch):

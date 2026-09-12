@@ -41,7 +41,7 @@ class CollectionSettings:
     mysql_password: str = field(default="", repr=False)
     mysql_ssl_ca: Path | None = field(default=None, repr=False)
     sqlite_path: Path = Path("var/collection.sqlite3")
-    interval_seconds: int = 3600
+    interval_seconds: int = 300
     social_enabled: bool = True
     social_interval_seconds: int = 300
     collect_history: bool = False
@@ -76,7 +76,7 @@ class CollectionSettings:
             mysql_password=os.environ.get("MYSQL_PASSWORD", ""),
             mysql_ssl_ca=Path(ca) if ca else None,
             sqlite_path=Path(sqlite_path),
-            interval_seconds=_integer("COLLECTION_INTERVAL_SECONDS", 3600),
+            interval_seconds=_integer("COLLECTION_INTERVAL_SECONDS", 300),
             social_enabled=_enabled("SOCIAL_COLLECTION_ENABLED", True),
             social_interval_seconds=_integer("SOCIAL_COLLECTION_INTERVAL_SECONDS", 300),
             collect_history=_enabled("COLLECT_HISTORY"),

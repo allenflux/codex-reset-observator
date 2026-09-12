@@ -34,6 +34,7 @@ def test_site_reads_complete_snapshots_including_removals_without_restart(tmp_pa
         status = response.json()
         assert response.status_code == 200
         assert status["fresh"] and status["runCount"] == 2
+        assert status["intervalSeconds"] == 300
         assert status["currentEventCount"] == 1 and status["eventVersionCount"] == 3
         assert "no-store" in response.headers["cache-control"]
         assert "source_metadata" not in response.text and "password" not in response.text
@@ -44,6 +45,17 @@ def test_empty_success_does_not_resurrect_seed_records(tmp_path):
     with CollectionStore(config.sqlite_path) as store:
         store.record_success([], fetched_at=NOW, source_metadata={})
     assert app.state.read_data()["reset_history"] == []
+
+
+def test_default_history_collection_becomes_stale_after_fifteen_minutes(tmp_path):
+    for minutes, expected_status in ((15, 200), (16, 503)):
+        app, config = configured_app(tmp_path / str(minutes))
+        with CollectionStore(config.sqlite_path) as store:
+            store.record_success([event("recent")], fetched_at=NOW - timedelta(minutes=minutes),
+                                 source_metadata={})
+        with TestClient(app) as client:
+            assert client.get("/api/collection/status").status_code == expected_status
+            assert client.get("/api/mobile/status").json()["historyIntervalSeconds"] == 300
 
 
 def test_missing_or_stale_collection_is_visible(tmp_path):

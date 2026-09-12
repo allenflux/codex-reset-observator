@@ -434,3 +434,35 @@ def test_older_collection_snapshot_cannot_cancel_newer_pending_event():
     assert len(calls) == 1
     assert repo.get("reset_notification_state", "dispatcher")["lastSourceRunId"] == 12
     repo.close()
+
+
+def test_imported_combined_product_scope_updates_latest_reset_and_notifies_once():
+    from observatory.domain import build_snapshot
+    from observatory.history import canonical_history, eligible_random_reset
+    from observatory.history_sync import normalize_history
+    from observatory.neural import eligible_events
+
+    source = {"key": "tibo-reset-2098685367058612394", "recordKind": "confirmed_global",
+              "resetAt": "2026-09-12T08:00:00Z", "source": "https://x.com/thsottiaux/status/2098685367058612394",
+              "details": {"cycleType": "随机重置", "scope": "Codex / ChatGPT Work"}}
+    limited = {**source, "key": "banked-reset-2097752790177370535", "recordKind": "banked_distribution",
+               "resetAt": "2026-09-09T18:23:34Z", "details": {"cycleType": "随机重置", "scope": "部分用户"}}
+    rows = normalize_history([source, limited], NOW)
+    history = canonical_history({"reset_history": rows}, NOW)
+    eligible = [row for row in history if eligible_random_reset(row, NOW)]
+    assert [row["id"] for row in eligible] == [source["key"]]
+    assert eligible[0]["completed_at"] == source["resetAt"]
+    snapshot = build_snapshot({"reset_history": rows}, locale="zh", now=NOW)
+    assert snapshot["lastRandomResetAt"] == "2026-09-12T08:00:00.000Z"
+    assert eligible_events(rows, NOW)[1]["eligibleEventIds"] == [source["key"]]
+    calls = []
+    repo = SQLiteRepository()
+    client = client_for(lambda request: calls.append(request) or httpx.Response(200, json={"ok": True}))
+    service = NotificationService(repo, settings(), client=client)
+    service.sync_history([], now=NOW, source_run_id=1)
+    assert service.sync_history(history, now=NOW, source_run_id=2)["queued"] == 1
+    assert service.deliver_pending(now=NOW)["sent"] == 1
+    assert service.sync_history(history, now=NOW, source_run_id=2)["queued"] == 0
+    assert service.deliver_pending(now=NOW)["sent"] == 0
+    assert len(calls) == 1
+    repo.close()

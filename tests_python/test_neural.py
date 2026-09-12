@@ -88,3 +88,36 @@ def test_malformed_weight_dimensions_and_zero_scale_fail_closed(tmp_path):
     bad_weights = {**model, "weights": [[]]}
     path.write_text(json.dumps(bad_weights))
     assert forecast(rows, datetime(2026, 9, 13, tzinfo=UTC), path) is None
+
+
+def test_combined_product_reset_is_eligible_without_accepting_partial_banked_distribution():
+    base = {"id": "tibo-reset-2098685367058612394", "recordKind": "confirmed_global",
+            "completed_at": "2026-09-12T08:00:00Z", "scope": "Codex / ChatGPT Work",
+            "details": {"cycleType": "ランダムリセット"}, "randomResetTargetScope": "broad"}
+    partial = {**base, "id": "banked-reset-2097752790177370535",
+               "recordKind": "banked_distribution", "completed_at": "2026-09-09T18:23:34Z",
+               "scope": "部分用户", "randomResetTargetScope": "conditional"}
+    events, profile = eligible_events([base, partial], datetime(2026, 9, 12, 12, tzinfo=UTC))
+    assert events == [parse_time(base["completed_at"])]
+    assert profile["eligibleEventIds"] == [base["id"]]
+    assert profile["excluded"] == {"limited_scope": 1}
+
+
+@pytest.mark.parametrize("scope", ["部分用户", "个人用户", "Codex / ChatGPT Work (部分用户)",
+                                  "Some Codex / ChatGPT Work users", "unknown", ""])
+def test_neural_scope_requires_exact_recognized_broad_description(scope):
+    row = {"id": "scope-check", "recordKind": "confirmed_global",
+           "completed_at": "2026-09-12T08:00:00Z", "scope": scope,
+           "details": {"cycleType": "ランダムリセット"}, "randomResetTargetScope": "broad"}
+    events, profile = eligible_events([row], datetime(2026, 9, 12, 12, tzinfo=UTC))
+    assert events == []
+    assert profile["excluded"] == {"limited_or_unknown_scope": 1}
+
+
+def test_explicit_conditional_combined_product_scope_is_excluded_from_neural_events():
+    row = {"id": "conditional", "recordKind": "confirmed_global",
+           "completed_at": "2026-09-12T08:00:00Z", "scope": "Codex / ChatGPT Work",
+           "details": {"cycleType": "ランダムリセット"}, "randomResetTargetScope": "conditional"}
+    events, profile = eligible_events([row], datetime(2026, 9, 12, 12, tzinfo=UTC))
+    assert events == []
+    assert profile["excluded"] == {"limited_scope": 1}

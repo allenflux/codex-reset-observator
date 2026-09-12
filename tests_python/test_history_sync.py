@@ -113,3 +113,28 @@ def test_localized_display_details_do_not_change_semantic_fields(tmp_path):
     assert record["details"]["resetMethod"] == "BANKED 重置发放"
     assert record["details"]["scope"] == "全有料プラン"
     assert record["details"]["cycleType"] == "ランダムリセット"
+
+
+def test_confirmed_combined_product_scope_is_broad_without_changing_display_text():
+    source = example() | {"key": "tibo-reset-2098685367058612394",
+                          "resetAt": "2026-09-12T08:00:00Z",
+                          "details": {"cycleType": "随机重置", "scope": "Codex / ChatGPT Work"}}
+    imported = normalize_history([source], datetime(2026, 9, 12, 12, tzinfo=UTC))[0]
+    assert imported["scope"] == imported["details"]["scope"] == "Codex / ChatGPT Work"
+    assert imported["randomResetTargetScope"] == "broad"
+
+
+@pytest.mark.parametrize("scope", ["部分用户", "个人用户", "Codex / ChatGPT Work (部分用户)",
+                                  "Some Codex / ChatGPT Work users", "unknown", ""])
+def test_import_does_not_infer_broad_scope_from_confirmed_record_kind(scope):
+    for kind in ["confirmed_global", "banked_distribution"]:
+        source = example() | {"recordKind": kind, "details": {"cycleType": "随机重置", "scope": scope}}
+        imported = normalize_history([source], datetime(2026, 9, 12, tzinfo=UTC))[0]
+        assert imported["randomResetTargetScope"] == "conditional"
+
+
+def test_explicit_conditional_scope_remains_conditional_for_combined_products():
+    source = example() | {"randomResetTargetScope": "conditional",
+                          "details": {"cycleType": "随机重置", "scope": "Codex / ChatGPT Work"}}
+    imported = normalize_history([source], datetime(2026, 9, 12, tzinfo=UTC))[0]
+    assert imported["randomResetTargetScope"] == "conditional"

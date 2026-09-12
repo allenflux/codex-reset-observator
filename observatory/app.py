@@ -133,7 +133,7 @@ def create_app(
                 rows = store.events_for_run(run_id) if run_id is not None else None
             latest = status.get("latestSuccessfulAt")
             age = (clock() - parse_time(latest)).total_seconds() if latest else None
-            interval = collection_config.interval_seconds if collection_config else 3600
+            interval = collection_config.interval_seconds if collection_config else 300
             return {**status, "configured": True,
                     "backend": collection_config.backend if collection_config else "injected",
                     "intervalSeconds": interval,
@@ -289,7 +289,7 @@ def create_app(
         age = (clock() - checked).total_seconds() if checked else None
         return {
             **status,
-            "historyIntervalSeconds": settings.collection.interval_seconds if settings.collection else 3600,
+            "historyIntervalSeconds": settings.collection.interval_seconds if settings.collection else 300,
             "pollIntervalSeconds": settings.notifications.interval_seconds,
             "workerFresh": age is not None and 0 <= age <= max(120, settings.notifications.interval_seconds * 3),
             "deliveryApp": "Telegram",
