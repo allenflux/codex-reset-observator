@@ -191,7 +191,10 @@ def test_prediction_log_preserves_model_identity_in_existing_jsonb_column(backen
     result = client.post("/api/log-probability", headers=CRON_AUTH).json()
     row = repo.list_records("prediction_history")[0]
     assert "model_version" not in row  # not a column in the existing Supabase schema
-    assert row["debug_info"]["modelVersion"] == "python-hazard-odds-calibrated-v1"
+    forecast = client.get("/api/current").json()["viewModel"]
+    assert row["debug_info"]["modelVersion"] == forecast["primaryForecast"]["modelVersion"]
+    assert row["probability_24h"] == forecast["neuralForecast"]["probability24h"]
+    assert row["probability_48h"] == forecast["neuralForecast"]["probability48h"]
     assert result["model_version"] == row["debug_info"]["modelVersion"]
     assert result["probability_12h"] == row["debug_info"]["probability12h"]
 

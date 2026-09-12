@@ -97,3 +97,7 @@ The original post-calibration strong timed teaser floor is not applied by this
 baseline. The separately fitted neural model uses event timestamps only, and is
 published with its own out-of-time evaluation and experimental status. Neither
 baseline parity fixtures nor a neural fit establish reliable future accuracy.
+
+## 当前主预测
+
+Python 网站使用自己的实验性神经网络输出主界面 24／48 小时概率，`primaryForecast` 标明模型和实验状态；`statisticalBaseline` 保留统计结果用于比较。神经网络未提供的 12／72 小时概率返回 null，模型不可用时回退到统计模型。以上与原站统计数值的兼容验证是不同范围；帖子文本和上游 LLM 标签目前不进入神经网络。

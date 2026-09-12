@@ -26,6 +26,7 @@ def main(argv: list[str] | None = None) -> None:
     classify = commands.add_parser("classify", help="Classify text with rules; no LLM")
     classify.add_argument("text")
     commands.add_parser("sync-history", help="Collect online history into the configured database")
+    commands.add_parser("sync-social", help="Sync public social posts into MySQL without LLM analysis")
     collect = commands.add_parser("collect", help="Continuously accumulate online history and forecasts")
     collect.add_argument("--once", action="store_true")
     status = commands.add_parser("collection-status", help="Show accumulation counts and freshness")
@@ -56,6 +57,12 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "classify":
             from observatory.domain import classify_post
             print(json.dumps(classify_post(args.text), ensure_ascii=False, indent=2))
+        elif args.command == "sync-social":
+            from observatory.social_sync import collect_social_once
+            result = collect_social_once(configuration)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            if not result["ok"]:
+                raise SystemExit(1)
         elif args.command == "sync-history":
             from observatory.collector import collect_once
             result = collect_once(configuration)

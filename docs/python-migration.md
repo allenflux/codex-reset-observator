@@ -13,7 +13,7 @@
 浏览器扩展的帖子与心跳 → FastAPI → 规则分类 → MySQL
 本机 Codex app-server → Python monitor → 额度 Webhook → 恢复记录
                               ↓
-                  规范化历史与主统计模型
+                  规范化历史与神经网络主预测／统计基线
                               ↓
                 public-v1 API / Jinja2 三语页面
                               ↑
@@ -28,6 +28,7 @@
 | 历史规范化 | `observatory/history.py` | 去重、排除定期/局部记录、已有名称、周期参考 |
 | 概率计算 | `observatory/probability.py` | 风险率、H30、校准；两个静态原实现对照样本 |
 | 规则分类 | `observatory/classification.py` | 完成/预告/暗示/无关，引用与否定安全处理 |
+| 社交同步 | `observatory/social_sync.py` | 公开相关帖原文、上下文、展示译文和修订入 MySQL，不导入上游语义判断 |
 | 线上导入 | `observatory/history_sync.py` | 结构化解析、事件 ID、时间、来源、三语匹配 |
 | 神经网络 | `observatory/neural.py` | 按时间验证、标签隔离、纯 Python JSON 权重推理 |
 | 本机监控 | `observatory/monitor.py` | 周额度选择、最小字段投递、超时与重连 |
@@ -55,7 +56,7 @@
 
 ## 开发与部署
 
-当前部署使用 MySQL，真实凭据只通过环境或被 Git 忽略的 `.env` 提供。`docker compose up -d --build` 启动 `web` 和每小时运行的 `collector`，共同连接已有 MySQL，不需要 Redis 或线上训练服务。程序增量创建 `cro_*` 表；必须保持采集器运行，观察数据才会继续积累。只启动网页不会自动采集。
+当前部署使用 MySQL，真实凭据只通过环境或被 Git 忽略的 `.env` 提供。`docker compose up -d --build` 启动 `web` 和持续运行的 `collector`（历史每小时、社交每 5 分钟），共同连接已有 MySQL，不需要 Redis 或线上训练服务。程序增量创建 `cro_*` 表；必须保持采集器运行，观察数据才会继续积累。只启动网页不会自动采集。
 
 本地开发使用 `uv sync` 后运行 `uv run --env-file .env observatory serve --reload`。需要训练时，在本机运行 `uv sync --extra ml`，再执行 `uv run --env-file .env observatory train`，默认读取 MySQL，输出实验模型和报告到被 Git 忽略的 `var/training`。训练不会自动替换网站使用的模型；Python 构建产物包含模板、静态文件、种子数据和已有推理权重。
 

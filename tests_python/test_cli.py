@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from observatory import cli, collection_config, collector, neural, training_data
+from observatory import cli, collection_config, collector, neural, social_sync, training_data
 from observatory.collection_config import CollectionSettings
 from observatory.collection_store import CollectionStorageError, CollectionStore
 
@@ -166,6 +166,19 @@ def test_continuous_collection_uses_worker_without_retraining(monkeypatch, train
     monkeypatch.setattr(collector, "run_collector", lambda settings: calls.append(settings))
     cli.main(["collect"])
     assert calls == [isolated_configuration]
+    assert not trainer
+
+
+@pytest.mark.parametrize("success", [True, False])
+def test_social_sync_command_exposes_result_without_training(success, monkeypatch, trainer, capsys):
+    monkeypatch.setattr(social_sync, "collect_social_once", lambda settings: {"ok": success})
+    if success:
+        cli.main(["sync-social"])
+    else:
+        with pytest.raises(SystemExit) as raised:
+            cli.main(["sync-social"])
+        assert raised.value.code == 1
+    assert json.loads(capsys.readouterr().out) == {"ok": success}
     assert not trainer
 
 

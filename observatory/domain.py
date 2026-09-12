@@ -185,6 +185,13 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
     event_rows = random_events(history, now)
     last_random = timestamp(event_rows[-1]["resetAt"]) if event_rows else None
     probability = calculate_probability(data, now)
+    from .neural import forecast as neural_forecast
+    neural = neural_forecast(history, now)
+    primary = {key: probability[key] for key in (
+        "probability12h", "probability24h", "probability48h", "probability72h")}
+    if neural:
+        primary.update(probability12h=None, probability72h=None,
+                       probability24h=neural["probability24h"], probability48h=neural["probability48h"])
     expected, anchor = next_regular_reset(history, now)
     notice = active_notice(data, now, max((at for at in (last_random, anchor) if at), default=None))
     local_expected = expected.astimezone(ZoneInfo("Asia/Tokyo")) if expected else None
@@ -209,7 +216,7 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
               "isOverduePending": overdue, "overdueText": _text(locale, "実施確認待ち", "Awaiting confirmation", "等待执行确认") if overdue else None}
     if notice:
         active["noticeKind"] = "banked" if "banked" in str(notice.get("text", "")).lower() else "forced"
-    p24, p48 = probability["probability24h"], probability["probability48h"]
+    p24, p48 = primary["probability24h"], primary["probability48h"]
     level = "very_high" if p24 >= .8 or p48 >= .85 else "high" if p24 >= .61 or p48 >= .61 else "medium" if p24 >= .3 or p48 >= .3 else "low"
     expectations = {"low": ("低", "Low", "低"), "medium": ("中", "Moderate", "中"), "high": ("高", "High", "高"), "very_high": ("非常に高い", "Very high", "很高")}
     signals = [s for s in all_signals(data, now) if s.get("verification_status") != "rejected"]
@@ -228,6 +235,9 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
                            "replyContextText": signal.get("reply_context_text"), "replyToHandles": [str(v) for v in (signal.get("reply_to_handles") or [])],
                            "temporalResolutionStatus": signal.get("temporal_resolution_status"),
                            "expectedStartAt": iso(timestamp(signal.get("expected_start_at"))), "expectedEndAt": iso(timestamp(signal.get("expected_end_at")))}
+        if signal.get("source_kind") == "upstream_public_snapshot":
+            latest_activity.update(sourceKind="upstream_public_snapshot", classification="unknown", teaserStrength=None,
+                                   classificationSource="none", semanticAnalysisPerformed=False)
     public_history = [_history_view(event, locale) for event in history]
     latest = public_history[0] if public_history else {}
     latest_window = {"kind": "regular" if latest.get("recordKind") == "regular_completed" else "observed",
@@ -244,12 +254,22 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
     updated_candidates = [timestamp(data.get("updated_at")), *(completed_at(event) for event in history), *(timestamp(s.get("tweet_created_at")) for s in signals)]
     updated = max((at for at in updated_candidates if at and at <= now), default=None)
     view_model = {"status": active["label"], "expectation": _text(locale, *expectations[level]),
-                  **{key: probability[key] for key in ("probability12h", "probability24h", "probability48h", "probability72h")},
+                  **primary,
                   "lastUpdated": iso(updated), "regularResetForecast": forecast, "activeWindow": active,
                   "displayReasoningSummary": _text(locale, "完了済みの広域ランダムリセット履歴と現在のシグナルに基づく統計予測です。", "Statistical forecast from completed broad-scope random resets and current signals.", "根据已完成的广泛随机重置历史和当前信号进行统计预测。"),
                   "codexOperationalStatus": operational, "latestWindow": latest_window, "recentHistory": public_history}
-    from .neural import forecast as neural_forecast
-    view_model["neuralForecast"] = neural_forecast(history, now)
+    view_model["neuralForecast"] = neural
+    view_model["statisticalBaseline"] = {key: probability[key] for key in (
+        "probability12h", "probability24h", "probability48h", "probability72h")}
+    from .probability import MODEL_VERSION as baseline_version
+    view_model["primaryForecast"] = {"kind": "neural" if neural else "statistical_fallback",
+                                    "modelVersion": neural["modelVersion"] if neural else baseline_version,
+                                    "experimental": bool(neural)}
+    if neural:
+        view_model["displayReasoningSummary"] = _text(
+            locale, "過去のリセット時刻で学習した実験的なニューラルネットワーク予測です。投稿の意味解析は行いません。",
+            "Experimental neural forecast trained on historical reset times. Post semantics are not model inputs.",
+            "基于历史重置时间训练的实验性神经网络预测，未使用帖文语义分析。")
     return {"schemaVersion": "public-v1", "checkedAt": iso(timestamp(data.get("checked_at")) or now), "updatedAt": iso(updated),
             "lastRandomResetAt": iso(last_random), "dataHealth": _health(data, now), "viewModel": view_model,
             "resetTeaserStatus": teaser_status, "latestTiboActivity": latest_activity, "recoveryObservation": _public_recovery(data, now)}

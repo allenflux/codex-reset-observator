@@ -16,7 +16,7 @@ from observatory.collection_config import (
 @pytest.fixture(autouse=True)
 def clean_collection_environment(monkeypatch):
     for key in list(os.environ):
-        if key.startswith(("MYSQL_", "COLLECTION_")) or key == "COLLECT_HISTORY":
+        if key.startswith(("MYSQL_", "COLLECTION_", "SOCIAL_COLLECTION_")) or key == "COLLECT_HISTORY":
             monkeypatch.delenv(key)
 
 
@@ -24,6 +24,8 @@ def test_unconfigured_defaults_do_not_silently_create_sqlite():
     settings = from_env()
     assert settings.backend == "unconfigured"
     assert settings.interval_seconds == 3600
+    assert settings.social_enabled is True
+    assert settings.social_interval_seconds == 300
     assert settings.collect_history is False
     assert settings.output_dir == Path("var/training")
     with pytest.raises(CollectionConfigError, match="^collection_database_not_configured$"):
@@ -86,6 +88,9 @@ def test_explicit_sqlite_has_a_separate_path_and_ignores_app_database(monkeypatc
 @pytest.mark.parametrize(("key", "value"), [
     ("COLLECTION_INTERVAL_SECONDS", "299"),
     ("COLLECTION_INTERVAL_SECONDS", "bad"),
+    ("SOCIAL_COLLECTION_INTERVAL_SECONDS", "59"),
+    ("SOCIAL_COLLECTION_INTERVAL_SECONDS", "bad"),
+    ("SOCIAL_COLLECTION_ENABLED", "maybe"),
     ("COLLECTION_BACKEND", "other"),
     ("MYSQL_PORT", "0"),
     ("MYSQL_PORT", "65536"),
@@ -101,9 +106,17 @@ def test_invalid_config_fails_with_sanitized_errors(monkeypatch, key, value):
     assert str(error.value) in {
         "invalid_collection_configuration", "invalid_collection_backend",
         "collection_interval_must_be_at_least_300_seconds",
+        "social_interval_must_be_at_least_60_seconds",
     }
 
 
 def test_interval_can_be_exact_minimum(monkeypatch):
     monkeypatch.setenv("COLLECTION_INTERVAL_SECONDS", "300")
     assert from_env().interval_seconds == 300
+
+
+def test_social_collection_can_be_disabled_or_run_at_minimum_interval(monkeypatch):
+    monkeypatch.setenv("SOCIAL_COLLECTION_ENABLED", "false")
+    monkeypatch.setenv("SOCIAL_COLLECTION_INTERVAL_SECONDS", "60")
+    assert from_env().social_enabled is False
+    assert from_env().social_interval_seconds == 60

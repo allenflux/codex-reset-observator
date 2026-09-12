@@ -6,12 +6,12 @@
     },
     {
       "question": "リセット期待度とは何ですか？",
-      "answer": "今後リセットが行われる可能性の目安です。過去のリセット間隔から基礎確率を算出し、公式予告、Statusの障害情報、コミュニティの動きなど現在の観測シグナルで補正しています。公式な確率ではありません。",
+      "answer": "24／48時間の主予測は、過去のリセット時刻でローカル学習したニューラルネットワークによるものです。初期評価ではベースラインを上回っておらず、実験段階です。モデルが利用できない場合は統計モデルに戻ります。公式の確率ではありません。",
       "id": "forecast-method"
     },
     {
       "question": "リセット匂わせ投稿は予測にどう反映されますか？",
-      "answer": "匂わせ投稿は公式予告とは分けて扱います。tomorrow、tonight、曜日、時刻などから示唆された時期を安全に解決できる場合は、その時間窓が今後24時間・48時間の予測範囲にどれだけ重なるかを反映し、時間が分かる匂わせでは「強い・弱い」という匂わせの強さも追加補正に使います。時刻を解決できない場合は、投稿の新しさなどに応じて影響を減衰させます。匂わせは確定した公式予定ではありません。",
+      "answer": "投稿本文は現在のニューラル予測の入力には含まれません。元サイトが選んだ公開投稿の本文、時刻、出典、返信文脈を同期し、LLMの呼び出しや上流の意味分類の取り込みは行いません。同期した投稿を自動で確認済みリセットに変換しません。完全なXタイムラインではありません。",
       "id": "teaser-forecast-method"
     },
     {
@@ -116,17 +116,17 @@
     },
     {
       "question": "What is the random reset probability?",
-      "answer": "It is a statistical reference forecast. A baseline derived from past reset intervals is adjusted using official notices, Status incident logs, community reports, and other current signals. It is not an official probability.",
+      "answer": "The main 24/48-hour forecast uses our locally trained neural network and historical reset timing. It remains experimental and has not outperformed the baseline in the initial evaluation. If the model is unavailable, the statistical baseline is shown. These are not official probabilities.",
       "id": "forecast-method"
     },
     {
       "question": "How are reset teaser posts reflected in the forecast?",
-      "answer": "Teaser posts are treated separately from official notices. When wording such as tomorrow, tonight, a weekday, or a clock time can be resolved safely, the forecast reflects how much that hinted window overlaps the next 24 and 48 hours; for timed teasers, weak or strong hint strength is also used as an additional adjustment. If the timing cannot be resolved, the effect decays with the age of the post. A teaser is not a confirmed official schedule.",
+      "answer": "Post text does not currently enter the neural forecast. We sync the original site’s curated public post, its time, source and reply context without calling an LLM or importing its semantic labels. Mirrored posts do not automatically become confirmed resets. This source does not provide a complete X timeline.",
       "id": "teaser-forecast-method"
     },
     {
       "question": "When can I know the Codex reset timing?",
-      "answer": "If there is an official notice, that takes priority. If there is no notice, this site shows the current estimate based on recent history and OpenAI Status activity."
+      "answer": "Please refer to any official notice for confirmed timing. Otherwise, the neural model provides an experimental 24/48-hour probability based on historical reset timing."
     },
     {
       "question": "Are token, usage, limit, and rate resets the same thing?",
@@ -172,17 +172,17 @@
     },
     {
       "question": "重置可能性是什么意思？",
-      "answer": "重置可能性表示未来发生重置的参考概率。本站先根据过去的重置间隔计算基础概率，再根据官方预告、OpenAI Status 故障信息、社区讨论等当前观测信号进行调整。这并不是 OpenAI 官方公布的概率。",
+      "answer": "主界面的 24／48 小时概率由我们本地训练的神经网络计算，使用历史重置时间特征。模型仍处于实验阶段，初始评估尚未超过基线；模型不可用时回退到统计模型。这不是官方概率。",
       "id": "forecast-method"
     },
     {
       "question": "重置暗示帖如何影响预测？",
-      "answer": "暗示帖会与官方预告分开处理。当 tomorrow、tonight、星期几或具体时刻等时间表达能够被安全解析时，预测会根据该暗示时间窗口与未来24小时、48小时预测区间的重叠程度进行调整；对于可解析时间的暗示，还会将“较强/较弱”的暗示强度作为额外修正。若无法可靠解析时间，则会按照帖子的新旧程度逐步减弱其影响。暗示帖并不等同于已确认的官方安排。",
+      "answer": "帖子文本目前不参与神经网络预测。我们同步原站挑选的公开帖文、时间、来源和回复上下文，不调用 LLM，也不沿用原站的语义分类。同步帖子不会自动变成已确认的重置记录；该来源不提供完整 X 时间线。",
       "id": "teaser-forecast-method"
     },
     {
       "question": "什么时候可以知道 Codex 重置的具体时间？",
-      "answer": "如果官方发布了预告，请优先查看预告中的详细信息。在没有预告的情况下，本站会根据最近的重置历史、OpenAI Status 上的故障信息和社区动态显示当前预测。"
+      "answer": "确定的时间应以官方公告为准。没有官方公告时，神经网络仅根据历史重置时间给出实验性的 24／48 小时概率。"
     },
     {
       "question": "Codex 的重置也会影响 ChatGPT Work 吗？",

@@ -113,7 +113,8 @@ def classify_post(text: str, url: str = "", is_reply: bool | None = None, is_quo
 def is_global_reset_signal(signal: dict) -> bool:
     """Use one scope gate for adoption, history and recovery corroboration."""
     confidence = signal.get("confidence")
-    if (signal.get("signal_type") != "reset_executed" or not isinstance(confidence, (int, float))
+    if (signal.get("formal_adoption_allowed") is False
+            or signal.get("signal_type") != "reset_executed" or not isinstance(confidence, (int, float))
             or confidence < .95 or signal.get("verification_status") == "rejected"
             or signal.get("is_reply") or signal.get("is_quote")):
         return False

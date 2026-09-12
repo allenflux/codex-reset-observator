@@ -8,12 +8,12 @@
 
 | 功能 | 当前实现 |
 | --- | --- |
-| 日／英／中网站 | `/`、`/en`、`/zh`，以及各语言的历史、FAQ、关于页面 |
+| 中／英／日网站 | 默认中文，`/` 跳转 `/zh`；另有 `/en`、`/ja` 及各语言的历史、FAQ、关于页面 |
 | 重置历史 | 从原站完整历史页解析结构化 JSON，保留事件 ID、来源、适用范围和时刻精度；不执行网页脚本 |
 | 时间分布 | 随机重置时刻和间隔分布、时区切换、最近一个月筛选 |
-| 统计预测 | Python 危险率模型、信号权重和校准；两个静态数据快照已与原 TypeScript 数值核对 |
-| 神经网络预测 | 7 个历史时间特征 → 8 个 tanh 神经元 → 3 类输出，计算 24／48 小时概率；独立实验卡片 |
-| 信号采集 | 保留浏览器扩展 Webhook；Python 规则分类，不使用 Gemini 或其他 LLM |
+| 统计基线 | Python 危险率模型、信号权重和校准；两个静态数据快照已与原 TypeScript 数值核对 |
+| 神经网络预测 | 7 个历史时间特征 → 8 个 tanh 神经元 → 3 类输出，计算 24／48 小时概率；作为主预测，保留实验标识和基线评估 |
+| 社交采集 | 默认每 5 分钟同步原站公开相关帖子、回复上下文及展示译文；保留扩展 Webhook，不调用 LLM |
 | 用量监控 | Python 命令行读取本机 Codex app-server 的周额度，服务端保存恢复记录、排除定期／个人重置 |
 | 持续积累 | 每小时同步公开历史，MySQL 保存事件版本、首次发现时间、采集成功／失败记录和当时预测 |
 | 存储与运维 | MySQL 保存网站新增数据和采集档案；监控心跳、预测记录、名称候选核对、健康检查 |
@@ -44,11 +44,25 @@ docker compose ps
 docker compose exec collector observatory collection-status --check-fresh
 ```
 
-Compose 运行 `web` 和 `collector` 两个服务：网站在容器内监听 `0.0.0.0:9090`，默认发布到宿主机 `0.0.0.0:9090`；采集器启动时同步一次，此后默认每小时同步。MySQL 自动创建独立的 `cro_*` 表，保存累计数据；修改 `COLLECTION_INTERVAL_SECONDS` 可调整采集间隔。**必须保持采集器运行，数据才会持续积累。**只启动网页不会自动采集。
+Compose 运行 `web` 和 `collector` 两个服务：网站在容器内监听 `0.0.0.0:9090`，默认发布到宿主机 `0.0.0.0:9090`；采集器启动时同步历史和社交帖子，此后历史默认每小时同步，社交默认每 5 分钟同步。MySQL 自动创建独立的 `cro_*` 表，保存累计数据；修改 `COLLECTION_INTERVAL_SECONDS` 可调整采集间隔。**必须保持采集器运行，数据才会持续积累。**只启动网页不会自动采集。
 
 部署后访问 [allenflux.tech:9090](http://allenflux.tech:9090/)，也可直接访问 `http://服务器IP:9090/zh`；本机部署访问 [中文页面](http://localhost:9090/zh)。`0.0.0.0` 表示监听所有网络接口，浏览器使用上述实际访问地址。应用无需绑定域名；`SITE_URL` 留空时，页面链接使用当前访问地址。`PORT` 可调整宿主机发布端口，容器内端口保持 `9090`；本地直接运行 `observatory serve` 的默认端口仍为 `8000`。
 
 网站读取最近一次成功采集的完整历史。未成功采集或数据库不可用时，会标记数据状态异常；仓库内快照只用于回退展示。运行中的采集不会修改 `observatory/data`，也不会自动训练或替换模型。
+
+社交采集默认开启：`SOCIAL_COLLECTION_ENABLED=true`、`SOCIAL_COLLECTION_INTERVAL_SECONDS=300`。它读取原站 `/api/current?locale=en` 中单条经过挑选的相关帖子，**不是完整 X 时间线**；中文／日文沿用身份和发布时间匹配的原站译文，仅供展示。正文、上下文、首次发现时间和内容版本持续保存到 MySQL，重复同步不重复新增；原站语义标签和时间推断不进入我们的预测，也不自动生成已确认重置记录。无需 X API 密钥或 LLM 配置。
+
+手动同步并检查：
+
+```bash
+docker compose exec collector observatory sync-social
+curl -f http://127.0.0.1:9090/api/social/status
+docker compose logs --tail=30 collector
+```
+
+本地可运行 `uv run --env-file .env observatory sync-social`。`/api/social/status` 独立显示同步新鲜度与累计数量；浏览器扩展心跳是另一条监控链路，服务器同步不会伪造它。
+
+当前主预测神经网络仅使用历史重置时间特征，**尚未分析帖子文本或寓意**。模型不可用时回退到统计模型。未来若要让帖文影响神经网络，需要新增文本特征和训练评估，不能直接把上游分类当作真实标签。
 
 采集内容、存储结构、训练与检查步骤见 [数据积累说明](docs/data-collection.md)。
 
@@ -153,13 +167,14 @@ uv run --env-file .env --extra ml observatory train --history /path/to/history.j
 
 ### 初始评估参考
 
-首次导入 **43 条记录，35 次符合目标的随机重置**。初始训练使用 102 个日级样本；最后 21 个测试日，神经网络平均 Brier 分数为 **0.2586**，历史频率基线为 **0.2565**，尚未胜过基线。因此主预测保留统计模型，神经网络以实验预测显示。以上是初始评估快照，不是当前 MySQL 计数；后续运行以本地报告为准。详见 [训练评估](reports/python-migration/neural-evaluation.md)。
+首次导入 **43 条记录，35 次符合目标的随机重置**。初始训练使用 102 个日级样本；最后 21 个测试日，神经网络平均 Brier 分数为 **0.2586**，历史频率基线为 **0.2565**，尚未胜过基线。按本项目设置，神经网络仍作为主预测显示，并明确标记实验状态；这不代表它已优于基线。以上是初始评估快照，不是当前 MySQL 计数；后续运行以本地报告为准。详见 [训练评估](reports/python-migration/neural-evaluation.md)。
 
 数据来自第三方整理的 [公开历史页](https://codex.gussuriworks.com/zh/history)，不是 OpenAI 提供的完整重置事件日志。这 35 次是站点已收录的事件，不能等同于逐条独立核验的精确执行时刻，也不足以证明神经网络具有稳定预测能力。分批重置、时间估计、历史修正和未知的漏报率都会影响训练；每小时抓取成功并不增加独立重置事件数。累计数据保留初始历史补录和后续实际观察的区别；前瞻导出只使用各预测时点已采集的信息，回顾性训练不具备同样保证。
 
 ## API 与监控
 
 - `GET /api/current?locale=zh`：公开 `public-v1` 快照。
+- `GET /api/social/status`：社交同步状态；过期或失败返回 503。
 - `GET /api/reset-marker`：供浏览器检查最新恢复标记。
 - `POST /api/webhook/tibo`、`POST /api/webhook/tibo/heartbeat`：帖子和心跳。
 - `POST /api/webhook/codex-usage`：本机额度快照。

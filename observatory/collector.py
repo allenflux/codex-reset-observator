@@ -7,6 +7,7 @@ import json
 import signal
 import tempfile
 import threading
+import time
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -68,8 +69,9 @@ def collect_once(
                       "forecastContext": "collector_public_history_with_bundled_context",
                       "includesRuntimeWebhookSignals": False,
                       "featureVectorPurpose": "neural_history_features"}
-            store.record_prediction(timestamp=observed_at, probability24h=view["probability24h"],
-                                    probability48h=view["probability48h"], model_version=BASELINE_MODEL_VERSION,
+            baseline = view.get("statisticalBaseline") or view
+            store.record_prediction(timestamp=observed_at, probability24h=baseline["probability24h"],
+                                    probability48h=baseline["probability48h"], model_version=BASELINE_MODEL_VERSION,
                                     features={**common, "forecastKind": "statistical_baseline"}, source_run_id=run_id)
             predictions += 1
             neural = view.get("neuralForecast")
@@ -104,11 +106,24 @@ def collection_status(settings: CollectionSettings) -> dict[str, Any]:
 
 
 def run_collector(settings: CollectionSettings) -> None:
+    from observatory.social_sync import collect_social_once
+
     stopping = threading.Event()
     for name in (signal.SIGINT, signal.SIGTERM):
         signal.signal(name, lambda *_: stopping.set())
+    next_history = next_social = 0.0
     while not stopping.is_set():
-        result = collect_once(settings)
-        print(json.dumps({"event": "collection", **result}), flush=True)
-        delay = settings.interval_seconds if result["ok"] else min(300, settings.interval_seconds)
-        stopping.wait(delay)
+        if settings.social_enabled and time.monotonic() >= next_social:
+            result = collect_social_once(settings)
+            print(json.dumps({"event": "social_collection", **result}), flush=True)
+            delay = settings.social_interval_seconds if result["ok"] else min(60, settings.social_interval_seconds)
+            next_social = time.monotonic() + delay
+        if stopping.is_set():
+            break
+        if time.monotonic() >= next_history:
+            result = collect_once(settings)
+            print(json.dumps({"event": "collection", **result}), flush=True)
+            delay = settings.interval_seconds if result["ok"] else min(300, settings.interval_seconds)
+            next_history = time.monotonic() + delay
+        wake_at = min(next_history, next_social) if settings.social_enabled else next_history
+        stopping.wait(max(0, wake_at - time.monotonic()))

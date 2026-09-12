@@ -180,3 +180,61 @@ def test_owned_connection_is_closed_after_collection(monkeypatch):
                                     snapshot_builder=snapshot, clock=lambda: NOW)
     assert result["ok"] is True
     assert closed == [True]
+
+
+def test_neural_primary_does_not_get_archived_as_statistical_baseline():
+    def neural_primary(data, *, locale, now):
+        result = snapshot(data, locale=locale, now=now)
+        view = result["viewModel"]
+        view["statisticalBaseline"] = {"probability24h": 0.12, "probability48h": 0.22}
+        view.update(probability24h=0.21, probability48h=0.41)
+        return result
+
+    with CollectionStore() as store:
+        assert collect(store, snapshot_builder=neural_primary)["predictionCount"] == 2
+        baseline, neural = store.export_dataset()["predictions"]
+        assert baseline["probability24h"] == 0.12
+        assert neural["probability24h"] == 0.21
+
+
+def test_worker_collects_social_more_often_and_history_failure_does_not_disable_it(monkeypatch):
+    from observatory import social_sync
+
+    calls = []
+    tick = [0.0]
+
+    class Stop:
+        stopped = False
+
+        def is_set(self):
+            return self.stopped
+
+        def set(self):
+            self.stopped = True
+
+        def wait(self, seconds):
+            tick[0] += seconds
+            if tick[0] > 300:
+                self.stopped = True
+
+    monkeypatch.setattr(collector.threading, "Event", Stop)
+    monkeypatch.setattr(collector.signal, "signal", lambda *args: None)
+    monkeypatch.setattr(collector.time, "monotonic", lambda: tick[0])
+
+    def social(settings):
+        calls.append(("social", tick[0]))
+        return {"ok": True}
+
+    def history(settings):
+        calls.append(("history", tick[0]))
+        return {"ok": False}
+
+    monkeypatch.setattr(social_sync, "collect_social_once", social)
+    monkeypatch.setattr(collector, "collect_once", history)
+    collector.run_collector(CollectionSettings(social_interval_seconds=60))
+    assert [at for kind, at in calls if kind == "social"] == [0, 60, 120, 180, 240, 300]
+    assert [at for kind, at in calls if kind == "history"] == [0, 300]
+    calls.clear()
+    tick[0] = 0
+    collector.run_collector(CollectionSettings(social_enabled=False))
+    assert calls == [("history", 0), ("history", 300)]

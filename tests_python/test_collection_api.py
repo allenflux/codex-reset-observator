@@ -90,3 +90,32 @@ def test_mysql_is_selected_ahead_of_legacy_storage(monkeypatch):
     assert used == [config]
     with TestClient(app) as client:
         assert client.get("/healthz").status_code == 200
+
+
+def test_social_status_distinguishes_missing_fresh_and_failed_without_private_fields(tmp_path):
+    from observatory.social_sync import SOURCE_ID
+
+    app, _ = configured_app(tmp_path)
+    repo = app.state.repository
+    with TestClient(app) as client:
+        assert client.get("/api/social/status").status_code == 503
+        state = {"id": SOURCE_ID, "last_successful_at": NOW.isoformat(),
+                 "latest_attempt_status": "success", "post_count": 1, "version_count": 2,
+                 "metadata": {"private": "internal-test-value"}}
+        repo.put("social_collection_state", state)
+        response = client.get("/api/social/status")
+        assert response.status_code == 200 and response.json()["fresh"]
+        assert response.json()["postCount"] == 1
+        assert response.json()["completeTimeline"] is False
+        assert "internal-test-value" not in response.text
+        assert "no-store" in response.headers["cache-control"]
+        assert repo.get("tibo_heartbeat", "main") is None
+        repo.put("social_collection_state", {**state, "latest_attempt_status": "failure",
+                                              "error": "private-error"})
+        response = client.get("/api/social/status")
+        assert response.status_code == 503
+        assert response.json()["latestSuccessfulAt"]
+        assert response.json()["postCount"] == 1
+        assert "private-error" not in response.text
+        repo.put("social_collection_state", {**state, "last_successful_at": (NOW - timedelta(minutes=16)).isoformat()})
+        assert client.get("/api/social/status").status_code == 503

@@ -54,8 +54,10 @@ def test_localized_pages_interactions_and_layout(local_site, width):
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
         try:
-            for route, title in [("/", "Codexリセット観測所"), ("/en", "Codex Reset Observatory"), ("/zh", "Codex 重置观测站")]:
+            for route, title in [("/", "Codex 重置观测站"), ("/ja", "Codexリセット観測所"), ("/en", "Codex Reset Observatory"), ("/zh", "Codex 重置观测站")]:
                 assert page.goto(local_site + route).status == 200
+                if route == "/":
+                    assert page.url == local_site + "/zh"
                 expect(page.locator("header .brand")).to_contain_text(title)
                 expect(page.get_by_role("heading", level=1)).to_be_visible()
                 expect(page.get_by_role("progressbar")).to_have_count(2)
@@ -78,6 +80,8 @@ def test_localized_pages_interactions_and_layout(local_site, width):
             page.locator("#history-search").fill("")
             for route in ["/zh/faq", "/en/about", "/faq", "/history"]:
                 assert page.goto(local_site + route).status == 200
+                if route in ("/faq", "/history"):
+                    expect(page.locator("html")).to_have_attribute("lang", "zh")
             assert not errors
         finally:
             browser.close()

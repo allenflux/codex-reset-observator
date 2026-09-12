@@ -32,6 +32,46 @@ def event(identifier="reset", at=NOW - timedelta(days=2), **extra):
     return row
 
 
+def test_neural_is_primary_and_baseline_remains_separate(monkeypatch):
+    from observatory import neural
+
+    monkeypatch.setattr(neural, "forecast", lambda history, now: {
+        "modelVersion": "test-neural", "probability24h": .2, "probability48h": .4})
+    data = {"reset_history": [event()]}
+    view = build_snapshot(data, "zh", NOW)["viewModel"]
+    assert (view["probability24h"], view["probability48h"]) == (.2, .4)
+    assert view["probability12h"] is None and view["probability72h"] is None
+    assert view["statisticalBaseline"]["probability24h"] == calculate_probability(data, NOW)["probability24h"]
+    assert view["primaryForecast"] == {"kind": "neural", "modelVersion": "test-neural", "experimental": True}
+
+
+def test_unavailable_neural_model_falls_back_to_statistical_forecast(monkeypatch):
+    from observatory import neural
+
+    monkeypatch.setattr(neural, "forecast", lambda history, now: None)
+    view = build_snapshot({"reset_history": [event()]}, "zh", NOW)["viewModel"]
+    assert view["primaryForecast"]["kind"] == "statistical_fallback"
+    assert view["primaryForecast"]["experimental"] is False
+    for key, value in view["statisticalBaseline"].items():
+        assert view[key] == value
+
+
+def test_mirrored_post_does_not_create_a_reset_or_change_neural_forecast():
+    data = load_data()
+    before = build_snapshot(data, "zh", NOW + timedelta(days=1))
+    text = "We reset Codex limits for everyone!"
+    post = {**classify_post(text), "tweet_id": "123456789", "text": text,
+            "tweet_url": "https://x.com/thsottiaux/status/123456789",
+            "tweet_created_at": iso(NOW), "source_kind": "upstream_public_snapshot",
+            "formal_adoption_allowed": False, "verification_status": "auto_unverified"}
+    data["tibo_signals"] = [post]
+    after = build_snapshot(data, "zh", NOW + timedelta(days=1))
+    assert after["lastRandomResetAt"] == before["lastRandomResetAt"]
+    assert after["viewModel"]["neuralForecast"] == before["viewModel"]["neuralForecast"]
+    assert after["latestTiboActivity"]["semanticAnalysisPerformed"] is False
+    assert after["latestTiboActivity"]["classification"] == "unknown"
+
+
 def test_current_calibrated_and_recency_math_matches_typescript_golden():
     history = json.loads((ROOT / "observatory/data/reset_history.json").read_text())
     golden = json.loads((Path(__file__).parent / "fixtures/domain_golden.json").read_text())

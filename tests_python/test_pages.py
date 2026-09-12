@@ -72,7 +72,7 @@ def client():
         yield browser
 
 
-@pytest.mark.parametrize("locale,base", [("ja", ""), ("en", "/en"), ("zh", "/zh")])
+@pytest.mark.parametrize("locale,base", [("ja", "/ja"), ("en", "/en"), ("zh", "/zh")])
 @pytest.mark.parametrize(
     "page,suffix", [("home", ""), ("history", "/history"), ("about", "/about"), ("faq", "/faq")]
 )
@@ -106,8 +106,36 @@ def test_language_switch_preserves_current_page(snapshot):
     for page in ("home", "history", "about", "faq"):
         context = page_context(snapshot, "zh", page)
         assert {item["url"] for item in context["languages"]} == {
-            (base + ("" if page == "home" else f"/{page}")) or "/" for base in ("", "/en", "/zh")
+            base + ("" if page == "home" else f"/{page}") for base in ("/ja", "/en", "/zh")
         }
+
+
+@pytest.mark.parametrize("suffix", ["", "/history", "/about", "/faq"])
+def test_unprefixed_routes_redirect_to_chinese(client, suffix):
+    response = client.get(suffix or "/", follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["location"] == "/zh" + suffix
+    page = client.get(suffix or "/")
+    assert '<html lang="zh">' in page.text
+
+
+def test_default_and_unknown_locales_are_chinese(snapshot, client):
+    assert page_context(snapshot)["locale"] == "zh"
+    assert page_context(snapshot, "unknown")["locale"] == "zh"
+    chinese = client.get("/api/current?locale=zh").json()
+    assert client.get("/api/current").json() == chinese
+    assert client.get("/api/current?locale=unknown").json() == chinese
+    assert client.get("/api/current?locale=ja").json()["viewModel"]["status"] != chinese["viewModel"]["status"]
+
+
+def test_sitemap_uses_explicit_language_prefixes(client):
+    from xml.etree.ElementTree import fromstring
+
+    urls = {item.text for item in fromstring(client.get("/sitemap.xml").text).iter()
+            if item.tag.endswith("}loc")}
+    assert urls == {f"http://localhost:8000/{locale}{suffix}"
+                    for locale in ("zh", "en", "ja")
+                    for suffix in ("", "/history", "/about", "/faq")}
 
 
 def test_forecast_rounding_unknown_values_and_public_only_rendering(snapshot):
@@ -207,7 +235,7 @@ def test_heatmap_uses_qualified_events_excludes_future_and_deduplicates(snapshot
     assert page_context(snapshot, "en")["heatmap"]["count"] == 0
 
 
-def test_neural_forecast_is_distinct_from_the_primary_forecast(snapshot):
+def test_neural_evaluation_keeps_validation_status_and_snapshot_probabilities(snapshot):
     snapshot["viewModel"]["neuralForecast"] = {
         "modelVersion": "historical-mlp-v1",
         "trainedAt": NOW.isoformat(),
@@ -222,11 +250,30 @@ def test_neural_forecast_is_distinct_from_the_primary_forecast(snapshot):
         },
     }
     html = render(snapshot)
-    assert "Experimental neural forecast" in html
-    assert "Experimental; main forecast unchanged" in html
+    assert "Neural model evaluation" in html
+    assert "Experimental; not prospectively validated" in html
     assert "0.1200" in html and "0.0800" in html
     assert ">91%" in html and ">97%" in html
     assert 'aria-valuenow="25"' in html and 'aria-valuenow="77"' in html
+
+
+def test_neural_primary_flag_uses_the_selected_model(snapshot):
+    assert page_context(snapshot)["primary_neural"] is False
+    snapshot["viewModel"]["primaryForecast"] = {"kind": "neural", "experimental": True}
+    assert page_context(snapshot)["primary_neural"] is True
+    snapshot["viewModel"]["primaryForecast"] = {"kind": "statistical"}
+    assert page_context(snapshot)["primary_neural"] is False
+
+
+@pytest.mark.parametrize("locale", ["zh", "en", "ja"])
+def test_mirrored_activity_does_not_display_upstream_semantic_classification(snapshot, locale):
+    snapshot["latestTiboActivity"] = {
+        "text": "A public post", "classification": "reset_executed",
+        "sourceKind": "upstream_public_snapshot",
+    }
+    activity = page_context(snapshot, locale)["activity"]
+    assert activity["mirrored"] is True
+    assert activity["classification"] == COPY[locale]["social_no_analysis"]
 
 
 def test_static_assets_are_served_and_unknown_routes_are_rejected(client):

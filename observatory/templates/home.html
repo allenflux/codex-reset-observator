@@ -10,9 +10,9 @@
 <div id="radar-content">
   <section class="forecast-panel" aria-labelledby="forecast-heading">
     <div class="forecast-intro">
-      <p class="eyebrow">{{ t.forecast }}</p>
+      <p class="eyebrow">{{ t.neural_primary if primary_neural else t.forecast }}</p>
       <h2 id="forecast-heading">{{ t.forecast }}</h2>
-      <p>{{ t.forecast_note }}</p>
+      <p>{{ t.neural_primary_note if primary_neural else t.forecast_note }}</p>
       <a href="{{ routes.faq }}#forecast-method">{{ t.method }} <span aria-hidden="true">↗</span></a>
       <div class="radar-art" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
     </div>
@@ -51,9 +51,10 @@
 
   <section class="panel post-card" aria-labelledby="activity-heading"><div class="section-heading"><div><p class="eyebrow">@thsottiaux</p><h2 id="activity-heading">{{ t.latest_post }}</h2></div>{% if activity.source %}<a class="text-link" href="{{ activity.source }}" target="_blank" rel="noopener noreferrer">{{ t.source }} ↗</a>{% endif %}</div>
     {% if activity.available %}
-      {% if activity.reply %}<p class="small-label">{{ t.reply_context }}</p><blockquote class="reply-context">{{ activity.reply }}</blockquote>{% endif %}
+      {% if activity.mirrored %}<p class="small-label">{{ t.social_source }}</p>{% endif %}
+      {% if activity.reply %}<p class="small-label">{{ t.reply_context }}{% for handle in activity.reply_handles %} · @{{ handle.lstrip('@') }}{% endfor %}</p><blockquote class="reply-context">{{ activity.reply }}</blockquote>{% endif %}
       {% if activity.text %}<blockquote>{{ activity.text }}</blockquote>{% else %}<p>{{ t.no_post }}</p>{% endif %}
-      <dl class="post-meta"><div><dt>{{ t.classification }}</dt><dd>{{ activity.classification }}</dd></div><div><dt>{{ t.posted }}</dt><dd>{{ time(activity.date) }}</dd></div></dl>
+      <dl class="post-meta"><div><dt>{{ t.classification }}</dt><dd>{{ t.social_no_analysis if activity.mirrored else activity.classification }}</dd></div><div><dt>{{ t.posted }}</dt><dd>{{ time(activity.date) }}</dd></div></dl>
     {% else %}<p class="empty-state">{{ t.no_post }}</p>{% endif %}
   </section>
 </div>

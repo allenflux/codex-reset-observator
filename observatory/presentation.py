@@ -62,6 +62,8 @@ COPY: dict[str, dict[str, Any]] = {
         "no_notice_text": "No active official reset notice is present in this snapshot.",
         "forecast": "Random reset outlook",
         "forecast_note": "Statistical estimates, not an official schedule. Account eligibility may vary.",
+        "neural_primary": "Neural network forecast",
+        "neural_primary_note": "Our locally trained neural network estimates reset probabilities from historical event timing. It does not analyze post text. The model is experimental and has not been prospectively validated.",
         "within_24": "Within 24h",
         "within_48": "Within 48h",
         "method": "How this is estimated",
@@ -105,7 +107,9 @@ COPY: dict[str, dict[str, Any]] = {
         "no_intervals": "At least two recorded resets are needed to calculate intervals.",
         "days": "days",
         "hours": "hours",
-        "latest_post": "Latest Tibo post",
+        "latest_post": "Related Tibo post",
+        "social_source": "Synced through the original site’s public API",
+        "social_no_analysis": "Post text has not been semantically analyzed",
         "no_post": "No public post is available in this snapshot.",
         "classification": "Observed classification",
         "posted": "Posted",
@@ -128,7 +132,7 @@ COPY: dict[str, dict[str, Any]] = {
         "source_official": "Official Codex updates",
         "about_paragraphs": [
             "Codex Reset Observatory brings together reset history and official notices so you can compare the current situation with earlier events.",
-            "The random reset forecast starts with historical reset intervals and adjusts the estimate using the current observable signals. It is a statistical reference, not an official OpenAI probability or a promise that a reset will occur.",
+            "The main forecast uses our locally trained neural network and historical reset timing. Post text is not a model input. The model is experimental and has not outperformed the baseline in the initial evaluation; it is not an official OpenAI probability or a promised reset.",
             "Global resets, Banked Reset distributions, regular resets, and reference records are kept distinct. Using a Banked Reset refreshes the applicable usage limit; the resulting window and reset date can differ by account.",
             "Read the original announcement for each event and check the usage limits shown in your account. A recorded event does not guarantee identical coverage for every plan.",
         ],
@@ -175,6 +179,8 @@ COPY: dict[str, dict[str, Any]] = {
         "no_notice_text": "このデータでは、現在有効な公式リセット予告は確認されていません。",
         "forecast": "ランダムリセット期待度",
         "forecast_note": "統計に基づく推定です。公式の予定ではなく、アカウントによって適用範囲が異なります。",
+        "neural_primary": "ニューラルネットワーク予測",
+        "neural_primary_note": "ローカルで学習した独自のニューラルネットワークが、過去の発生時刻からリセット確率を推定します。投稿本文の意味解析は行いません。試験運用中で、将来データによる検証は未完了です。",
         "within_24": "24時間以内",
         "within_48": "48時間以内",
         "method": "予測の算出方法",
@@ -218,7 +224,9 @@ COPY: dict[str, dict[str, Any]] = {
         "no_intervals": "間隔の計算には2件以上のリセット記録が必要です。",
         "days": "日",
         "hours": "時間",
-        "latest_post": "Tiboの最新投稿",
+        "latest_post": "Tiboの関連投稿",
+        "social_source": "元サイトの公開API経由で同期",
+        "social_no_analysis": "投稿本文の意味解析は未実施",
         "no_post": "このデータでは公開投稿を取得できていません。",
         "classification": "観測上の分類",
         "posted": "投稿時刻",
@@ -241,7 +249,7 @@ COPY: dict[str, dict[str, Any]] = {
         "source_official": "Codexの公式投稿",
         "about_paragraphs": [
             "Codexリセット観測所は、リセット履歴と公式予告をまとめ、現在の状況と過去の出来事を比較できるようにする非公式サイトです。",
-            "ランダムリセットの予測は、過去のリセット間隔をもとに、現在観測できるシグナルで補正する統計的な参考値です。OpenAIの公式確率でも、リセット実施の保証でもありません。",
+            "主予測には、過去のリセット時刻でローカル学習したニューラルネットワークを使用します。投稿本文は入力に含みません。初期評価ではベースラインを上回っておらず、実験的な予測です。OpenAIの公式確率やリセット実施の保証ではありません。",
             "全体リセット、任意リセット権配布、定期リセット、参考記録を区別して掲載します。任意リセットを使うと対象の利用上限が更新されますが、その後の利用期間とリセット日時はアカウントにより異なります。",
             "各イベントの原文とアカウントの利用上限をご確認ください。履歴に記録されたイベントが、すべてのプランに同じように適用されるとは限りません。",
         ],
@@ -288,6 +296,8 @@ COPY: dict[str, dict[str, Any]] = {
         "no_notice_text": "当前数据中没有发现仍然有效的官方重置预告。",
         "forecast": "随机重置可能性",
         "forecast_note": "基于统计的参考预测，并非官方时间表；实际适用范围可能因账号而异。",
+        "neural_primary": "神经网络预测",
+        "neural_primary_note": "使用我们在本地训练的神经网络，根据历史事件时间估算重置概率。当前模型不分析帖文语义，仍处于实验阶段，尚未完成前瞻验证。",
         "within_24": "24 小时内",
         "within_48": "48 小时内",
         "method": "了解预测方法",
@@ -331,7 +341,9 @@ COPY: dict[str, dict[str, Any]] = {
         "no_intervals": "需要至少两条重置记录才能计算间隔。",
         "days": "天",
         "hours": "小时",
-        "latest_post": "Tibo 最新帖子",
+        "latest_post": "Tibo 相关帖子",
+        "social_source": "通过原站公开接口同步",
+        "social_no_analysis": "未进行帖文语义分析",
         "no_post": "当前数据中暂无公开帖子。",
         "classification": "观测分类",
         "posted": "发布时间",
@@ -354,7 +366,7 @@ COPY: dict[str, dict[str, Any]] = {
         "source_official": "Codex 官方动态",
         "about_paragraphs": [
             "Codex 重置观测站汇集重置历史与官方预告，方便你将当前情况与过去的重置事件进行比较。",
-            "随机重置预测以历史重置间隔为基础，再根据当前可观测的信号调整估计值。它是一项统计参考，并非 OpenAI 官方概率，也不代表一定会发生重置。",
+            "主预测使用本地训练的神经网络，输入是历史重置时间特征，尚未使用帖子文本。模型仍处于实验阶段，初始评估尚未超过基线；预测并非 OpenAI 官方概率，也不保证会发生重置。",
             "本站区分全局重置、手动重置发放、定期重置和参考记录。使用手动重置后，适用的使用额度会被刷新；之后的使用周期和重置日期可能因账号而异。",
             "请查看每次事件对应的原始公告，并检查账号显示的使用额度。记录某次重置发生，并不意味着每个方案都会以同样的方式获得重置。",
         ],
@@ -363,9 +375,9 @@ COPY: dict[str, dict[str, Any]] = {
 
 NEURAL_COPY: dict[str, dict[str, str]] = {
     "en": {
-        "heading": "Experimental neural forecast",
+        "heading": "Neural model evaluation",
         "label": "HISTORICAL MODEL EXPERIMENT",
-        "note": "Trained on recorded reset history. The limited event count and retrospective corrections mean this model has not been approved to replace the main forecast.",
+        "note": "Trained on recorded reset history. Event counts are limited and records may include retrospective corrections. Historical evaluation does not establish accuracy for future resets.",
         "trained": "Trained",
         "model": "Model",
         "evaluation": "Held-out Brier score (lower is better)",
@@ -374,12 +386,12 @@ NEURAL_COPY: dict[str, dict[str, str]] = {
         "events": "Training events",
         "samples": "Evaluation samples",
         "active": "Model in use",
-        "experimental": "Experimental; main forecast unchanged",
+        "experimental": "Experimental; not prospectively validated",
     },
     "ja": {
-        "heading": "ニューラルモデルの試験予測",
+        "heading": "ニューラルモデルの評価",
         "label": "履歴に基づくモデル実験",
-        "note": "記録済みのリセット履歴で学習しています。イベント数が少なく事後修正もあるため、メインの予測に代わるモデルとしては採用していません。",
+        "note": "記録済みのリセット履歴で学習しています。イベント数が少なく、履歴には事後修正も含まれます。過去データの評価だけでは将来のリセットに対する精度は確認できません。",
         "trained": "学習日時",
         "model": "モデル",
         "evaluation": "未学習期間のBrierスコア（低いほど良い）",
@@ -388,12 +400,12 @@ NEURAL_COPY: dict[str, dict[str, str]] = {
         "events": "学習イベント数",
         "samples": "評価サンプル数",
         "active": "採用モデル",
-        "experimental": "試験表示・メインの予測は変更なし",
+        "experimental": "試験運用・将来データによる検証は未完了",
     },
     "zh": {
-        "heading": "神经网络实验预测",
+        "heading": "神经网络模型评估",
         "label": "基于历史数据的模型实验",
-        "note": "使用已记录的重置历史训练。由于独立事件数量有限，历史记录也可能经过事后修正，该模型尚未获准替代主预测。",
+        "note": "使用已记录的重置历史训练。独立事件数量有限，历史记录也可能经过事后修正。历史评估结果不能证明模型对未来重置的预测准确率。",
         "trained": "训练时间",
         "model": "模型",
         "evaluation": "留出集 Brier 分数（越低越好）",
@@ -402,7 +414,7 @@ NEURAL_COPY: dict[str, dict[str, str]] = {
         "events": "训练事件数",
         "samples": "评估样本数",
         "active": "当前采用的模型",
-        "experimental": "实验展示，主预测保持不变",
+        "experimental": "实验模型，尚未完成前瞻验证",
     },
 }
 
@@ -540,10 +552,10 @@ def _heatmap(snapshot: dict[str, Any], copy: dict[str, Any]) -> dict[str, Any]:
 
 
 def page_context(
-    snapshot: dict[str, Any], locale: str = "ja", page: str = "home", site_url: str = SITE_URL
+    snapshot: dict[str, Any], locale: str = "zh", page: str = "home", site_url: str = SITE_URL
 ) -> dict[str, Any]:
     """Build the sole template contract for all twelve localized pages."""
-    locale = locale if locale in COPY else "ja"
+    locale = locale if locale in COPY else "zh"
     page = page if page in {"home", "history", "about", "faq"} else "home"
     site_origin = get_site_origin(site_url)
     copy = COPY[locale]
@@ -559,7 +571,7 @@ def page_context(
         if item.get("recordKind") in VISIBLE_RECORD_KINDS
     ]
     history.sort(key=lambda item: item["date"]["iso"] or "", reverse=True)
-    base = "" if locale == "ja" else f"/{locale}"
+    base = f"/{locale}"
     routes = {
         name: f"{base}/{name}" if name != "home" else base or "/"
         for name in ("home", "history", "about", "faq")
@@ -569,9 +581,9 @@ def page_context(
         {
             "code": code,
             "label": label,
-            "url": (("" if code == "ja" else f"/{code}") + suffix) or "/",
+            "url": f"/{code}" + suffix,
         }
-        for code, label in (("ja", "日本語"), ("en", "English"), ("zh", "简体中文"))
+        for code, label in (("zh", "简体中文"), ("en", "English"), ("ja", "日本語"))
     ]
     status = view.get("codexOperationalStatus", "unknown")
     if status not in {"none", "active", "recovered", "unknown"}:
@@ -585,6 +597,7 @@ def page_context(
         "locale": locale,
         "page": page,
         "t": copy,
+        "primary_neural": (view.get("primaryForecast") or {}).get("kind") == "neural",
         "routes": routes,
         "languages": languages,
         "title": copy[f"title_{page}"],
@@ -635,11 +648,15 @@ def page_context(
         "faqs": faqs,
         "activity": {
             "available": bool(activity),
+            "mirrored": activity.get("sourceKind") == "upstream_public_snapshot",
+            "reply_handles": [str(handle) for handle in activity.get("replyToHandles", [])],
             "text": localized(activity.get("text"), locale),
             "reply": localized(activity.get("replyContextText"), locale),
             "date": date_display(activity.get("createdAt"), copy["unknown"]),
             "source": safe_url(activity.get("sourceUrl")),
-            "classification": copy.get(f"classification_{classification}", copy["unknown"]),
+            "classification": (copy["social_no_analysis"]
+                               if activity.get("sourceKind") == "upstream_public_snapshot"
+                               else copy.get(f"classification_{classification}", copy["unknown"])),
         },
         "json_ld": {
             "@context": "https://schema.org",

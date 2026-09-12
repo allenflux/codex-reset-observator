@@ -42,6 +42,8 @@ class CollectionSettings:
     mysql_ssl_ca: Path | None = field(default=None, repr=False)
     sqlite_path: Path = Path("var/collection.sqlite3")
     interval_seconds: int = 3600
+    social_enabled: bool = True
+    social_interval_seconds: int = 300
     collect_history: bool = False
     output_dir: Path = Path("var/training")
 
@@ -50,6 +52,8 @@ class CollectionSettings:
             raise CollectionConfigError("invalid_collection_backend")
         if self.interval_seconds < 300:
             raise CollectionConfigError("collection_interval_must_be_at_least_300_seconds")
+        if self.social_interval_seconds < 60:
+            raise CollectionConfigError("social_interval_must_be_at_least_60_seconds")
         if not 1 <= self.mysql_port <= 65535:
             raise CollectionConfigError("invalid_collection_configuration")
 
@@ -73,6 +77,8 @@ class CollectionSettings:
             mysql_ssl_ca=Path(ca) if ca else None,
             sqlite_path=Path(sqlite_path),
             interval_seconds=_integer("COLLECTION_INTERVAL_SECONDS", 3600),
+            social_enabled=_enabled("SOCIAL_COLLECTION_ENABLED", True),
+            social_interval_seconds=_integer("SOCIAL_COLLECTION_INTERVAL_SECONDS", 300),
             collect_history=_enabled("COLLECT_HISTORY"),
             output_dir=Path(output_dir),
         )

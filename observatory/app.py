@@ -16,6 +16,7 @@ from fastapi.responses import (
     HTMLResponse,
     JSONResponse,
     PlainTextResponse,
+    RedirectResponse,
     Response,
 )
 from fastapi.staticfiles import StaticFiles
@@ -46,6 +47,7 @@ from observatory.webhooks import (
     iso,
     process_usage,
     reset_marker,
+    timestamp,
     validate_tibo,
     validate_usage,
 )
@@ -177,6 +179,29 @@ def create_app(
                 response.headers["Cache-Control"] = NO_STORE
         return response
 
+    def read_social_status() -> Record:
+        from observatory.social_sync import SOURCE_ID
+
+        config = settings.collection
+        enabled = bool(config and config.social_enabled and config.backend in {"mysql", "sqlite"})
+        interval = config.social_interval_seconds if config else 300
+        result: Record = {"enabled": enabled, "fresh": False, "intervalSeconds": interval,
+                          "source": SOURCE_ID, "coverage": "single_curated_public_post",
+                          "completeTimeline": False}
+        try:
+            state = repo.get("social_collection_state", SOURCE_ID) or {}
+        except StorageError:
+            return {**result, "error": "social_database_unavailable"}
+        latest = timestamp(state.get("last_successful_at"))
+        age = (clock() - latest).total_seconds() if latest else None
+        result.update(fresh=age is not None and 0 <= age <= interval * 3,
+                      latestSuccessfulAt=iso(latest) if latest else None,
+                      latestAttemptStatus=state.get("latest_attempt_status"),
+                      postCount=state.get("post_count", 0), versionCount=state.get("version_count", 0))
+        if state.get("latest_attempt_status") == "failure":
+            result.update(fresh=False, error="social_collection_failed")
+        return result
+
     def read_data(*, strict: bool = False) -> Record:
         data = dict(seed)
         source_status = "mysql" if isinstance(repo, MySQLRepository) else "local" if isinstance(repo, SQLiteRepository) else "supabase"
@@ -209,21 +234,24 @@ def create_app(
             data["status_feed_available"] = available
         data["source_status"] = source_status
         database_healthy = source_status in {"mysql", "supabase"}
+        social = read_social_status()
+        data["social_collection_status"] = social
+        social_healthy = social["fresh"] or data["health"].get("status") == "healthy"
         collection_healthy = not collection["configured"] or collection["fresh"]
         status_healthy = bool(data.get("status_feed_available"))
         data["checked_at"] = iso(clock())
         data["data_health"] = {
-            "stale": not database_healthy or not status_healthy or not collection_healthy,
+            "stale": not database_healthy or not social_healthy or not status_healthy or not collection_healthy,
             "sources": {
-                "supabaseSignals": {"state": "ok" if database_healthy else "degraded",
-                                    "detail": "database_error" if source_status == "unavailable" else "missing_configuration"},
+                "supabaseSignals": {"state": "ok" if database_healthy and social_healthy else "degraded",
+                                    "detail": "database_error" if source_status == "unavailable" else "request_failed" if social["enabled"] else "missing_configuration"},
                 "openAIStatus": {"state": "ok" if status_healthy else "degraded",
                                  "detail": "request_failed" if status_feed else "missing_configuration"},
             },
         }
         return data
 
-    def get_snapshot(locale: str = "ja", *, strict: bool = False) -> Record:
+    def get_snapshot(locale: str = "zh", *, strict: bool = False) -> Record:
         data = read_data(strict=strict)
         result = snapshot_builder(data, locale=locale, now=clock())
         # Integration point for the independently trained, non-LLM forecast.
@@ -233,14 +261,19 @@ def create_app(
     application.state.get_snapshot = get_snapshot
 
     @application.get("/api/current")
-    def current(locale: str = "ja") -> JSONResponse:
-        language = locale if locale in ("ja", "en", "zh") else "ja"
+    def current(locale: str = "zh") -> JSONResponse:
+        language = locale if locale in ("ja", "en", "zh") else "zh"
         return JSONResponse(get_snapshot(language), headers={"Cache-Control": PUBLIC_CACHE})
 
     @application.get("/api/collection/status")
     def public_collection_status() -> JSONResponse:
         status, _ = read_collection()
         return JSONResponse(status, status_code=200 if status.get("fresh") else 503)
+
+    @application.get("/api/social/status")
+    def public_social_status() -> JSONResponse:
+        status = read_social_status()
+        return JSONResponse(status, status_code=200 if status["fresh"] else 503)
 
     @application.get("/api/reset-marker")
     def marker() -> JSONResponse:
@@ -349,7 +382,7 @@ def create_app(
                "reasons": str(view.get("displayReasoningSummary", "")),
                "official_notice": view.get("activeWindow", {}).get("kind") == "official",
                "incident_hint": 0, "status_incidents": 0,
-               "debug_info": {"modelVersion": BASELINE_MODEL_VERSION,
+               "debug_info": {"modelVersion": (view.get("primaryForecast") or {}).get("modelVersion", BASELINE_MODEL_VERSION),
                               "probability12h": view.get("probability12h"),
                               "probability72h": view.get("probability72h"),
                               "neuralForecast": {key: view["neuralForecast"].get(key) for key in (
@@ -380,7 +413,7 @@ def create_app(
     def sitemap(request: Request) -> Response:
         from xml.sax.saxutils import escape
         site_origin = request_origin(request)
-        urls = [site_origin + ("" if locale == "ja" else "/" + locale) + (suffix or ("/" if locale == "ja" else "")) for locale in ("ja", "en", "zh")
+        urls = [site_origin + "/" + locale + suffix for locale in ("zh", "en", "ja")
                 for suffix in ("", "/history", "/about", "/faq")]
         content = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
         content += "".join("<url><loc>" + escape(url) + "</loc></url>" for url in urls) + "</urlset>"
@@ -398,13 +431,13 @@ def create_app(
         return templates.TemplateResponse(request=request, name=page_name + ".html", context=context)
 
     @application.get("/", response_class=HTMLResponse)
-    def root(request: Request) -> Response:
-        return page(request, "ja", "home")
+    def root() -> Response:
+        return RedirectResponse("/zh")
 
     @application.get("/{locale}", response_class=HTMLResponse)
     def localized_root(request: Request, locale: str) -> Response:
         if locale in ("history", "about", "faq"):
-            return page(request, "ja", locale)
+            return RedirectResponse("/zh/" + locale)
         return page(request, locale, "home")
 
     @application.get("/{locale}/{page_name}", response_class=HTMLResponse)
