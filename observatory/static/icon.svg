@@ -1,1 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="12" fill="#123c37"/><circle cx="20" cy="20" r="11" stroke="#ddede4" stroke-width="1.4"/><circle cx="20" cy="20" r="6" stroke="#ddede4" stroke-width="1.4"/><path d="M20 20 30 10" stroke="#e0f792" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#e0f792"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="16" fill="#12846f"/>
+  <text x="32" y="40" text-anchor="middle" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="-0.8">CRO</text>
+</svg>

@@ -2,6 +2,8 @@
 
 观察 Codex 使用额度重置，汇总已记录事件、官方帖子和服务状态，并估计未来 24／48 小时的随机重置概率。网站使用 **Python 3.12+、FastAPI、Jinja2**；运行网页不需要 Node.js，也不调用 LLM。
 
+网站署名：**allen flux** · [项目仓库](https://github.com/allenflux/codex-reset-observator)
+
 ## 主要功能
 
 | 功能 | 当前实现 |
@@ -22,13 +24,39 @@
 
 按 [.env.example](.env.example) 在本地 `.env` 中填写 MySQL 连接配置；已有 `.env` 时保留原文件。不要把真实凭据提交到 Git。Compose 连接已有 MySQL，不需要 Redis。
 
+线上部署在 `.env` 中设置：
+
+```dotenv
+PORT=9090
+SITE_URL=http://allenflux.tech
+```
+
 ```bash
 docker compose up -d --build
 docker compose ps
 docker compose exec collector observatory collection-status --check-fresh
 ```
 
-Compose 运行 `web` 和 `collector` 两个服务：网站默认使用 `8000` 端口，采集器启动时同步一次，此后默认每小时同步。MySQL 自动创建独立的 `cro_*` 表，保存累计数据；修改 `COLLECTION_INTERVAL_SECONDS` 可调整采集间隔。**必须保持采集器运行，数据才会持续积累。**只启动网页不会自动采集。
+Compose 运行 `web` 和 `collector` 两个服务：网站默认映射到宿主机 `9090` 端口，容器内仍使用 `8000`；采集器启动时同步一次，此后默认每小时同步。MySQL 自动创建独立的 `cro_*` 表，保存累计数据；修改 `COLLECTION_INTERVAL_SECONDS` 可调整采集间隔。**必须保持采集器运行，数据才会持续积累。**只启动网页不会自动采集。
+
+要通过 [allenflux.tech](http://allenflux.tech/) 直接访问，需要把域名 DNS 指向部署服务器，并配置宿主机反向代理，将 HTTP `80` 端口转发至 `127.0.0.1:9090`。例如 Nginx：
+
+```nginx
+server {
+    listen 80;
+    server_name allenflux.tech;
+
+    location / {
+        proxy_pass http://127.0.0.1:9090;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+将该配置加入服务器的 Nginx 站点配置后，先运行 `sudo nginx -t`，通过后再运行 `sudo systemctl reload nginx`。DNS 和反向代理需在服务器上配置，Compose 不会自动设置。直接检查应用可访问服务器的 `9090` 端口；本地执行 `observatory serve` 的默认端口仍为 `8000`。
 
 网站读取最近一次成功采集的完整历史。未成功采集或数据库不可用时，会标记数据状态异常；仓库内快照只用于回退展示。运行中的采集不会修改 `observatory/data`，也不会自动训练或替换模型。
 
@@ -56,37 +84,88 @@ PyCharm：选择项目 `.venv`，使用模块运行配置 `observatory`，参数
 
 ## 本地训练与前瞻评估
 
-线上只运行网站和采集器。需要训练时，在本机安装训练依赖，从 MySQL 读取已积累的历史：
+线上只运行网站和采集器，训练在本机按需执行，直接读取同一个 MySQL，无需从服务器下载数据文件，也不需要 Redis 或本地训练容器。以下命令均在项目根目录执行，需要 **Python 3.12+ 和 uv**，以及能连接 MySQL 的网络。
+
+### 1. 准备环境并检查数据
+
+本地 `.env` 参照 [.env.example](.env.example) 配置 `COLLECTION_BACKEND=mysql` 和 `MYSQL_HOST`、`MYSQL_PORT`、`MYSQL_DATABASE`、`MYSQL_USER`、`MYSQL_PASSWORD`；已有配置时直接复用，不覆盖原文件。`.env` 和 `var/` 已被 Git 忽略。
 
 ```bash
 uv sync --extra ml
-uv run --env-file .env observatory train
+uv run --env-file .env observatory collection-status
 ```
 
-默认输出为 Git 忽略的 `var/training/neural_model.json` 和 `var/training/neural-evaluation.json`。模型权重采用可检查的 JSON，不使用 pickle；训练结果是实验文件，**不会自动替换网站正在使用的模型**。当前 `train` 对最新历史做回顾性训练，报告保留数据库观察截止时间和首次发现信息，不能当成前瞻评估结果。
-
-手动补采、检查累计状态及导出前瞻审计数据：
+检查 `latestSuccessfulAt`、`currentEventCount` 和 `fresh`，确认已有成功采集且数据更新时间符合预期。`runCount` 是采集次数，`eventVersionCount` 包含历史修订，都不等于独立重置次数。如果还没有成功采集，可以手动执行一次：
 
 ```bash
 uv run --env-file .env observatory collect --once
-uv run --env-file .env observatory collection-status
+```
+
+日常积累交给线上 `collector`；不必为训练另开一个本地常驻采集器。`sync-history` 也等同于单次采集，写入数据库。
+
+### 2. 在本机训练
+
+```bash
+uv run --env-file .env --extra ml observatory train
+# 等效的快捷命令
+make train
+```
+
+两条命令任选其一。训练读取最近一次成功采集的历史，以该次采集时间作为观察截止时间，按时间划分训练／验证／测试，并剔除边界处 48 小时标签重叠。最低需要 45 个标签窗口已满 48 小时的日级样本，训练部分还必须覆盖三种结果类别；这只是程序可训练的条件，不代表数据足以可靠预测。每小时重复抓取同一批记录不会增加独立重置事件。
+
+默认生成以下本地文件，重复训练会覆盖同名文件；可通过 `COLLECTION_OUTPUT_DIR` 调整默认目录。
+
+| 文件 | 内容 |
+| --- | --- |
+| `var/training/neural_model.json` | 可检查的 JSON 模型权重、训练时间、数据指纹；不使用 pickle |
+| `var/training/neural-evaluation.json` | 数据质量、样本与时间划分、测试集指标、基线对照、数据库采集来源 |
+
+要保留不同训练版本，为每次运行指定不同目录，例如：
+
+```bash
+uv run --env-file .env --extra ml observatory train \
+  --model var/training/run-001/neural_model.json \
+  --report var/training/run-001/neural-evaluation.json
+```
+
+后续把 `run-001` 换成 `run-002` 等名称。训练输出留在本机，**不会自动上传、修改 MySQL 历史或替换网站正在使用的模型**。
+
+### 3. 查看训练结果
+
+终端会打印主要指标，完整信息在评估 JSON 中：`sampleCount` 是日级样本数，`dataQuality` 记录符合训练口径的事件及排除原因；`neural` 与 `baselines` 在相同测试集上比较。Brier 分数越低越好，`relativeBrierImprovement` 为正表示平均分数优于最佳基线，为负表示更差；还应检查 24／48 小时两个指标和 `beatsBaselineBothHorizons`。
+
+当前 `train` 对最新历史做**回顾性训练**，报告的 `collectionProvenance` 保留观察截止时间和首次发现信息。历史补录、修订及未核实的来源完整性会影响结果；一次回测领先不能当成前瞻验证通过。输出始终标记 `deploymentStatus=experimental`，是否采用新模型需要另行评估和更新。
+
+### 4. 导出前瞻样本和评估已存档预测
+
+```bash
 uv run --env-file .env observatory export-training
 uv run --env-file .env observatory score-forecasts
 ```
 
-`sync-history` 等同于单次采集，写入数据库。`export-training` 从每个预测时点实际可见的历史生成日级样本；`score-forecasts` 在完整 48 小时后评估已存档的预测。默认超过 3 小时的采集空档标为未知，不当成“没有重置”。这两个命令输出到 `var/training`，不会触发训练。
+分别输出 `var/training/prospective-dataset.json` 和 `var/training/forecast-scores.json`；可用 `--output var/training/run-001/文件名.json` 单独保存。`export-training` 依据每个 UTC 日首个成功采集时点实际可见的历史生成日级样本；`score-forecasts` 评估采集器当时存档的预测，并不评估刚训练出的本地模型。
+
+未满 48 小时的记录标记 `pending`；缺少后续采集或默认超过 3 小时的采集空档标记 `unknown`，不当成“没有重置”。初次启动时没有成熟样本是正常情况。这两个命令只导出审计数据，不触发训练；目前 `train` 默认仍读取最新历史，前瞻导出文件也不是 `--history` 所需的事件列表格式。
+
+### 其他运行方式
+
+**PyCharm：**先运行 `uv sync --extra ml`，选择项目 `.venv` 解释器，创建 Python 模块运行配置：模块名 `observatory`、参数 `train`、工作目录为项目根目录；在配置中注入 `.env` 对应的环境变量。普通 `python -m observatory train` 不会自动读取 `.env`。要保留多个实验，在参数中加上 `--model` 和 `--report`。
 
 也可使用自有历史，明确指定观察截止时间，避免把未观察的日子当作负样本：
 
 ```bash
-uv run --env-file .env observatory train --history /path/to/history.json \
+uv run --env-file .env --extra ml observatory train --history /path/to/history.json \
   --observed-until 2026-09-12T00:00:00Z \
   --model /path/to/model.json --report /path/to/evaluation.json
 ```
 
-目前导入 **43 条记录，35 次符合目标的随机重置**。训练使用 102 个日级样本，按时间划分训练／验证／测试，在边界剔除 48 小时标签重叠。最后 21 个测试日，神经网络平均 Brier 分数为 **0.2586**，历史频率基线为 **0.2565**（越低越好），尚未胜过基线。因此主预测保留统计模型，神经网络以实验预测显示。详见 [训练评估](reports/python-migration/neural-evaluation.md)。
+自有历史应为与 `observatory/data/online_history.json` 相同结构的事件列表；把示例路径和截止时间换成实际值。直接从 MySQL 训练时，不传 `--history` 或 `--observed-until`。
 
-数据来自第三方整理的 [公开历史页](https://codex.gussuriworks.com/zh/history)，不是 OpenAI 提供的完整重置事件日志。这 35 次是站点已收录的事件，不能等同于逐条独立核验的精确执行时刻，也不足以证明神经网络具有稳定预测能力。分批重置、时间估计、历史修正和未知的漏报率都会影响训练；每小时抓取成功并不增加独立重置事件数。累计数据保留初始历史补录和后续实际观察的区别，没有使用未来公告构造历史时点的特征。
+### 初始评估参考
+
+首次导入 **43 条记录，35 次符合目标的随机重置**。初始训练使用 102 个日级样本；最后 21 个测试日，神经网络平均 Brier 分数为 **0.2586**，历史频率基线为 **0.2565**，尚未胜过基线。因此主预测保留统计模型，神经网络以实验预测显示。以上是初始评估快照，不是当前 MySQL 计数；后续运行以本地报告为准。详见 [训练评估](reports/python-migration/neural-evaluation.md)。
+
+数据来自第三方整理的 [公开历史页](https://codex.gussuriworks.com/zh/history)，不是 OpenAI 提供的完整重置事件日志。这 35 次是站点已收录的事件，不能等同于逐条独立核验的精确执行时刻，也不足以证明神经网络具有稳定预测能力。分批重置、时间估计、历史修正和未知的漏报率都会影响训练；每小时抓取成功并不增加独立重置事件数。累计数据保留初始历史补录和后续实际观察的区别；前瞻导出只使用各预测时点已采集的信息，回顾性训练不具备同样保证。
 
 ## API 与监控
 

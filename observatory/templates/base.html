@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#123c37">
   <meta name="description" content="{{ t.description }}">
+  <meta name="author" content="{{ site_author }}">
   <title>{{ title }} | {{ t.site_name }}</title>
   <link rel="canonical" href="{{ canonical }}">
   {% for language in languages %}<link rel="alternate" hreflang="{{ language.code }}" href="{{ site_url }}{{ language.url }}">{% endfor %}
@@ -23,7 +24,7 @@
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="{{ routes.home }}">
-        <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="12" fill="currentColor"/><circle cx="20" cy="20" r="11" stroke="#ddede4" stroke-width="1.4"/><circle cx="20" cy="20" r="6" stroke="#ddede4" stroke-width="1.4"/><path d="M20 20 30 10" stroke="#e0f792" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#e0f792"/></svg>
+        <img class="brand-mark" src="/static/icon.svg" width="40" height="40" alt="" aria-hidden="true">
         <span>{{ t.site_name }}<small>{{ t.tagline }}</small></span>
       </a>
       <nav class="main-nav" aria-label="{{ t.navigation }}">
@@ -48,8 +49,8 @@
       <nav aria-label="{{ t.sources_heading }}">
         <a href="{{ routes.about }}">{{ t.about }}</a><a href="{{ routes.faq }}#forecast-method">{{ t.method }}</a>
         <a href="/api/current?locale={{ locale }}">{{ t.api }}</a>
-        <a href="https://github.com/gussuri/codex-reset-observatory" target="_blank" rel="noopener noreferrer">{{ t.developer }} ↗</a>
-        <a href="https://gussuriworks.com/" target="_blank" rel="noopener noreferrer">Gussuri Works ↗</a>
+        <a href="{{ repository_url }}" target="_blank" rel="noopener noreferrer">{{ t.developer }} ↗</a>
+        <span class="site-credit">by {{ site_author }}</span>
       </nav>
     </div>
   </footer>

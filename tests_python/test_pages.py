@@ -88,6 +88,11 @@ def test_localized_pages_render_without_javascript(
         in response.text
     )
     assert 'href="/static/site.css"' in response.text
+    assert '<meta name="author" content="allen flux">' in response.text
+    footer = response.text.split('<footer class="site-footer">', 1)[1].split('</footer>', 1)[0]
+    assert 'by allen flux' in footer
+    assert 'href="https://github.com/allenflux/codex-reset-observator"' in footer
+    assert 'gussuri' not in footer.lower()
     assert "__NEXT_DATA__" not in response.text
     if page == "home":
         assert 'role="progressbar"' in response.text
@@ -234,10 +239,11 @@ def test_static_assets_are_served_and_unknown_routes_are_rejected(client):
 @pytest.mark.parametrize(
     "configured,origin",
     [
+        ("http://allenflux.tech/", "http://allenflux.tech"),
         ("https://my-observatory.example/", "https://my-observatory.example"),
         ("http://localhost:9000/unused/path?query=discarded#fragment", "http://localhost:9000"),
-        ("javascript:alert(1)", "https://codex.gussuriworks.com"),
-        ("https://user:secret@example.org/", "https://codex.gussuriworks.com"),
+        ("javascript:alert(1)", "http://allenflux.tech"),
+        ("https://user:secret@example.org/", "http://allenflux.tech"),
     ],
 )
 def test_configured_origin_is_consistent_across_page_metadata_and_discovery(configured, origin):
@@ -256,4 +262,4 @@ def test_configured_origin_is_consistent_across_page_metadata_and_discovery(conf
 
 
 def test_standalone_presentation_retains_default_origin(snapshot):
-    assert page_context(snapshot, "en")["canonical"] == "https://codex.gussuriworks.com/en"
+    assert page_context(snapshot, "en")["canonical"] == "http://allenflux.tech/en"

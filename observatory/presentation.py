@@ -14,7 +14,9 @@ from statistics import mean, median
 from typing import Any
 from urllib.parse import urlsplit
 
-SITE_URL = "https://codex.gussuriworks.com"
+SITE_URL = "http://allenflux.tech"
+SITE_AUTHOR = "allen flux"
+REPOSITORY_URL = "https://github.com/allenflux/codex-reset-observator"
 VISIBLE_RECORD_KINDS = {"confirmed_global", "banked_distribution", "reference", "regular_completed"}
 
 COPY: dict[str, dict[str, Any]] = {
@@ -590,6 +592,8 @@ def page_context(
         "subtitle": copy["description"] if page == "home" else copy[f"subtitle_{page}"],
         "canonical": site_origin + routes[page],
         "site_url": site_origin,
+        "site_author": SITE_AUTHOR,
+        "repository_url": REPOSITORY_URL,
         "stale": health.get("stale", True) or health.get("overall") != "ok",
         "checked": date_display(snapshot.get("checkedAt"), copy["unknown"]),
         "updated": date_display(
