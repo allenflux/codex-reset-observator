@@ -196,7 +196,9 @@ uv run observatory monitor-usage --once
 
 默认 Webhook 为本地地址；远程地址必须 HTTPS。仅发送白名单额度字段，不发送账号响应原文。浏览器扩展仍使用 [原生 JavaScript](extension/tibo-monitor/README.md)，在扩展设置中配置你的 Python 服务 URL。
 
-`FETCH_LIVE_STATUS=true` 可开启官方状态查询。本次部署统一使用 MySQL；旧 SQLite／Supabase 适配器保留供兼容和测试使用，不需要额外配置它们。
+Docker Compose 默认开启官方状态查询，无需 API 密钥。旧 `.env` 如果保留了 `FETCH_LIVE_STATUS=false`，需改为 `FETCH_LIVE_STATUS=true`，再执行 `docker compose up -d --force-recreate web` 让进程重新读取配置；普通 `docker compose restart` 不会重新加载环境变量。查询关闭时，状态卡显示“状态暂不可用”，公开 API 的 `dataHealth.sources.openAIStatus.detail` 为 `missing_configuration`；查询失败时为 `request_failed`。这与 MySQL、历史及社交采集是否正常是不同的状态。
+
+本次部署统一使用 MySQL；旧 SQLite／Supabase 适配器保留供兼容和测试使用，不需要额外配置它们。
 
 ## 检查与部署
 
