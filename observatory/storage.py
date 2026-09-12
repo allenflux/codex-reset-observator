@@ -23,6 +23,8 @@ TABLE_KEYS = {
     "prediction_history": "logged_hour", "reset_display_names": "event_key",
     "reset_display_name_candidates": "candidate_id", "tibo_formal_adoptions": "id",
     "social_post_versions": "id", "social_collection_state": "id",
+    "reset_notification_state": "id", "reset_notification_seen": "id",
+    "reset_notification_outbox": "id",
 }
 TABLE_ORDER = {
     "tibo_signals": "tweet_created_at", "prediction_history": "logged_hour",

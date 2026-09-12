@@ -21,3 +21,9 @@ jobs:
       - run: uv run mypy observatory
       - run: uv run pytest -m 'not browser'
       - run: uv build
+
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: make ios-test ios-build

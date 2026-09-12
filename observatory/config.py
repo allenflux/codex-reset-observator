@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from observatory.collection_config import CollectionSettings
+from observatory.notifications import NotificationSettings
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,7 @@ class Settings:
     site_url: str = ""
     max_body_bytes: int = 65_536
     collection: CollectionSettings | None = None
+    notifications: NotificationSettings = field(default_factory=NotificationSettings)
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -33,4 +35,5 @@ class Settings:
             fetch_live_status=os.environ.get("FETCH_LIVE_STATUS", "false").lower() == "true",
             site_url=os.environ.get("SITE_URL", "").strip().rstrip("/"),
             collection=CollectionSettings.from_env(),
+            notifications=NotificationSettings.from_env(),
         )

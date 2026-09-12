@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -42,6 +43,7 @@ def main(argv: list[str] | None = None) -> None:
     train.add_argument("--report", type=Path)
     monitor = commands.add_parser("monitor-usage", help="Poll the local Codex CLI and send minimal quota snapshots")
     monitor.add_argument("--once", action="store_true")
+    commands.add_parser("telegram-chat-id", help="Read private chat IDs after messaging your bot; token stays in environment")
     args = parser.parse_args(argv)
     try:
         from observatory.collection_config import CollectionSettings, create_collection_store
@@ -130,6 +132,13 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "monitor-usage":
             from observatory.monitor import run_monitor
             run_monitor(once=args.once)
+        elif args.command == "telegram-chat-id":
+            from observatory.telegram_setup import private_chat_ids
+            chat_ids = private_chat_ids(os.environ.get("TELEGRAM_BOT_TOKEN", "").strip())
+            if not chat_ids:
+                print("No private chat found. Open your dedicated bot in Telegram, send /start, then retry.", file=sys.stderr)
+                raise SystemExit(1)
+            print(json.dumps({"privateChatIds": chat_ids}))
     except KeyboardInterrupt:
         pass
     except ImportError:

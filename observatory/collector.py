@@ -106,12 +106,16 @@ def collection_status(settings: CollectionSettings) -> dict[str, Any]:
 
 
 def run_collector(settings: CollectionSettings) -> None:
+    from observatory.notification_worker import notify_once
+    from observatory.notifications import NotificationSettings
     from observatory.social_sync import collect_social_once
 
+    notifications = NotificationSettings.from_env()
     stopping = threading.Event()
     for name in (signal.SIGINT, signal.SIGTERM):
         signal.signal(name, lambda *_: stopping.set())
     next_history = next_social = 0.0
+    next_notifications = 0.0
     while not stopping.is_set():
         if settings.social_enabled and time.monotonic() >= next_social:
             result = collect_social_once(settings)
@@ -125,5 +129,15 @@ def run_collector(settings: CollectionSettings) -> None:
             print(json.dumps({"event": "collection", **result}), flush=True)
             delay = settings.interval_seconds if result["ok"] else min(300, settings.interval_seconds)
             next_history = time.monotonic() + delay
+            if result["ok"]:
+                next_notifications = 0.0
+        if stopping.is_set():
+            break
+        if notifications.enabled and time.monotonic() >= next_notifications:
+            result = notify_once(settings, notifications)
+            print(json.dumps({"event": "reset_notifications", **result}), flush=True)
+            next_notifications = time.monotonic() + notifications.interval_seconds
         wake_at = min(next_history, next_social) if settings.social_enabled else next_history
+        if notifications.enabled:
+            wake_at = min(wake_at, next_notifications)
         stopping.wait(max(0, wake_at - time.monotonic()))

@@ -20,6 +20,14 @@
 
 功能盘点、迁移边界和原代码位置见 [迁移说明](docs/python-migration.md)。模型兼容范围见 [模型对照](docs/python-model-parity.md)。
 
+## iPhone 客户端与锁屏通知
+
+原生 SwiftUI 客户端位于 [ios/ResetObservatory.xcodeproj](ios/ResetObservatory.xcodeproj)，支持 iOS 17+，默认连接 `http://allenflux.tech:9090`。用 Xcode 和免费 Apple ID 即可安装到自己的 iPhone，无需上架 App Store，也无需为网站配置 HTTPS。
+
+免费 Personal Team 的自签客户端使用 **Telegram 接收后台与锁屏通知**。在服务器环境中配置自己的 Bot Token 和 Chat ID，并启用 `TELEGRAM_ENABLED=true`；采集器会持久去重、发送新记录的广泛随机重置或重置机会发放通知，首次运行不会补发旧历史。建议设置 `COLLECTION_INTERVAL_SECONDS=300`，以约 5 分钟间隔检查公开历史。预告、预测和定期重置不会触发这条通道。
+
+客户端提供状态、历史、HTTP 地址设置、Telegram 通知状态和受保护的测试按钮。签名、安装、服务器配置和实机收信步骤见 [iPhone 安装与通知说明](docs/ios-client.md)。
+
 ## 部署网站与持续采集
 
 按 [.env.example](.env.example) 在本地 `.env` 中填写 MySQL 连接配置；已有 `.env` 时保留原文件。不要把真实凭据提交到 Git。Compose 连接已有 MySQL，不需要 Redis。

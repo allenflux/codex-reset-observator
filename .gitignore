@@ -52,3 +52,15 @@ build/
 var/
 .env.*
 !.env.example
+
+# Personal Xcode signing, local builds, and test results.
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcresult/
+*.ipa
+*.mobileprovision
+*.p8
+*.p12
+ios/.build/
+ios/.swiftpm/

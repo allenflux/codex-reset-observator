@@ -31,6 +31,7 @@ from observatory.domain import build_snapshot, classify_post, load_data
 from observatory.integrations import StatusFeed
 from observatory.mysql_repository import MySQLRepository
 from observatory.neural import parse_time
+from observatory.notifications import NotificationError, NotificationService
 from observatory.presentation import get_site_origin
 from observatory.probability import MODEL_VERSION as BASELINE_MODEL_VERSION
 from observatory.reconciliation import reconcile_names
@@ -152,6 +153,7 @@ def create_app(
     application = FastAPI(title="Codex Reset Observatory", version="2.0.0", lifespan=lifespan)
     application.state.repository = repo
     application.state.settings = settings
+    notification_service = NotificationService(repo, settings.notifications)
     templates = Jinja2Templates(directory=str(ROOT / "templates"))
     application.mount("/static", StaticFiles(directory=str(ROOT / "static"), check_dir=False), name="static")
 
@@ -279,6 +281,32 @@ def create_app(
     def marker() -> JSONResponse:
         result = reset_marker(repo.list_records("reset_execution_estimates"), clock())
         return JSONResponse(result, headers={"Cache-Control": "public, max-age=0, s-maxage=300"})
+
+    @application.get("/api/mobile/status")
+    def mobile_status() -> Record:
+        status = notification_service.status()
+        checked = timestamp(status.get("lastCheckedAt"))
+        age = (clock() - checked).total_seconds() if checked else None
+        return {
+            **status,
+            "historyIntervalSeconds": settings.collection.interval_seconds if settings.collection else 3600,
+            "pollIntervalSeconds": settings.notifications.interval_seconds,
+            "workerFresh": age is not None and 0 <= age <= max(120, settings.notifications.interval_seconds * 3),
+            "deliveryApp": "Telegram",
+        }
+
+    @application.post("/api/mobile/test")
+    async def mobile_test(request: Request) -> Record:
+        authorize(request, settings.notifications.mobile_api_secret)
+        body = await json_body(request, 1024)
+        if body:
+            raise HTTPException(400, "Expected an empty JSON object")
+        try:
+            await run_in_threadpool(notification_service.send_test, now=clock())
+        except NotificationError as exc:
+            status_code = {"rate_limited": 429, "delivery_failed": 502}.get(exc.code, 503)
+            raise HTTPException(status_code, exc.code) from None
+        return {"ok": True}
 
     @application.get("/api/monitor/health")
     def monitor_health(request: Request) -> JSONResponse:

@@ -1,4 +1,5 @@
-.PHONY: dev check test lint typecheck build train sync-history collect collection-status
+.PHONY: dev check test lint typecheck build train sync-history collect collection-status ios-test ios-build
+IOS_DEVELOPER_DIR ?= /Applications/Xcode.app/Contents/Developer
 dev:
 	uv run --env-file .env observatory serve --reload
 test:
@@ -18,3 +19,7 @@ collect:
 	uv run --env-file .env observatory collect
 collection-status:
 	uv run --env-file .env observatory collection-status
+ios-test:
+	DEVELOPER_DIR="$(IOS_DEVELOPER_DIR)" swift test --package-path ios --scratch-path var/ios-tests
+ios-build:
+	DEVELOPER_DIR="$(IOS_DEVELOPER_DIR)" xcodebuild -project ios/ResetObservatory.xcodeproj -scheme ResetObservatory -configuration Debug -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath var/ios-device CODE_SIGNING_ALLOWED=NO build
