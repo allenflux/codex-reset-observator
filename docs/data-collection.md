@@ -6,6 +6,8 @@
 
 根据仓库的 `.env.example` 配置本地、被 Git 忽略的 `.env`，填写 MySQL 连接字段。已有 `.env` 时保留原文件。配置账号需能连接指定数据库，并在其中创建和读写本项目的 `cro_*` 表；程序不会创建数据库，也不会清空已有业务表。
 
+当前 MySQL 的远程连接端口为 `32768`，设置 `MYSQL_PORT=32768`。如果部署日志出现 `Database unavailable` 或 `collection_database_unavailable`，先核对数据库实际对外端口；`.env` 更新后执行 `docker compose up -d --force-recreate web collector` 重新加载配置。
+
 ```bash
 docker compose up -d --build
 docker compose ps

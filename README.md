@@ -24,6 +24,13 @@
 
 按 [.env.example](.env.example) 在本地 `.env` 中填写 MySQL 连接配置；已有 `.env` 时保留原文件。不要把真实凭据提交到 Git。Compose 连接已有 MySQL，不需要 Redis。
 
+当前远程 MySQL 使用对外端口 **32768**，应设置 `MYSQL_PORT=32768`。跨服务器连接需要填写数据库服务器实际发布的端口；误填默认端口 `3306` 会导致连接失败。修改 `.env` 后，执行以下命令让两个容器重新读取配置：
+
+```bash
+docker compose up -d --force-recreate web collector
+docker compose logs --tail=30 web collector
+```
+
 线上部署在 `.env` 中设置：
 
 ```dotenv
