@@ -5,6 +5,8 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from observatory.collection_config import CollectionSettings
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -17,6 +19,7 @@ class Settings:
     fetch_live_status: bool = False
     site_url: str = "http://localhost:8000"
     max_body_bytes: int = 65_536
+    collection: CollectionSettings | None = None
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -29,4 +32,5 @@ class Settings:
             supabase_service_role_key=os.environ.get("SUPABASE_SERVICE_ROLE_KEY", ""),
             fetch_live_status=os.environ.get("FETCH_LIVE_STATUS", "false").lower() == "true",
             site_url=os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/"),
+            collection=CollectionSettings.from_env(),
         )

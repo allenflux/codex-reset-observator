@@ -1,0 +1,48 @@
+x-runtime: &runtime
+  build:
+    context: .
+    target: runtime
+  image: codex-reset-observatory:local
+  env_file:
+    - .env
+  environment:
+    COLLECTION_BACKEND: mysql
+    COLLECTION_INTERVAL_SECONDS: "${COLLECTION_INTERVAL_SECONDS:-3600}"
+  init: true
+  restart: unless-stopped
+  stop_grace_period: 120s
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  web:
+    <<: *runtime
+    command: ["observatory", "serve", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${PORT:-8000}:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import json, urllib.request;
+          response = urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=5);
+          raise SystemExit(0 if response.status == 200 and json.load(response).get('status') == 'ok' else 1)
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  collector:
+    <<: *runtime
+    command: ["observatory", "collect"]
+    healthcheck:
+      test: ["CMD", "observatory", "collection-status", "--check-fresh"]
+      interval: 5m
+      timeout: 45s
+      start_period: 2m
+      retries: 3

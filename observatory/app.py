@@ -6,6 +6,7 @@ import json
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
+from functools import partial
 from pathlib import Path
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
@@ -22,9 +23,13 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 
 from observatory.classification import is_global_reset_signal
+from observatory.collection_config import create_collection_store
+from observatory.collection_store import CollectionStorageError
 from observatory.config import Settings
 from observatory.domain import build_snapshot, classify_post, load_data
 from observatory.integrations import StatusFeed
+from observatory.mysql_repository import MySQLRepository
+from observatory.neural import parse_time
 from observatory.presentation import get_site_origin
 from observatory.probability import MODEL_VERSION as BASELINE_MODEL_VERSION
 from observatory.reconciliation import reconcile_names
@@ -91,12 +96,15 @@ def create_app(
     *,
     clock: Callable[[], datetime] | None = None,
     snapshot_builder: Callable[..., Record] | None = None,
+    collection_factory: Callable[[], Any] | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_env()
     site_origin = get_site_origin(settings.site_url)
     owned_repository = repository is None
     if repository is None:
-        if settings.supabase_url or settings.supabase_service_role_key:
+        if settings.collection and settings.collection.backend == "mysql":
+            repository = MySQLRepository(settings.collection)
+        elif settings.supabase_url or settings.supabase_service_role_key:
             repository = SupabaseRepository(settings.supabase_url, settings.supabase_service_role_key)
         else:
             repository = SQLiteRepository(settings.database_path)
@@ -105,6 +113,28 @@ def create_app(
     snapshot_builder = snapshot_builder or build_snapshot
     status_feed = StatusFeed() if settings.fetch_live_status else None
     seed = load_data()
+    collection_config = settings.collection
+    if collection_factory is None and collection_config and collection_config.backend != "unconfigured":
+        collection_factory = partial(create_collection_store, collection_config)
+
+    def read_collection() -> tuple[Record, list[Record] | None]:
+        if collection_factory is None:
+            return {"configured": False, "fresh": False}, None
+        try:
+            with collection_factory() as store:
+                status = store.get_status()
+                run_id = status.get("latestSuccessfulRunId")
+                rows = store.events_for_run(run_id) if run_id is not None else None
+            latest = status.get("latestSuccessfulAt")
+            age = (clock() - parse_time(latest)).total_seconds() if latest else None
+            interval = collection_config.interval_seconds if collection_config else 3600
+            return {**status, "configured": True,
+                    "backend": collection_config.backend if collection_config else "injected",
+                    "intervalSeconds": interval,
+                    "fresh": age is not None and 0 <= age <= interval * 3,
+                    "ageSeconds": round(age) if age is not None else None}, rows
+        except (CollectionStorageError, ValueError, OSError):
+            return {"configured": True, "fresh": False, "error": "collection_database_unavailable"}, None
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> Any:
@@ -146,7 +176,12 @@ def create_app(
 
     def read_data(*, strict: bool = False) -> Record:
         data = dict(seed)
-        source_status = "local" if isinstance(repo, SQLiteRepository) else "supabase"
+        source_status = "mysql" if isinstance(repo, MySQLRepository) else "local" if isinstance(repo, SQLiteRepository) else "supabase"
+        collection, collected_history = read_collection()
+        data["collection_status"] = collection
+        if collected_history is not None:
+            # A source correction/removal must replace the prior snapshot too.
+            data["reset_history"] = collected_history
         try:
             for table, field, key in [
                 ("tibo_signals", "tibo_signals", "tweet_id"),
@@ -170,11 +205,12 @@ def create_app(
                 data["status_history"] = incidents
             data["status_feed_available"] = available
         data["source_status"] = source_status
-        database_healthy = source_status == "supabase"
+        database_healthy = source_status in {"mysql", "supabase"}
+        collection_healthy = not collection["configured"] or collection["fresh"]
         status_healthy = bool(data.get("status_feed_available"))
         data["checked_at"] = iso(clock())
         data["data_health"] = {
-            "stale": not database_healthy or not status_healthy,
+            "stale": not database_healthy or not status_healthy or not collection_healthy,
             "sources": {
                 "supabaseSignals": {"state": "ok" if database_healthy else "degraded",
                                     "detail": "database_error" if source_status == "unavailable" else "missing_configuration"},
@@ -197,6 +233,11 @@ def create_app(
     def current(locale: str = "ja") -> JSONResponse:
         language = locale if locale in ("ja", "en", "zh") else "ja"
         return JSONResponse(get_snapshot(language), headers={"Cache-Control": PUBLIC_CACHE})
+
+    @application.get("/api/collection/status")
+    def public_collection_status() -> JSONResponse:
+        status, _ = read_collection()
+        return JSONResponse(status, status_code=200 if status.get("fresh") else 503)
 
     @application.get("/api/reset-marker")
     def marker() -> JSONResponse:
