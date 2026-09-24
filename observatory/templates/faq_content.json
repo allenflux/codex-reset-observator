@@ -6,7 +6,7 @@
     },
     {
       "question": "リセット期待度とは何ですか？",
-      "answer": "24／48時間の主予測は、過去のリセット時刻でローカル学習したニューラルネットワークによるものです。初期評価ではベースラインを上回っておらず、実験段階です。モデルが利用できない場合は統計モデルに戻ります。公式の確率ではありません。",
+      "answer": "24／48時間の主表示は Gussuri Works の公開APIから約5分ごとに同期し、配信元と予測時刻を表示します。取得できない場合や30分以上古い場合は、明示した上でローカルの履歴モデルに戻ります。その時点の入力と確率をMySQLに保存し、配信元を模倣するニューラルネットワークをローカルで学習します。模倣誤差が小さくても、実際のリセット予測精度を証明するものではありません。本プロジェクトはLLMを呼び出しませんが、配信元の構造化シグナルは意味解析に依存する場合があります。",
       "id": "forecast-method"
     },
     {
@@ -116,7 +116,7 @@
     },
     {
       "question": "What is the random reset probability?",
-      "answer": "The main 24/48-hour forecast uses our locally trained neural network and historical reset timing. It remains experimental and has not outperformed the baseline in the initial evaluation. If the model is unavailable, the statistical baseline is shown. These are not official probabilities.",
+      "answer": "The main 24/48-hour probabilities are synced from Gussuri Works’ public API about every five minutes, with source attribution and the source forecast time. If that forecast is unavailable or older than 30 minutes, the local historical model is used and clearly labeled. Paired source inputs and probabilities are stored in MySQL for a locally trained student neural network. Learning to match the source does not establish accuracy for actual resets. No LLM is called by this project; source-provided structured signals may depend on upstream semantic analysis.",
       "id": "forecast-method"
     },
     {
@@ -172,7 +172,7 @@
     },
     {
       "question": "重置可能性是什么意思？",
-      "answer": "主界面的 24／48 小时概率由我们本地训练的神经网络计算，使用历史重置时间特征。模型仍处于实验阶段，初始评估尚未超过基线；模型不可用时回退到统计模型。这不是官方概率。",
+      "answer": "主卡的 24／48 小时概率通过 Gussuri Works 公开接口约每 5 分钟同步，并标明来源与源站预测时间。源站数据不可用或超过 30 分钟时，明确标记并回退到本地历史模型。当时的输入和概率会成对保存在 MySQL，供本地训练模仿源站的学生神经网络。模仿误差小不代表真实重置预测更准。本项目不调用 LLM；作为训练输入的源站结构化信号可能来自其语义分析。",
       "id": "forecast-method"
     },
     {

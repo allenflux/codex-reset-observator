@@ -193,6 +193,11 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
     if neural:
         primary.update(probability12h=None, probability72h=None,
                        probability24h=neural["probability24h"], probability48h=neural["probability48h"])
+    from .teacher import teacher_status
+    upstream_status = teacher_status(data.get("teacher_forecast"), now=now)
+    teacher = upstream_status["forecast"] if upstream_status["fresh"] else None
+    if teacher:
+        primary.update({key: teacher.get(key) for key in primary})
     expected, anchor = next_regular_reset(history, now)
     notice = active_notice(data, now, max((at for at in (last_random, anchor) if at), default=None))
     local_expected = expected.astimezone(ZoneInfo("Asia/Tokyo")) if expected else None
@@ -283,6 +288,27 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
             locale, "過去のリセット時刻で学習した実験的なニューラルネットワーク予測です。投稿の意味解析は行いません。",
             "Experimental neural forecast trained on historical reset times. Post semantics are not model inputs.",
             "基于历史重置时间训练的实验性神经网络预测，未使用帖文语义分析。")
+    if teacher:
+        view_model["primaryForecast"] = {
+            "kind": "upstream_mirror", "modelVersion": teacher["modelVersion"],
+            "experimental": False,
+            "includesAnnouncement": teacher.get("context", {}).get("officialNoticeActive") is True,
+            "sourceUrl": "https://codex.gussuriworks.com/zh",
+        }
+        view_model["displayReasoningSummary"] = _text(
+            locale, "Gussuri Works の公開予測を同期しています。更新間隔やキャッシュによる遅延があります。",
+            "Synced from Gussuri Works’ public forecast. Polling and source caching can delay updates.",
+            "同步自 Gussuri Works 的公开预测，采集间隔及源站缓存可能造成延迟。")
+    saved_teacher = data.get("teacher_forecast") or {}
+    view_model["upstreamForecast"] = {
+        "enabled": bool(data.get("teacher_enabled") or saved_teacher),
+        "fresh": bool(upstream_status["fresh"]), "reason": upstream_status["reason"],
+        "source": "Gussuri Works", "sourceUrl": "https://codex.gussuriworks.com/zh",
+        "checkedAt": iso(timestamp(saved_teacher.get("checkedAt"))) if isinstance(saved_teacher, dict) else None,
+        "fetchedAt": iso(timestamp(saved_teacher.get("fetchedAt"))) if isinstance(saved_teacher, dict) else None,
+        "probability24h": teacher["probability24h"] if teacher else None,
+        "probability48h": teacher["probability48h"] if teacher else None,
+    }
     return {"schemaVersion": "public-v1", "checkedAt": iso(timestamp(data.get("checked_at")) or now), "updatedAt": iso(updated),
             "lastRandomResetAt": iso(last_random), "dataHealth": _health(data, now), "viewModel": view_model,
             "resetTeaserStatus": teaser_status, "latestTiboActivity": latest_activity, "recoveryObservation": _public_recovery(data, now)}

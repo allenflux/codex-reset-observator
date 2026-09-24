@@ -121,6 +121,62 @@ def test_predictions_record_exact_inputs_and_reject_future_source():
         assert store.get_status()["predictionCount"] == 2
 
 
+def test_teacher_cache_uses_latest_observed_identity_and_preserves_source_time(tmp_path, monkeypatch):
+    from observatory.teacher import MODEL_VERSION
+
+    path = tmp_path / "teacher.sqlite3"
+    first = {"checkedAt": "2026-09-12T00:00:00+00:00", "fetchedAt": "2026-09-12T00:01:00+00:00"}
+    second = {"checkedAt": "2026-09-12T01:00:00+00:00", "fetchedAt": "2026-09-12T01:01:00+00:00"}
+    with CollectionStore(path) as store:
+        assert store.latest_teacher_forecast(at="2026-09-12T00:00:00Z") is None
+        for hour, forecast in enumerate((first, second)):
+            run_id = record(store, [event()], hour)
+            store.record_prediction(
+                timestamp=f"2026-09-12T0{hour}:01:00Z", probability24h=0.2, probability48h=0.4,
+                model_version=MODEL_VERSION, source_run_id=run_id,
+                features={"forecastKind": "upstream_teacher", "teacherForecast": forecast},
+            )
+        store.record_prediction(
+            timestamp="2026-09-12T02:00:00Z", probability24h=0.2, probability48h=0.4,
+            model_version="local-neural-model", source_run_id=run_id,
+            features={"teacherForecast": {"checkedAt": "wrong-model"}},
+        )
+        store.record_failure(fetched_at="2026-09-12T03:00:00Z", error_code="teacher_unavailable")
+        monkeypatch.setattr(store, "export_dataset", lambda: pytest.fail("must use bounded query"))
+        assert store.latest_teacher_forecast(at="2026-09-12T00:00:59Z") is None
+        assert store.latest_teacher_forecast(at="2026-09-12T00:01:00Z") == first
+        assert store.latest_teacher_forecast(at="2026-09-12T01:00:59Z") == first
+        assert store.latest_teacher_forecast(at="2026-09-12T04:00:00Z") == second
+    with CollectionStore(path) as reopened:
+        assert reopened.latest_teacher_forecast(at="2026-09-12T04:00:00Z") == second
+
+
+def test_mysql_teacher_lookup_uses_fixed_version_cutoff_and_bounded_query(monkeypatch):
+    from observatory import collection_store
+    from observatory.teacher import MODEL_VERSION
+
+    calls = []
+    forecast = {"checkedAt": "2026-09-12T00:00:00Z"}
+
+    class Cursor:
+        def execute(self, sql, parameters):
+            calls.append((sql, parameters))
+
+        def fetchone(self):
+            return {"features": json.dumps({"teacherForecast": forecast})}
+
+    connection = SimpleNamespace(cursor=lambda: Cursor(), close=lambda: None)
+    driver = SimpleNamespace(connect=lambda **kwargs: connection,
+                             cursors=SimpleNamespace(DictCursor=object))
+    monkeypatch.setattr(collection_store.importlib, "import_module", lambda _: driver)
+    with MySQLCollectionStore(host="db.example", database="existing", user="user", password="test-secret") as store:
+        assert store.latest_teacher_forecast(at="2026-09-12T00:10:00Z") == forecast
+    query, parameters = next((sql, values) for sql, values in calls if sql.startswith("SELECT features"))
+    assert "FROM cro_predictions" in query
+    assert "ORDER BY timestamp DESC,id DESC LIMIT 1" in query
+    assert parameters == (MODEL_VERSION, "2026-09-12T00:10:00.000000+00:00")
+
+
 def test_store_can_share_application_database_without_changing_records(tmp_path):
     path = tmp_path / "shared.sqlite3"
     repository = SQLiteRepository(path)

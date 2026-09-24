@@ -228,6 +228,26 @@ class CollectionStore:
                 "SELECT id FROM collection_predictions WHERE content_hash=?", (digest,),
             ).fetchone()["id"])
 
+    def latest_teacher_forecast(self, *, at: Timestamp | None = None) -> Record | None:
+        """Read the last observed teacher snapshot without exporting the full archive.
+
+        The caller applies freshness at display time. Retaining original checked
+        and fetched timestamps prevents a failed poll from extending this cache.
+        """
+        from observatory.teacher import MODEL_VERSION
+
+        cutoff = _timestamp(at or datetime.now(UTC))
+        with self._transaction(write=False):
+            row = self._connection.execute(
+                "SELECT features FROM collection_predictions WHERE model_version=? AND timestamp<=? "
+                "ORDER BY timestamp DESC,id DESC LIMIT 1", (MODEL_VERSION, cutoff),
+            ).fetchone()
+            if row is None:
+                return None
+            features = json.loads(row["features"])
+            forecast = features.get("teacherForecast") if isinstance(features, dict) else None
+            return forecast if isinstance(forecast, dict) else None
+
     def get_status(self) -> Record:
         with self._transaction(write=False):
             latest = self._connection.execute(

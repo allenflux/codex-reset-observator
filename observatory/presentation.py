@@ -63,6 +63,11 @@ COPY: dict[str, dict[str, Any]] = {
         "forecast": "Random reset outlook",
         "forecast_note": "Statistical estimates, not an official schedule. Account eligibility may vary.",
         "neural_primary": "Neural network forecast",
+        "teacher_primary": "Synced source forecast",
+        "teacher_note": "Probabilities are synced from Gussuri Works’ public API about every five minutes. Paired inputs and forecasts are collected for local neural-network training.",
+        "teacher_checked": "Source forecast time",
+        "teacher_fallback": "The source forecast is unavailable or expired. A local historical estimate is shown.",
+        "neural_comparison": "Local historical model · comparison",
         "neural_primary_note": "Our locally trained neural network estimates reset probabilities from historical event timing. It does not analyze post text. The model is experimental and has not been prospectively validated.",
         "within_24": "Within 24h",
         "within_48": "Within 48h",
@@ -138,7 +143,7 @@ COPY: dict[str, dict[str, Any]] = {
         "source_official": "Official Codex updates",
         "about_paragraphs": [
             "Codex Reset Observatory brings together reset history and official notices so you can compare the current situation with earlier events.",
-            "The main forecast uses our locally trained neural network and historical reset timing. Post text is not a model input. The model is experimental and has not outperformed the baseline in the initial evaluation; it is not an official OpenAI probability or a promised reset.",
+            "Main probabilities are synced from Gussuri Works with their source timestamp. Paired inputs and forecasts are collected for a local student neural network. The historical model remains available for comparison and fallback. These are not official OpenAI probabilities or guarantees.",
             "Global resets, Banked Reset distributions, regular resets, and reference records are kept distinct. Using a Banked Reset refreshes the applicable usage limit; the resulting window and reset date can differ by account.",
             "Read the original announcement for each event and check the usage limits shown in your account. A recorded event does not guarantee identical coverage for every plan.",
         ],
@@ -186,6 +191,11 @@ COPY: dict[str, dict[str, Any]] = {
         "forecast": "ランダムリセット期待度",
         "forecast_note": "統計に基づく推定です。公式の予定ではなく、アカウントによって適用範囲が異なります。",
         "neural_primary": "ニューラルネットワーク予測",
+        "teacher_primary": "配信元の予測を同期",
+        "teacher_note": "Gussuri Works の公開APIから約5分ごとに確率を同期します。入力と予測の組を保存し、ローカルのニューラルネットワーク学習に利用します。",
+        "teacher_checked": "配信元の予測時刻",
+        "teacher_fallback": "配信元の予測を取得できないか、有効期限が切れています。ローカルの履歴モデルによる推定を表示します。",
+        "neural_comparison": "ローカル履歴モデル・比較用",
         "neural_primary_note": "ローカルで学習した独自のニューラルネットワークが、過去の発生時刻からリセット確率を推定します。投稿本文の意味解析は行いません。試験運用中で、将来データによる検証は未完了です。",
         "within_24": "24時間以内",
         "within_48": "48時間以内",
@@ -261,7 +271,7 @@ COPY: dict[str, dict[str, Any]] = {
         "source_official": "Codexの公式投稿",
         "about_paragraphs": [
             "Codexリセット観測所は、リセット履歴と公式予告をまとめ、現在の状況と過去の出来事を比較できるようにする非公式サイトです。",
-            "主予測には、過去のリセット時刻でローカル学習したニューラルネットワークを使用します。投稿本文は入力に含みません。初期評価ではベースラインを上回っておらず、実験的な予測です。OpenAIの公式確率やリセット実施の保証ではありません。",
+            "主表示は配信元の時刻を付けて Gussuri Works の確率を同期します。入力と確率を保存し、ローカルの学生ニューラルネットワークの学習に利用します。履歴モデルは比較用と取得失敗時の代替として保持します。OpenAIの公式確率や実施の保証ではありません。",
             "全体リセット、任意リセット権配布、定期リセット、参考記録を区別して掲載します。任意リセットを使うと対象の利用上限が更新されますが、その後の利用期間とリセット日時はアカウントにより異なります。",
             "各イベントの原文とアカウントの利用上限をご確認ください。履歴に記録されたイベントが、すべてのプランに同じように適用されるとは限りません。",
         ],
@@ -309,6 +319,11 @@ COPY: dict[str, dict[str, Any]] = {
         "forecast": "随机重置可能性",
         "forecast_note": "基于统计的参考预测，并非官方时间表；实际适用范围可能因账号而异。",
         "neural_primary": "神经网络预测",
+        "teacher_primary": "源站同步预测",
+        "teacher_note": "概率来自 Gussuri Works 公开接口，约每 5 分钟同步。同步保存当时的输入与概率，用于本地神经网络学习。",
+        "teacher_checked": "源站预测时间",
+        "teacher_fallback": "源站预测暂不可用或已过期，当前显示本地历史模型估计。",
+        "neural_comparison": "本地历史模型 · 对照",
         "neural_primary_note": "使用我们在本地训练的神经网络，根据历史事件时间估算重置概率。当前模型不分析帖文语义，仍处于实验阶段，尚未完成前瞻验证。",
         "within_24": "24 小时内",
         "within_48": "48 小时内",
@@ -384,7 +399,7 @@ COPY: dict[str, dict[str, Any]] = {
         "source_official": "Codex 官方动态",
         "about_paragraphs": [
             "Codex 重置观测站汇集重置历史与官方预告，方便你将当前情况与过去的重置事件进行比较。",
-            "主预测使用本地训练的神经网络，输入是历史重置时间特征，尚未使用帖子文本。模型仍处于实验阶段，初始评估尚未超过基线；预测并非 OpenAI 官方概率，也不保证会发生重置。",
+            "主卡同步 Gussuri Works 的公开概率并标注源站时间，同时积累输入与概率样本，用于本地训练学生神经网络。原有历史模型用于对照及源站不可用时的回退。预测并非 OpenAI 官方概率，也不保证会发生重置。",
             "本站区分全局重置、手动重置发放、定期重置和参考记录。使用手动重置后，适用的使用额度会被刷新；之后的使用周期和重置日期可能因账号而异。",
             "请查看每次事件对应的原始公告，并检查账号显示的使用额度。记录某次重置发生，并不意味着每个方案都会以同样的方式获得重置。",
         ],
@@ -578,6 +593,7 @@ def page_context(
     site_origin = get_site_origin(site_url)
     copy = COPY[locale]
     view = snapshot.get("viewModel") or {}
+    upstream = view.get("upstreamForecast") or {}
     health = snapshot.get("dataHealth") or {}
     active = view.get("activeWindow") or {}
     latest = view.get("latestWindow") or {}
@@ -616,6 +632,12 @@ def page_context(
         "page": page,
         "t": copy,
         "primary_neural": (view.get("primaryForecast") or {}).get("kind") == "neural",
+        "teacher": {
+            "primary": (view.get("primaryForecast") or {}).get("kind") == "upstream_mirror",
+            "enabled": bool(upstream.get("enabled")), "fresh": bool(upstream.get("fresh")),
+            "checked": date_display(upstream.get("checkedAt"), copy["unknown"]),
+            "source": safe_url(upstream.get("sourceUrl")),
+        },
         "routes": routes,
         "languages": languages,
         "title": copy[f"title_{page}"],
@@ -703,7 +725,8 @@ def page_context(
             ):
                 scores.append((NEURAL_COPY[locale][key], f"{value:.4f}"))
         context["neural"] = {
-            "t": NEURAL_COPY[locale],
+            "t": {**NEURAL_COPY[locale], **({"heading": copy["neural_comparison"]}
+                  if context["teacher"]["primary"] else {})},
             "model": localized(neural.get("modelVersion"), locale),
             "trained": date_display(neural.get("trainedAt"), copy["unknown"]),
             "eligible": bool(neural.get("eligibleForUse")),

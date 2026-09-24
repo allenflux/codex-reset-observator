@@ -18,6 +18,14 @@ from observatory.domain import build_snapshot, load_data
 from observatory.history_sync import HISTORY_URL, sync_history
 from observatory.neural import FEATURES, MODEL_PATH, eligible_events, features_at, parse_time
 from observatory.probability import MODEL_VERSION as BASELINE_MODEL_VERSION
+from observatory.teacher import MODEL_VERSION as TEACHER_MODEL_VERSION
+from observatory.teacher import (
+    SOURCE_ERRORS,
+    TeacherSourceError,
+    fetch_teacher_forecast,
+    teacher_status,
+    validate_teacher_forecast,
+)
 
 
 def fetch_source() -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -27,6 +35,13 @@ def fetch_source() -> tuple[list[dict[str, Any]], dict[str, Any]]:
         target = Path(directory)
         metadata = sync_history(target)
         rows = json.loads((target / "online_history.json").read_text())
+        # Public probabilities are an independently attributed teacher stream.
+        # Failure to fetch them does not turn a valid history poll into a gap.
+        try:
+            metadata["teacherForecast"] = fetch_teacher_forecast()
+        except Exception as exc:
+            code = str(exc) if isinstance(exc, TeacherSourceError) else "teacher_source_unavailable"
+            metadata["teacherForecastError"] = code if code in SOURCE_ERRORS else "teacher_source_unavailable"
         return rows, metadata
 
 
@@ -44,6 +59,13 @@ def collect_once(
         try:
             rows, metadata = fetcher()
             observed_at = clock()
+            metadata = dict(metadata)
+            if "teacherForecast" in metadata:
+                try:
+                    metadata["teacherForecast"] = validate_teacher_forecast(metadata["teacherForecast"])
+                except (TeacherSourceError, OverflowError):
+                    metadata.pop("teacherForecast")
+                    metadata["teacherForecastError"] = "teacher_source_invalid_forecast"
             # A source-provided historical timestamp must not become firstSeenAt.
             run_id = store.record_success(rows, fetched_at=observed_at, source_metadata=metadata)
         except Exception:
@@ -86,8 +108,24 @@ def collect_once(
         except Exception:
             # Preserve the valid source snapshot even if prediction generation fails.
             prediction_status = "failed"
+        teacher = teacher_status(metadata.get("teacherForecast"), observed_at)
+        teacher_prediction_status = teacher["reason"]
+        if teacher["fresh"]:
+            try:
+                forecast = teacher["forecast"]
+                store.record_prediction(
+                    timestamp=observed_at, probability24h=forecast["probability24h"],
+                    probability48h=forecast["probability48h"], model_version=TEACHER_MODEL_VERSION,
+                    features={"forecastKind": "upstream_teacher", "teacherForecast": forecast},
+                    source_run_id=run_id,
+                )
+                predictions += 1
+                teacher_prediction_status = "saved"
+            except Exception:
+                teacher_prediction_status = "teacher_prediction_failed"
         return {"ok": True, "runId": run_id, "observedAt": observed_at.isoformat(),
-                "eventCount": len(rows), "predictionCount": predictions, "predictionStatus": prediction_status}
+                "eventCount": len(rows), "predictionCount": predictions, "predictionStatus": prediction_status,
+                "teacherForecastStatus": teacher_prediction_status}
     except Exception:
         return {"ok": False, "error": "collection_database_unavailable"}
     finally:

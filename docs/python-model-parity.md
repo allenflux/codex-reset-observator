@@ -100,4 +100,6 @@ baseline parity fixtures nor a neural fit establish reliable future accuracy.
 
 ## 当前主预测
 
-Python 网站使用自己的实验性神经网络输出主界面 24／48 小时概率，`primaryForecast` 标明模型和实验状态；`statisticalBaseline` 保留统计结果用于比较。神经网络未提供的 12／72 小时概率返回 null，模型不可用时回退到统计模型。以上与原站统计数值的兼容验证是不同范围；帖子文本和上游 LLM 标签目前不进入神经网络。
+Python 网站优先同步源站公开概率，`primaryForecast.kind=upstream_mirror`；`upstreamForecast` 标明来源、原始预测时点和采集时点。任一时间超过 30 分钟或上游过期时回退到本地历史神经网络，再回退到统计模型。`neuralForecast` 与 `statisticalBaseline` 保留独立结果用于对照；镜像不会被标记为我们神经网络的输出。
+
+历史网络只使用重置时间特征。另有 `observatory/distillation.py` 学生网络，以同次保存的公开输入学习源站概率。其目标是模仿误差，不能与真实事件的 Brier 准确度混用；上游结构化信号可能来自 LLM，但 Python 采集、训练和推理均不调用 LLM。样本不足时只生成报告，不生成权重；候选不自动替换主显示。

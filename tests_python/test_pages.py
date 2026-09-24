@@ -285,6 +285,21 @@ def test_neural_primary_flag_uses_the_selected_model(snapshot):
 
 
 @pytest.mark.parametrize("locale", ["zh", "en", "ja"])
+def test_teacher_attribution_and_source_time_are_localized(snapshot, locale):
+    snapshot["viewModel"].update(
+        primaryForecast={"kind": "upstream_mirror"},
+        upstreamForecast={"enabled": True, "fresh": True, "checkedAt": NOW.isoformat(),
+                          "sourceUrl": "https://codex.gussuriworks.com/zh"})
+    context = page_context(snapshot, locale)
+    assert context["teacher"]["primary"] and not context["primary_neural"]
+    html = render(snapshot, locale)
+    assert COPY[locale]["teacher_primary"] in html
+    assert COPY[locale]["teacher_checked"] in html
+    assert 'href="https://codex.gussuriworks.com/zh"' in html
+    assert f'datetime="{NOW.isoformat()}"' in html
+
+
+@pytest.mark.parametrize("locale", ["zh", "en", "ja"])
 def test_mirrored_activity_does_not_display_upstream_semantic_classification(snapshot, locale):
     snapshot["latestTiboActivity"] = {
         "text": "A public post", "classification": "reset_executed",

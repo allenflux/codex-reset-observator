@@ -123,14 +123,15 @@ def create_app(
     if collection_factory is None and collection_config and collection_config.backend != "unconfigured":
         collection_factory = partial(create_collection_store, collection_config)
 
-    def read_collection() -> tuple[Record, list[Record] | None]:
+    def read_collection() -> tuple[Record, list[Record] | None, Record | None]:
         if collection_factory is None:
-            return {"configured": False, "fresh": False}, None
+            return {"configured": False, "fresh": False}, None, None
         try:
             with collection_factory() as store:
                 status = store.get_status()
                 run_id = status.get("latestSuccessfulRunId")
                 rows = store.events_for_run(run_id) if run_id is not None else None
+                teacher = store.latest_teacher_forecast(at=clock())
             latest = status.get("latestSuccessfulAt")
             age = (clock() - parse_time(latest)).total_seconds() if latest else None
             interval = collection_config.interval_seconds if collection_config else 300
@@ -138,9 +139,9 @@ def create_app(
                     "backend": collection_config.backend if collection_config else "injected",
                     "intervalSeconds": interval,
                     "fresh": age is not None and 0 <= age <= interval * 3,
-                    "ageSeconds": round(age) if age is not None else None}, rows
+                    "ageSeconds": round(age) if age is not None else None}, rows, teacher
         except (CollectionStorageError, ValueError, OSError):
-            return {"configured": True, "fresh": False, "error": "collection_database_unavailable"}, None
+            return {"configured": True, "fresh": False, "error": "collection_database_unavailable"}, None, None
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> Any:
@@ -207,8 +208,10 @@ def create_app(
     def read_data(*, strict: bool = False) -> Record:
         data = dict(seed)
         source_status = "mysql" if isinstance(repo, MySQLRepository) else "local" if isinstance(repo, SQLiteRepository) else "supabase"
-        collection, collected_history = read_collection()
+        collection, collected_history, teacher = read_collection()
         data["collection_status"] = collection
+        data["teacher_forecast"] = teacher
+        data["teacher_enabled"] = collection["configured"]
         if collected_history is not None:
             # A source correction/removal must replace the prior snapshot too.
             data["reset_history"] = collected_history
@@ -269,8 +272,14 @@ def create_app(
 
     @application.get("/api/collection/status")
     def public_collection_status() -> JSONResponse:
-        status, _ = read_collection()
+        status, _, _ = read_collection()
         return JSONResponse(status, status_code=200 if status.get("fresh") else 503)
+
+    @application.get("/api/forecast/source")
+    def public_forecast_source() -> JSONResponse:
+        status = get_snapshot()["viewModel"]["upstreamForecast"]
+        return JSONResponse(status, status_code=200 if status["fresh"] else 503,
+                            headers={"Cache-Control": NO_STORE})
 
     @application.get("/api/social/status")
     def public_social_status() -> JSONResponse:

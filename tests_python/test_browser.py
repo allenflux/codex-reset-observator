@@ -4,6 +4,7 @@ import os
 import socket
 import threading
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -13,18 +14,29 @@ from playwright.sync_api import expect, sync_playwright
 
 from observatory.app import create_app
 from observatory.config import Settings
+from observatory.domain import build_snapshot
 from observatory.storage import SQLiteRepository
+from observatory.teacher import MODEL_VERSION, SOURCE, SOURCE_URL
 
 pytestmark = pytest.mark.browser
 
 
-@pytest.fixture(scope="module")
-def local_site():
+@pytest.fixture(scope="module", params=[False, True], ids=["local", "teacher"])
+def local_site(request):
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
     repository = SQLiteRepository(":memory:")
-    app = create_app(Settings(database_path=":memory:"), repository)
+    def snapshot(data, locale="zh", now=None):
+        now = now or datetime.now(UTC)
+        if request.param:
+            data = {**data, "teacher_enabled": True, "teacher_forecast": {
+                "schemaVersion": 1, "source": SOURCE, "sourceUrl": SOURCE_URL,
+                "modelVersion": MODEL_VERSION, "checkedAt": now.isoformat(), "fetchedAt": now.isoformat(),
+                "sourceStale": False, "probability24h": .36, "probability48h": .54, "context": {}}}
+        return build_snapshot(data, locale, now)
+
+    app = create_app(Settings(database_path=":memory:"), repository, snapshot_builder=snapshot)
     server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=port, log_level="error"))
     worker = threading.Thread(target=server.run, daemon=True)
     worker.start()
@@ -38,7 +50,7 @@ def local_site():
                 time.sleep(.05)
         else:
             pytest.fail("Local Python server failed to start")
-        yield url
+        yield url, request.param
     finally:
         server.should_exit = True
         worker.join(timeout=5)
@@ -47,6 +59,7 @@ def local_site():
 
 @pytest.mark.parametrize("width", [1440, 390])
 def test_localized_pages_interactions_and_layout(local_site, width):
+    local_site, mirrored = local_site
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         page = browser.new_page(viewport={"width": width, "height": 1000}, timezone_id="Asia/Bangkok")
@@ -64,6 +77,11 @@ def test_localized_pages_interactions_and_layout(local_site, width):
                 expect(page.locator("#neural-heading")).to_be_visible()
                 assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
             before = page.locator("[data-heatmap-count]").first.inner_text()
+            if mirrored:
+                expect(page.locator(".forecast-panel")).to_contain_text("源站同步预测")
+                expect(page.locator(".forecast-panel")).to_contain_text("源站预测时间")
+                expect(page.get_by_role("progressbar").first).to_have_attribute("aria-valuenow", "36")
+                expect(page.get_by_role("progressbar").last).to_have_attribute("aria-valuenow", "54")
             page.locator('[data-heatmap-range]').select_option("month")
             assert page.locator("[data-heatmap-count]").first.inner_text() != before
             page.locator('[data-heatmap-range]').select_option("all")
@@ -73,7 +91,7 @@ def test_localized_pages_interactions_and_layout(local_site, width):
             destination = os.environ.get("OBSERVATORY_SCREENSHOT_DIR")
             if destination:
                 Path(destination).mkdir(parents=True, exist_ok=True)
-                page.screenshot(path=str(Path(destination) / f"python-dashboard-{width}.png"), full_page=True)
+                page.screenshot(path=str(Path(destination) / f"python-dashboard-{width}-{'teacher' if mirrored else 'local'}.png"), full_page=True)
             assert page.goto(local_site + "/zh/history").status == 200
             page.locator("#history-search").fill("Never-Nonexistent-Record")
             assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")

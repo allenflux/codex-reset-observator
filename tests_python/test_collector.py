@@ -2,10 +2,14 @@ import hashlib
 import json
 from datetime import UTC, datetime, timedelta
 
+import pytest
+
 from observatory import collector
 from observatory.collection_config import CollectionSettings
 from observatory.collection_store import CollectionStore
 from observatory.neural import FEATURES, MODEL_PATH, eligible_events, features_at
+from observatory.teacher import MODEL_VERSION as TEACHER_MODEL_VERSION
+from observatory.teacher import SOURCE, SOURCE_URL
 
 NOW = datetime(2026, 9, 12, 12, tzinfo=UTC)
 
@@ -22,6 +26,18 @@ def source():
         })
     return rows, {"recordCount": 43, "sourceSha256": "a" * 64,
                   "fetchedAt": "2000-01-01T00:00:00Z", "sourceUrl": "https://example.com/history"}
+
+
+def teacher_forecast():
+    return {"schemaVersion": 1, "source": SOURCE, "sourceUrl": SOURCE_URL,
+            "modelVersion": TEACHER_MODEL_VERSION, "fetchedAt": NOW.isoformat(),
+            "checkedAt": (NOW - timedelta(minutes=5)).isoformat(), "sourceStale": False,
+            "probability24h": 0.8, "probability48h": 0.9, "context": {}}
+
+
+def teacher_source():
+    rows, metadata = source()
+    return rows, {**metadata, "teacherForecast": teacher_forecast()}
 
 
 def snapshot(data, *, locale, now):
@@ -151,9 +167,130 @@ def test_fetch_source_uses_ephemeral_staging_and_removes_it(monkeypatch):
         return expected_metadata
 
     monkeypatch.setattr(collector, "sync_history", fake_sync)
-    assert collector.fetch_source() == (expected_rows, expected_metadata)
+    monkeypatch.setattr(collector, "fetch_teacher_forecast", teacher_forecast)
+    assert collector.fetch_source() == (expected_rows, {**expected_metadata, "teacherForecast": teacher_forecast()})
     assert len(directories) == 1
     assert not directories[0].exists()
+
+
+def test_teacher_fetch_failure_does_not_discard_history_or_leak_error(monkeypatch):
+    rows, metadata = source()
+
+    def sync(directory):
+        (directory / "online_history.json").write_text(json.dumps(rows))
+        return metadata
+
+    def unavailable():
+        raise RuntimeError("private-token")
+
+    monkeypatch.setattr(collector, "sync_history", sync)
+    monkeypatch.setattr(collector, "fetch_teacher_forecast", unavailable)
+    actual_rows, actual_metadata = collector.fetch_source()
+    assert actual_rows == rows
+    assert actual_metadata["teacherForecastError"] == "teacher_source_unavailable"
+    assert "private-token" not in json.dumps(actual_metadata)
+
+
+def test_teacher_forecast_is_archived_independently_with_original_source_time():
+    with CollectionStore() as store:
+        result = collect(store, fetcher=teacher_source)
+        assert result["predictionCount"] == 3
+        assert result["teacherForecastStatus"] == "saved"
+        baseline, neural, teacher = store.export_dataset()["predictions"]
+        assert teacher["modelVersion"] == TEACHER_MODEL_VERSION
+        assert teacher["probability24h"] == 0.8
+        assert teacher["sourceRunId"] == baseline["sourceRunId"] == neural["sourceRunId"]
+        assert teacher["timestamp"] == NOW.isoformat(timespec="microseconds")
+        assert teacher["features"]["teacherForecast"]["checkedAt"] == teacher_forecast()["checkedAt"]
+        assert teacher["features"]["forecastKind"] == "upstream_teacher"
+
+
+def test_teacher_is_still_saved_when_local_prediction_generation_fails():
+    def broken(*args, **kwargs):
+        raise RuntimeError("private-token")
+
+    with CollectionStore() as store:
+        result = collect(store, fetcher=teacher_source, snapshot_builder=broken)
+        assert result["ok"] is True
+        assert result["predictionCount"] == 1
+        assert result["predictionStatus"] == "failed"
+        assert result["teacherForecastStatus"] == "saved"
+
+
+def test_teacher_storage_failure_preserves_local_forecasts_and_history(monkeypatch):
+    with CollectionStore() as store:
+        original = store.record_prediction
+
+        def record_prediction(**kwargs):
+            if kwargs["model_version"] == TEACHER_MODEL_VERSION:
+                raise RuntimeError("private-token")
+            return original(**kwargs)
+
+        monkeypatch.setattr(store, "record_prediction", record_prediction)
+        result = collect(store, fetcher=teacher_source)
+        assert result["ok"] is True
+        assert result["predictionCount"] == 2
+        assert result["teacherForecastStatus"] == "teacher_prediction_failed"
+        assert result["predictionStatus"] == "saved"
+        assert "private-token" not in json.dumps(result)
+
+
+def test_stale_teacher_is_not_saved_as_a_fresh_training_target():
+    with CollectionStore() as store:
+        result = collect(store, now=NOW + timedelta(hours=1), fetcher=teacher_source)
+        assert result["ok"] is True
+        assert result["predictionCount"] == 2
+        assert result["teacherForecastStatus"] == "expired"
+        assert store.latest_teacher_forecast(at=NOW + timedelta(hours=1)) is None
+
+
+def test_invalid_teacher_cannot_break_history_collection_or_local_predictions():
+    def invalid_source():
+        rows, metadata = teacher_source()
+        metadata["teacherForecast"]["probability24h"] = float("nan")
+        return rows, metadata
+
+    with CollectionStore() as store:
+        result = collect(store, fetcher=invalid_source)
+        assert result["ok"] is True
+        assert result["predictionCount"] == 2
+        metadata = store.export_dataset()["runs"][0]["sourceMetadata"]
+        assert "teacherForecast" not in metadata
+        assert metadata["teacherForecastError"] == "teacher_source_invalid_forecast"
+
+
+@pytest.mark.parametrize("value", [
+    "0001-01-01T00:00:00+23:00", "9999-12-31T23:59:59-23:00",
+    "9999-12-31T23:59:59+00:00",
+])
+def test_extreme_teacher_dates_preserve_successful_history_and_local_forecasts(value):
+    def extreme_source():
+        rows, metadata = teacher_source()
+        metadata["teacherForecast"].update(checkedAt=value, updatedAt=value)
+        return rows, metadata
+
+    with CollectionStore() as store:
+        result = collect(store, fetcher=extreme_source)
+        assert result["ok"] is True
+        assert result["predictionCount"] == 2
+        assert store.get_status()["successfulRunCount"] == 1
+        assert store.get_status()["failedRunCount"] == 0
+        assert store.latest_events() == source()[0]
+        assert store.latest_teacher_forecast(at=NOW) is None
+
+
+def test_teacher_revalidation_overflow_is_isolated_from_history(monkeypatch):
+    def overflowing_validator(record):
+        raise OverflowError("private-invalid-time")
+
+    monkeypatch.setattr(collector, "validate_teacher_forecast", overflowing_validator)
+    with CollectionStore() as store:
+        result = collect(store, fetcher=teacher_source)
+        assert result["ok"] is True
+        assert result["predictionCount"] == 2
+        exported = store.export_dataset()
+        assert exported["runs"][0]["sourceMetadata"]["teacherForecastError"] == "teacher_source_invalid_forecast"
+        assert "private-invalid-time" not in json.dumps(exported)
 
 
 def test_database_connection_failure_is_sanitized(monkeypatch):

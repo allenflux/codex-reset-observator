@@ -10,11 +10,13 @@
 <div id="radar-content">
   <section class="forecast-panel" aria-labelledby="forecast-heading">
     <div class="forecast-intro">
-      <p class="eyebrow">{{ t.notice if notice.active else t.neural_primary if primary_neural else t.forecast }}</p>
+      <p class="eyebrow">{{ t.notice if notice.active else t.teacher_primary if teacher.primary else t.neural_primary if primary_neural else t.forecast }}</p>
       <h2 id="forecast-heading">{{ t.announced if notice.active else t.forecast }}</h2>
-      <p>{{ t.announced_note if notice.active else t.neural_primary_note if primary_neural else t.forecast_note }}</p>
+      <p>{{ t.announced_note if notice.active else t.teacher_note if teacher.primary else t.neural_primary_note if primary_neural else t.forecast_note }}</p>
       {% if notice.active and notice.source %}<a href="{{ notice.source }}" target="_blank" rel="noopener noreferrer">{{ t.source }} ↗</a>{% else %}
+      {% if teacher.primary and teacher.source %}<a href="{{ teacher.source }}" target="_blank" rel="noopener noreferrer">Gussuri Works ↗</a>{% else %}
       <a href="{{ routes.faq }}#forecast-method">{{ t.method }} <span aria-hidden="true">↗</span></a>
+      {% endif %}
       {% endif %}
       <div class="radar-art" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
     </div>
@@ -35,7 +37,9 @@
       </article>
       {% endfor %}
     </div>{% endif %}
-    {% if notice.active %}<p class="reasoning">{{ t.historical_forecast_note }}</p>{% elif reasoning %}<p class="reasoning">{{ reasoning }}</p>{% endif %}
+    {% if teacher.primary %}<p class="reasoning">{{ t.teacher_checked }}: {{ time(teacher.checked) }}</p>
+    {% elif teacher.enabled and not teacher.fresh %}<p class="reasoning" role="status">{{ t.teacher_fallback }}</p>
+    {% elif notice.active %}<p class="reasoning">{{ t.historical_forecast_note }}</p>{% elif reasoning %}<p class="reasoning">{{ reasoning }}</p>{% endif %}
   </section>
 
   <section class="current-status panel" aria-labelledby="notice-heading">

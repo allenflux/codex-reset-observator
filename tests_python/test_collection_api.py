@@ -6,8 +6,59 @@ from observatory.app import create_app
 from observatory.collection_config import CollectionSettings
 from observatory.collection_store import CollectionStorageError, CollectionStore
 from observatory.config import Settings
+from observatory.teacher import MODEL_VERSION, SOURCE, SOURCE_URL
 
 NOW = datetime(2026, 9, 12, 10, tzinfo=UTC)
+
+
+def teacher_forecast(at=NOW):
+    return {"schemaVersion": 1, "source": SOURCE, "sourceUrl": SOURCE_URL,
+            "modelVersion": MODEL_VERSION, "checkedAt": at.isoformat(),
+            "fetchedAt": at.isoformat(), "sourceStale": False,
+            "probability24h": .3638336, "probability48h": .5368211, "context": {}}
+
+
+def test_public_forecast_uses_collected_teacher_with_provenance_and_keeps_local_model(tmp_path):
+    app, config = configured_app(tmp_path)
+    with CollectionStore(config.sqlite_path) as store:
+        history = app.state.read_data()["reset_history"]
+        run = store.record_success(history, fetched_at=NOW, source_metadata={})
+        store.record_prediction(timestamp=NOW, probability24h=.3638336, probability48h=.5368211,
+                                model_version=MODEL_VERSION, source_run_id=run,
+                                features={"teacherForecast": {**teacher_forecast(), "private": "must-not-leak"}})
+    with TestClient(app) as client:
+        view = client.get("/api/current?locale=zh").json()["viewModel"]
+        assert view["primaryForecast"]["kind"] == "upstream_mirror"
+        assert view["primaryForecast"]["experimental"] is False
+        assert view["probability24h"] == .3638336
+        assert view["probability48h"] == .5368211
+        assert view["neuralForecast"]["modelVersion"] == "reset-mlp-8-tanh-v1"
+        status = client.get("/api/forecast/source")
+        assert status.status_code == 200 and status.json()["fresh"]
+        assert datetime.fromisoformat(status.json()["checkedAt"].replace("Z", "+00:00")) == NOW
+        assert "must-not-leak" not in status.text
+        html = client.get("/zh").text
+        assert "源站同步预测" in html and "源站预测时间" in html
+        assert 'aria-valuenow="36"' in html and 'aria-valuenow="54"' in html
+        assert "本地历史模型 · 对照" in html
+
+
+def test_expired_teacher_does_not_relabel_local_predictions_as_a_mirror(tmp_path):
+    app, config = configured_app(tmp_path)
+    with CollectionStore(config.sqlite_path) as store:
+        at = NOW - timedelta(minutes=31)
+        run = store.record_success(app.state.read_data()["reset_history"], fetched_at=at, source_metadata={})
+        store.record_prediction(timestamp=at, probability24h=.3638336, probability48h=.5368211,
+                                model_version=MODEL_VERSION, source_run_id=run,
+                                features={"teacherForecast": teacher_forecast(at)})
+    with TestClient(app) as client:
+        view = client.get("/api/current").json()["viewModel"]
+        assert view["primaryForecast"]["kind"] == "neural"
+        assert view["probability24h"] == view["neuralForecast"]["probability24h"]
+        assert view["upstreamForecast"]["reason"] == "expired"
+        assert view["upstreamForecast"]["probability24h"] is None
+        assert client.get("/api/forecast/source").status_code == 503
+        assert "源站预测暂不可用或已过期" in client.get("/zh").text
 
 
 def event(key, **fields):
