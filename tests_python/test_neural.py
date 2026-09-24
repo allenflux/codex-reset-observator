@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from observatory.neural import (
+    MODEL_VERSION,
     eligible_events,
     features_at,
     forecast,
@@ -45,13 +46,19 @@ def test_censoring_horizon_boundaries_and_purged_splits():
         assert row["label"] == expected
 
 
-def test_saved_model_is_portable_coherent_and_not_used_for_earlier_dates(tmp_path):
+@pytest.mark.parametrize("filename,version", [
+    ("neural_model.json", "reset-mlp-8-tanh-v1"),
+    ("neural_model_v2_candidate.json", "reset-mlp-8-tanh-v2"),
+])
+def test_saved_model_is_portable_coherent_and_not_used_for_earlier_dates(tmp_path, filename, version):
     rows = json.loads((DATA / "online_history.json").read_text())
-    model = DATA / "neural_model.json"
-    output = forecast(rows, datetime(2026, 9, 13, tzinfo=UTC), model)
+    model = DATA / filename
+    cutoff = parse_time(json.loads(model.read_text())["observedUntil"])
+    output = forecast(rows, cutoff + timedelta(days=1), model)
     assert output and 0 <= output["probability24h"] <= output["probability48h"] <= 1
+    assert output["modelVersion"] == version
     assert output["eligibleForUse"] is False
-    assert forecast(rows, datetime(2026, 8, 1, tzinfo=UTC), model) is None
+    assert forecast(rows, cutoff - timedelta(seconds=1), model) is None
     assert forecast(rows, model_path=tmp_path / "missing.json") is None
     corrupt = tmp_path / "corrupt.json"
     corrupt.write_text("[]")
@@ -65,29 +72,72 @@ def test_timezone_and_small_sample_rejection():
         split_samples([])
 
 
-def test_training_temporal_report_and_portable_serialization(tmp_path):
+@pytest.mark.parametrize("model_version", [None, "reset-mlp-8-tanh-v2"])
+def test_training_temporal_report_and_portable_serialization(tmp_path, model_version):
     pytest.importorskip("sklearn")
     from observatory.neural import train_model
     rows = json.loads((DATA / "online_history.json").read_text())
     model_path = tmp_path / "model.json"
-    report = train_model(rows, datetime(2026, 9, 12, tzinfo=UTC), model_path)
+    report_path = tmp_path / "report.json"
+    until = datetime(2026, 9, 12, tzinfo=UTC)
+    options = {} if model_version is None else {"model_version": model_version}
+    report = train_model(rows, until, model_path, report_path, **options)
+    expected_version = model_version or MODEL_VERSION
+    assert report["modelVersion"] == expected_version
+    assert json.loads(model_path.read_text())["modelVersion"] == expected_version
+    assert json.loads(report_path.read_text())["modelVersion"] == expected_version
     assert report["splits"]["test"]["count"] == 21
     assert report["sampleCount"] == 102
     assert report["eligibleForUse"] is False
     assert 0 <= report["neural"]["meanBrier"] <= 1
-    assert forecast(rows, datetime(2026, 9, 13, tzinfo=UTC), model_path)
+    prediction = forecast(rows, until + timedelta(days=1), model_path)
+    assert prediction and prediction["modelVersion"] == expected_version
+
+
+@pytest.mark.parametrize("version", ["reset-mlp-8-tanh-v1", "reset-mlp-8-tanh-v2"])
+def test_supported_model_versions_keep_portable_predictions(tmp_path, version):
+    rows = json.loads((DATA / "online_history.json").read_text())
+    source = DATA / "neural_model.json"
+    model = json.loads(source.read_text())
+    now = parse_time(model["observedUntil"]) + timedelta(days=1)
+    expected = forecast(rows, now, source)
+    model["modelVersion"] = version
+    path = tmp_path / "model.json"
+    path.write_text(json.dumps(model))
+    result = forecast(rows, now, path)
+    assert expected and result
+    assert result["modelVersion"] == version
+    assert result["probability24h"] == expected["probability24h"]
+    assert result["probability48h"] == expected["probability48h"]
+
+
+def test_unknown_model_version_fails_closed_and_cannot_be_trained(tmp_path):
+    from observatory.neural import train_model
+
+    rows = json.loads((DATA / "online_history.json").read_text())
+    model = json.loads((DATA / "neural_model.json").read_text())
+    now = parse_time(model["observedUntil"]) + timedelta(days=1)
+    model["modelVersion"] = "unknown-model"
+    path = tmp_path / "unknown-model.json"
+    path.write_text(json.dumps(model))
+    assert forecast(rows, now, path) is None
+    target = tmp_path / "must-not-be-written.json"
+    with pytest.raises(ValueError, match="unsupported_neural_model_version"):
+        train_model(rows, now, target, model_version="unknown-model")
+    assert not target.exists()
 
 
 def test_malformed_weight_dimensions_and_zero_scale_fail_closed(tmp_path):
     rows = json.loads((DATA / "online_history.json").read_text())
     model = json.loads((DATA / "neural_model.json").read_text())
+    now = parse_time(model["observedUntil"]) + timedelta(days=1)
     path = tmp_path / "bad-model.json"
     bad_scale = {**model, "scale": [0] * len(model["scale"])}
     path.write_text(json.dumps(bad_scale))
-    assert forecast(rows, datetime(2026, 9, 13, tzinfo=UTC), path) is None
+    assert forecast(rows, now, path) is None
     bad_weights = {**model, "weights": [[]]}
     path.write_text(json.dumps(bad_weights))
-    assert forecast(rows, datetime(2026, 9, 13, tzinfo=UTC), path) is None
+    assert forecast(rows, now, path) is None
 
 
 def test_combined_product_reset_is_eligible_without_accepting_partial_banked_distribution():

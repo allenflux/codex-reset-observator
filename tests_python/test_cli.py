@@ -97,6 +97,36 @@ def test_file_training_uses_explicit_coverage_and_custom_artifact_paths(monkeypa
     assert "collectionProvenance" not in json.loads(Path("var/experiment/report.json").read_text())
 
 
+@pytest.mark.parametrize("version", ["reset-mlp-8-tanh-v1", "reset-mlp-8-tanh-v2"])
+def test_train_passes_explicit_model_version_to_trainer(version, monkeypatch, trainer):
+    original_train = neural.train_model
+    options_seen = []
+
+    def train_with_version(*args, **kwargs):
+        options_seen.append(kwargs)
+        return original_train(*args)
+
+    monkeypatch.setattr(neural, "train_model", train_with_version)
+    Path("custom.json").write_text(json.dumps(HISTORY))
+    cli.main(["train", "--history", "custom.json", "--observed-until", OBSERVED_UNTIL.isoformat(),
+              "--model-version", version])
+    assert options_seen == [{"model_version": version}]
+    assert trainer == [(HISTORY, OBSERVED_UNTIL, Path("var/training/neural_model.json"),
+                        Path("var/training/neural-evaluation.json"))]
+
+
+def test_train_rejects_unknown_model_version_before_database_access(monkeypatch, trainer, capsys):
+    def unexpected_connection(settings):
+        pytest.fail("Invalid model version must fail before connecting")
+
+    monkeypatch.setattr(collection_config, "create_collection_store", unexpected_connection)
+    with pytest.raises(SystemExit) as raised:
+        cli.main(["train", "--model-version", "unknown-model"])
+    assert raised.value.code == 2
+    assert not trainer
+    assert "invalid choice" in capsys.readouterr().err
+
+
 def test_matching_import_history_can_use_its_observation_metadata(trainer):
     Path("online_history.json").write_text(json.dumps(HISTORY))
     Path("online_history_metadata.json").write_text(json.dumps({"fetchedAt": OBSERVED_UNTIL.isoformat()}))

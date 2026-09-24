@@ -19,6 +19,7 @@ from typing import Any
 DATA_DIR = Path(__file__).parent / "data"
 MODEL_PATH = DATA_DIR / "neural_model.json"
 MODEL_VERSION = "reset-mlp-8-tanh-v1"
+SUPPORTED_MODEL_VERSIONS = frozenset({MODEL_VERSION, "reset-mlp-8-tanh-v2"})
 FEATURES = [
     "log_days_since_reset", "log_previous_interval_days", "log_mean_last_3_intervals_days",
     "resets_last_7_days", "resets_last_30_days", "weekday_sin", "weekday_cos",
@@ -180,7 +181,10 @@ def _fit(rows: list[dict[str, Any]], alpha: float) -> dict[str, Any]:
 
 
 def train_model(rows: list[dict[str, Any]], observed_until: datetime,
-                model_path: Path = MODEL_PATH, report_path: Path | None = None) -> dict[str, Any]:
+                model_path: Path = MODEL_PATH, report_path: Path | None = None, *,
+                model_version: str = MODEL_VERSION) -> dict[str, Any]:
+    if model_version not in SUPPORTED_MODEL_VERSIONS:
+        raise ValueError("unsupported_neural_model_version")
     events, quality = eligible_events(rows, observed_until)
     samples = make_samples(events, observed_until)
     train, valid, test = split_samples(samples)
@@ -213,7 +217,7 @@ def train_model(rows: list[dict[str, Any]], observed_until: datetime,
     # A good score on this small corrected historical snapshot is insufficient evidence
     # for automatic publication. Require a separate prospective collection before adoption.
     report = {
-        "modelVersion": MODEL_VERSION, "trainedAt": datetime.now(UTC).isoformat(),
+        "modelVersion": model_version, "trainedAt": datetime.now(UTC).isoformat(),
         "observedUntil": observed_until.isoformat(), "dataQuality": quality,
         "sampleCount": len(samples), "featureNames": FEATURES,
         "target": "At least one broad-scope random reset or banked distribution in the next 24/48 hours",
@@ -231,7 +235,7 @@ def train_model(rows: list[dict[str, Any]], observed_until: datetime,
         "limitations": [
             "Only a few dozen independent reset events; daily rows are not independent new events.",
             "48h labels overlap; aggregate holdout metrics are descriptive, not significance tests.",
-            "Published history may include retrospective corrections; no point-in-time discovery log is available.",
+            "This fit uses corrected historical data, not point-in-time discovery logs; evaluate those separately.",
             "No event in a period is treated as a negative assuming site coverage is complete, which is unverified.",
             "No causal relation or exact next-reset time can be inferred from these records.",
             "Automatic adoption requires prospective verification on newly collected data.",
@@ -242,7 +246,7 @@ def train_model(rows: list[dict[str, Any]], observed_until: datetime,
     }
     final_model = _fit(samples, alpha)
     fingerprint = hashlib.sha256(json.dumps(rows, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
-    final_model.update({"modelVersion": MODEL_VERSION, "trainedAt": report["trainedAt"],
+    final_model.update({"modelVersion": model_version, "trainedAt": report["trainedAt"],
                         "observedUntil": report["observedUntil"], "trainingDataSha256": fingerprint,
                         "eligibleForUse": False, "evaluation": {"neural": metrics, "baseline": score,
                         "testSampleCount": len(test), "eventCount": len(events),
@@ -266,11 +270,12 @@ def forecast(rows: list[dict[str, Any]], now: datetime | None = None,
         model = json.loads(model_path.read_text())
         if not isinstance(model, dict):
             return None
-        if model.get("modelVersion") != MODEL_VERSION or now < parse_time(model["observedUntil"]):
+        model_version = model.get("modelVersion")
+        if model_version not in SUPPORTED_MODEL_VERSIONS or now < parse_time(model["observedUntil"]):
             return None  # never leak a model fitted in the future into historical requests
         events, _ = eligible_events(rows, now)
         probabilities = _predict_weights(model, features_at(events, now))
-        return {"modelVersion": MODEL_VERSION, "trainedAt": model["trainedAt"],
+        return {"modelVersion": model_version, "trainedAt": model["trainedAt"],
                 "probability24h": probabilities[1], "probability48h": probabilities[1]+probabilities[2],
                 "eligibleForUse": False, "evaluation": model["evaluation"]}
     except (OSError, ValueError, TypeError, KeyError, ArithmeticError, IndexError, AttributeError):

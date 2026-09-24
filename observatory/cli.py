@@ -12,6 +12,7 @@ from pathlib import Path
 import httpx
 
 from observatory.collection_store import CollectionStorageError
+from observatory.neural import SUPPORTED_MODEL_VERSIONS
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -41,6 +42,8 @@ def main(argv: list[str] | None = None) -> None:
     train.add_argument("--observed-until", help="End of verified observation coverage (ISO time)")
     train.add_argument("--model", type=Path)
     train.add_argument("--report", type=Path)
+    train.add_argument("--model-version", choices=sorted(SUPPORTED_MODEL_VERSIONS),
+                       help="Version written to trained weights and report; defaults to v1")
     monitor = commands.add_parser("monitor-usage", help="Poll the local Codex CLI and send minimal quota snapshots")
     monitor.add_argument("--once", action="store_true")
     commands.add_parser("telegram-chat-id", help="Read private chat IDs after messaging your bot; token stays in environment")
@@ -122,7 +125,8 @@ def main(argv: list[str] | None = None) -> None:
                     rows, until, provenance = get_training_history(store)
             model_path = args.model or configuration.output_dir / "neural_model.json"
             report_path = args.report or configuration.output_dir / "neural-evaluation.json"
-            report = train_model(rows, until, model_path, report_path)
+            train_options = {"model_version": args.model_version} if args.model_version else {}
+            report = train_model(rows, until, model_path, report_path, **train_options)
             if provenance:
                 report["collectionProvenance"] = provenance
                 report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n")

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "decision": "retain_v1_save_v2_candidate",
+  "candidatePath": "observatory/data/neural_model_v2_candidate.json",
+  "activePath": "observatory/data/neural_model.json",
+  "collection": {
+    "observedUntil": "2026-09-24T00:46:51.683292+00:00",
+    "firstCollectedAt": "2026-09-12T02:43:44.237462+00:00",
+    "snapshotSha256": "a51ebd27138314164aa4097ec3490d81c9550c4d22ca44cc1c789bf10bdfe17a",
+    "maxPollGapHours": 1.0008046752777777,
+    "pollGapsOver3Hours": 0,
+    "keyDuplicates": 0,
+    "orphanVersionReferences": 0
+  },
+  "counts": {
+    "runCount": 3367,
+    "successfulRunCount": 3367,
+    "failedRunCount": 0,
+    "currentEventCount": 46,
+    "eventVersionCount": 239
+  },
+  "eligibleEventCount": 36,
+  "exclusions": {
+    "reference_or_regular": 6,
+    "limited_scope": 3,
+    "non_random_cycle": 1
+  },
+  "candidateEvaluation": {
+    "modelVersion": "reset-mlp-8-tanh-v2",
+    "trainedAt": "2026-09-24T00:51:53.141694+00:00",
+    "observedUntil": "2026-09-24T00:46:51.683292+00:00",
+    "sampleCount": 114,
+    "architecture": "7 inputs -> 8 tanh neurons -> 3 softmax classes (none/0-24h/24-48h)",
+    "selectedAlpha": 100.0,
+    "randomSeed": 42,
+    "splits": {
+      "train": {
+        "count": 66,
+        "start": "2026-06-01T00:00:00+00:00",
+        "end": "2026-08-05T00:00:00+00:00",
+        "positives24h": 19,
+        "positives48h": 30
+      },
+      "validation": {
+        "count": 21,
+        "start": "2026-08-08T00:00:00+00:00",
+        "end": "2026-08-28T00:00:00+00:00",
+        "positives24h": 6,
+        "positives48h": 11
+      },
+      "test": {
+        "count": 23,
+        "start": "2026-08-31T00:00:00+00:00",
+        "end": "2026-09-22T00:00:00+00:00",
+        "positives24h": 5,
+        "positives48h": 9
+      }
+    },
+    "neural": {
+      "brier24h": 0.17416547111737532,
+      "logLoss24h": 0.5341025276827072,
+      "brier48h": 0.24468245257248072,
+      "logLoss48h": 0.6825017075856284,
+      "meanBrier": 0.209423961844928
+    },
+    "baselines": {
+      "empirical_frequency": {
+        "brier24h": 0.17438563327032136,
+        "logLoss24h": 0.5346464880671676,
+        "brier48h": 0.2457466918714556,
+        "logLoss48h": 0.6846354962675263,
+        "meanBrier": 0.21006616257088848
+      },
+      "poisson_rate": {
+        "brier24h": 0.17023337968056682,
+        "logLoss24h": 0.523876958244175,
+        "brier48h": 0.23832574202112874,
+        "logLoss48h": 0.6696208498638695,
+        "meanBrier": 0.20427956085084778
+      }
+    },
+    "bestBaseline": "poisson_rate",
+    "relativeBrierImprovement": -0.02518314104775432,
+    "eligibleForUse": false,
+    "limitations": [
+      "Only a few dozen independent reset events; daily rows are not independent new events.",
+      "48h labels overlap; aggregate holdout metrics are descriptive, not significance tests.",
+      "This fit uses corrected historical data, not point-in-time discovery logs; evaluate those separately.",
+      "No event in a period is treated as a negative assuming site coverage is complete, which is unverified.",
+      "No causal relation or exact next-reset time can be inferred from these records.",
+      "Automatic adoption requires prospective verification on newly collected data."
+    ]
+  },
+  "comparison": {
+    "schemaVersion": 1,
+    "mode": "point_in_time_retraining_replay",
+    "generatedAt": "2026-09-24T00:46:51.683292+00:00",
+    "incumbentVersion": "reset-mlp-8-tanh-v1",
+    "candidateVersion": "reset-mlp-8-tanh-v2",
+    "incumbentAvailableAt": "2026-09-12T02:22:12.092237+00:00",
+    "incumbentSha256": "677f6d38f668e4ebc16f73c2a1b855af1304d1754c852712b5f9c26e8869440d",
+    "sampleCount": 11,
+    "start": "2026-09-12T02:43:44.237462+00:00",
+    "end": "2026-09-22T00:04:26.157132+00:00",
+    "positives24h": 2,
+    "positives48h": 3,
+    "excludedBeforeIncumbentAvailable": 0,
+    "censoredCounts": {
+      "horizon_not_mature": 2
+    },
+    "sourceRevisionWarningCount": 11,
+    "metrics": {
+      "incumbent": {
+        "brier24h": 0.1613714916045224,
+        "logLoss24h": 0.5074828069770883,
+        "brier48h": 0.2499999727470563,
+        "logLoss48h": 0.6931471260540578,
+        "meanBrier": 0.20568573217578934
+      },
+      "daily_retraining": {
+        "brier24h": 0.17129407305367164,
+        "logLoss24h": 0.5194538071796154,
+        "brier48h": 0.29727469432893944,
+        "logLoss48h": 0.8261898726514133,
+        "meanBrier": 0.23428438369130555
+      },
+      "empirical_frequency": {
+        "brier24h": 0.15874555477577384,
+        "logLoss24h": 0.5011401467040353,
+        "brier48h": 0.24621988316652718,
+        "logLoss48h": 0.6855973232433012,
+        "meanBrier": 0.2024827189711505
+      },
+      "poisson_rate": {
+        "brier24h": 0.15143848876789995,
+        "logLoss24h": 0.48208512874611764,
+        "brier48h": 0.2192306853176151,
+        "logLoss48h": 0.6311189125926182,
+        "meanBrier": 0.18533458704275751
+      }
+    },
+    "limitations": [
+      "Successful polls cover the published history; upstream completeness is unverified.",
+      "Initial history is a retrospective backfill, not prospective observation.",
+      "Event execution times can be estimates and the source can revise its history.",
+      "Overlapping 48-hour labels and repeated polls are not independent reset events.",
+      "Candidate scores describe daily retraining, not the final all-data model weights.",
+      "Each historical fit uses the snapshot known then; its older history is still retrospective.",
+      "Incumbent is scored on the same observed inputs and targets; these are replayed, not logged predictions.",
+      "Daily 48h outcomes overlap and the short observation window cannot establish reliable superiority."
+    ]
+  }
+}

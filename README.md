@@ -138,11 +138,12 @@ make train
 
 ```bash
 uv run --env-file .env --extra ml observatory train \
+  --model-version reset-mlp-8-tanh-v2 \
   --model var/training/run-001/neural_model.json \
   --report var/training/run-001/neural-evaluation.json
 ```
 
-后续把 `run-001` 换成 `run-002` 等名称。训练输出留在本机，**不会自动上传、修改 MySQL 历史或替换网站正在使用的模型**。
+后续把 `run-001` 换成 `run-002` 等名称。`--model-version` 将版本写入权重和报告，目前支持 v1／v2；不传时兼容原有 v1。它标记训练版本，不会自动更换网络结构。训练输出留在本机，**不会自动上传、修改 MySQL 历史或替换网站正在使用的模型**；`--model` 应始终指向 `var/` 下的新文件，不要指向网站现用权重。
 
 ### 3. 查看训练结果
 
@@ -160,6 +161,25 @@ uv run --env-file .env observatory score-forecasts
 分别输出 `var/training/prospective-dataset.json` 和 `var/training/forecast-scores.json`；可用 `--output var/training/run-001/文件名.json` 单独保存。`export-training` 依据每个 UTC 日首个成功采集时点实际可见的历史生成日级样本；`score-forecasts` 评估采集器当时存档的预测，并不评估刚训练出的本地模型。
 
 未满 48 小时的记录标记 `pending`；缺少后续采集或默认超过 3 小时的采集空档标记 `unknown`，不当成“没有重置”。初次启动时没有成熟样本是正常情况。这两个命令只导出审计数据，不触发训练；目前 `train` 默认仍读取最新历史，前瞻导出文件也不是 `--history` 所需的事件列表格式。
+
+### 5. 与现用模型作时点对照
+
+下面的命令直接读取 MySQL，在本机重放“每天用当时可见数据重新训练”的方案，与固定现用模型及两个统计基线在相同的成熟日样本上比较。需要训练依赖，不改线上模型或采集记录。
+
+```bash
+uv run --env-file .env --extra ml python -m observatory.retraining \
+  --incumbent observatory/data/neural_model.json \
+  --save-snapshot var/training/run-001/mysql-snapshot.json \
+  --output var/training/run-001/retraining-comparison.json
+```
+
+完整采集快照与逐日评分保留在 Git 忽略的 `var/`。以后重跑同一快照，可将 `--save-snapshot` 换成 `--snapshot var/training/run-001/mysql-snapshot.json`，并保留相同的 incumbent 权重。比较只从旧模型实际训练完成之后开始，未成熟和采集缺口样本不会计入分数。空窗口返回 `sampleCount=0` 和空指标，不表示模型误差为零。
+
+这是**重训流程的回放**，并非刚训练出的最终候选已经通过前瞻验证；最终候选看过的标签不能再作它的独立测试集。不要通过不断调整网络直到这段回放分数变好来决定上线。
+
+### 最新训练：2026-09-24 v2 候选
+
+本次使用 MySQL 的 46 条最新记录，其中 36 次符合目标的随机重置，形成 114 个成熟日级样本。已保存 [v2 候选权重](observatory/data/neural_model_v2_candidate.json)，网站继续使用 v1：v2 历史留出平均 Brier 为 **0.2094**，最佳统计基线为 **0.2043**；最近 11 个成熟日样本中，每日重训方案也未胜过固定 v1。Brier 越低越好，不同日期的测试分数不能直接比较。数据核对、完整指标和复现方法见 [v2 训练报告](reports/neural-v2-2026-09-24/README.md)。
 
 ### 其他运行方式
 
