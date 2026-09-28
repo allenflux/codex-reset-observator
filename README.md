@@ -13,7 +13,7 @@
 | 时间分布 | 随机重置时刻和间隔分布、时区切换、最近一个月筛选 |
 | 统计基线 | Python 危险率模型、信号权重和校准；两个静态数据快照已与原 TypeScript 数值核对 |
 | 源站概率同步 | 主卡同步 Gussuri Works 的公开 24／48 小时概率，标明来源及源站时间；缓存超过 30 分钟时明确回退 |
-| 神经网络预测 | 历史时间神经网络用于对照和回退；另有学习源站概率的学生网络训练流程，真实样本足够后在本机训练 |
+| 神经网络预测 | 本地训练的学生网络学习源站概率，单独展示试运行对照；历史时间模型用于对照和回退 |
 | 社交采集 | 默认每 5 分钟同步原站公开相关帖子、回复上下文及展示译文；保留扩展 Webhook，不调用 LLM |
 | 用量监控 | Python 命令行读取本机 Codex app-server 的周额度，服务端保存恢复记录、排除定期／个人重置 |
 | 持续积累 | 默认每 5 分钟同步公开历史，MySQL 保存事件版本、首次发现时间、采集成功／失败记录和当时预测 |
@@ -114,11 +114,29 @@ uv run --env-file .env --extra ml python -m observatory.distillation \
   --report var/training/teacher-student/report.json
 ```
 
-报告 `status=insufficient_data` 表示还不能训练，`modelWritten=false`，不会生成假权重或覆盖已有模型。重复抓到同一源站时刻会去重，每个 UTC 小时最多使用一个样本。当前最低要求为 72 个小时样本、观察跨度至少 14 天、至少 14 个 UTC 日期及有变化的目标值；按日期 60／20／20 划分，边界留 24 小时间隔，并剔除跨分组重复帖子。门槛只是程序可训练条件，不保证准确或已经足够贴近源站。
+默认训练报告 `status=insufficient_data` 表示尚未满足完整训练流程的要求，`modelWritten=false`，不会生成假权重或覆盖已有模型。重复抓到同一源站时刻会去重，每个 UTC 小时最多使用一个样本。默认最低要求为 72 个小时样本、观察跨度至少 14 天、至少 14 个 UTC 日期及有变化的目标值；按日期 60／20／20 划分，边界留 24 小时间隔，并剔除跨分组重复帖子。门槛只是程序可训练条件，不保证准确或已经足够贴近源站。
 
 数据足够时输出 `trained_candidate`、JSON 权重、按时间留出的 MAE／RMSE（单位：百分点），并与训练均值、上一时刻老师概率比较。训练始终在本机执行，不自动替换网站主卡。模仿误差和真实事件预测的 Brier 分数是两种不同指标。所有逐条数据与完整报告仍留在 MySQL／被 Git 忽略的 `var/`，仅经评估的模型权重可另行发布。
 
 可用 `--dataset /path/to/collection-export.json` 对冻结的采集导出重跑；需要 `export_dataset()` 的结构，`export-training` 生成的事件标签文件不是本命令输入格式。数据目录、准备 `.env` 的方法与下节相同。本次首轮采集和训练检查见 [学生网络接入记录](reports/teacher-imitation-2026-09-24.md)。
+
+### 小样本试运行与本次迭代
+
+2026-09-28 已用 MySQL 积累的 **97 条小时样本（约 4 天）**训练首版 `teacher-student-mlp-pilot-v1`，权重随网站部署。首页主卡下方的“学生神经网络 · 本地迭代”显示它自己的 24／48 小时概率、样本数和训练时间。主卡仍同步源站；学生网络不接替主预测或回退模型。最新历史中另有 37 次符合历史模型目标的随机重置，它们不等于 97 条独立训练事件。详细数据与评估见 [本次迭代报告](reports/teacher-student-pilot-2026-09-28.md)。
+
+在本机明确选择小样本试运行模式：
+
+```bash
+uv run --env-file .env --extra ml python -m observatory.distillation --pilot \
+  --model var/training/teacher-student/pilot-model.json \
+  --report var/training/teacher-student/pilot-report.json
+```
+
+`--pilot` 保留默认完整流程的 14 天要求，另设仅供对照的小样本流程：至少 24 条小时样本、跨度 1 天、有变化的目标；固定 27→8→2 网络、`alpha=100`，不根据本批测试结果调参。固定最后 24 小时作测试，前留 24 小时间隔，再排除与训练组重复的帖子；至少 24 条训练、8 条测试才能给出初步留出误差，否则标注 `evaluation.status=not_available`，不编造分数。最终部署权重用全部合格样本重拟合，留出分数来自另一个只使用测试期之前数据的拟合。
+
+权重仅可作为 `comparison_only` 发布，始终带 `experimental=true`、`eligibleForUse=false`。检查报告后可将生成的权重复制到 `observatory/data/teacher_student_pilot.json`，测试通过再提交并部署；不提交原始数据库导出或逐条预测。训练时间使用实际完成时间，首次推理需等源站 `checkedAt` 晚于训练完成时间，且源站输入不超过 30 分钟；等待或过期时页面保留训练信息，不显示旧的学生概率。
+
+采集器将学生预测以独立模型版本存入 MySQL `cro_predictions`，保存权重 SHA256、训练时间和当时的结构化输入。该记录的 `inputContext.checkedAt` 是预测窗口起点，`timestamp` 是本地存储时刻；未来评估需按前者对齐窗口，按后者检查何时可用。输入不含源站当次概率；源站概率仍单独归档作老师目标。试运行依赖源站的结构化信号，不是独立的 X 帖文语义网络；也没有证明超过“沿用上一小时源站概率”的简单方法。
 
 ## 本地训练与前瞻评估
 

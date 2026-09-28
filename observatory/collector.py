@@ -18,6 +18,7 @@ from observatory.domain import build_snapshot, load_data
 from observatory.history_sync import HISTORY_URL, sync_history
 from observatory.neural import FEATURES, MODEL_PATH, eligible_events, features_at, parse_time
 from observatory.probability import MODEL_VERSION as BASELINE_MODEL_VERSION
+from observatory.student import input_context, student_forecast
 from observatory.teacher import MODEL_VERSION as TEACHER_MODEL_VERSION
 from observatory.teacher import (
     SOURCE_ERRORS,
@@ -110,6 +111,7 @@ def collect_once(
             prediction_status = "failed"
         teacher = teacher_status(metadata.get("teacherForecast"), observed_at)
         teacher_prediction_status = teacher["reason"]
+        student_prediction_status = "context_unavailable"
         if teacher["fresh"]:
             try:
                 forecast = teacher["forecast"]
@@ -123,9 +125,30 @@ def collect_once(
                 teacher_prediction_status = "saved"
             except Exception:
                 teacher_prediction_status = "teacher_prediction_failed"
+            # Student weights are trained locally. Archive independent, forward
+            # predictions for comparison without affecting the teacher/history.
+            try:
+                student = student_forecast(teacher["forecast"], now=observed_at)
+                student_prediction_status = student["reason"]
+                if student["available"]:
+                    store.record_prediction(
+                        timestamp=observed_at, probability24h=student["probability24h"],
+                        probability48h=student["probability48h"], model_version=student["modelVersion"],
+                        features={"forecastKind": "teacher_student_pilot", "experimental": True,
+                                  "deploymentRole": "comparison_only", "modelSha256": student["modelSha256"],
+                                  "trainedAt": student["trainedAt"], "observedUntil": student["observedUntil"],
+                                  "forecastOrigin": student["checkedAt"],
+                                  "inputContext": input_context(teacher["forecast"])},
+                        source_run_id=run_id,
+                    )
+                    predictions += 1
+                    student_prediction_status = "saved"
+            except Exception:
+                student_prediction_status = "student_prediction_failed"
         return {"ok": True, "runId": run_id, "observedAt": observed_at.isoformat(),
                 "eventCount": len(rows), "predictionCount": predictions, "predictionStatus": prediction_status,
-                "teacherForecastStatus": teacher_prediction_status}
+                "teacherForecastStatus": teacher_prediction_status,
+                "studentForecastStatus": student_prediction_status}
     except Exception:
         return {"ok": False, "error": "collection_database_unavailable"}
     finally:

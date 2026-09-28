@@ -1,0 +1,14 @@
+<section class="panel neural-card student-card" aria-labelledby="student-heading">
+  <div class="section-heading"><div><p class="eyebrow">{{ student.t.label }}</p><h2 id="student-heading">{{ student.t.heading }}</h2></div></div>
+  <p class="neural-note">{{ student.t.note }}</p>
+  {% if student.available %}
+  <dl class="neural-values">{% for probability in student.probabilities %}<div><dt>{{ probability.label }}</dt><dd>{{ probability.value }}%</dd></div>{% endfor %}</dl>
+  <p class="neural-meta">{{ student.t.checked }}: {{ time(student.checked) }}</p>
+  {% else %}<p class="reference-note" role="status">{{ student.t.waiting }}</p>{% endif %}
+  <p class="neural-meta">{{ student.t.samples }}: {{ student.samples }} · {{ student.t.span }}: {{ student.span or t.unknown }} {{ t.days }}</p>
+  {% if student.scores %}<p class="neural-meta">{{ student.t.evaluation }}: {% for label, score in student.scores %}{{ label }} <strong>{{ score }}</strong>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% else %}<p class="neural-note">{{ student.t.no_evaluation }}</p>{% endif %}
+  {% if student.test_groups is not none %}<p class="neural-meta">{{ student.t.test_groups }}: {{ student.test_groups }}</p>{% endif %}
+  {% if student.below_baseline %}<p class="reference-note">{{ student.t.below_baseline }}</p>{% endif %}
+  <p class="neural-note">{{ student.t.evaluation_note }}</p>
+  <p class="neural-meta">{{ student.t.model }}: <code>{{ student.model }}</code> · {{ student.t.trained }}: {{ time(student.trained) }}</p>
+</section>

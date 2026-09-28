@@ -42,6 +42,8 @@
     {% elif notice.active %}<p class="reasoning">{{ t.historical_forecast_note }}</p>{% elif reasoning %}<p class="reasoning">{{ reasoning }}</p>{% endif %}
   </section>
 
+  {% if student is defined and student %}{% include "student.html" %}{% endif %}
+
   <section class="current-status panel" aria-labelledby="notice-heading">
     <div class="notice-body"><p class="eyebrow">{{ t.notice }}</p><h2 id="notice-heading">{{ t.notice_active if notice.active else t.no_notice }}</h2><p>{{ notice.summary }}</p>
       {% if notice.active and notice.date.iso %}<p class="notice-date">{{ t.scheduled }}: {{ time(notice.date) }}{% if notice.end.iso %}<br>{{ t.deadline }}: {{ time(notice.end) }}{% endif %}</p>{% endif %}

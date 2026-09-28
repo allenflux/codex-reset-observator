@@ -406,6 +406,45 @@ COPY: dict[str, dict[str, Any]] = {
     },
 }
 
+STUDENT_COPY: dict[str, dict[str, str]] = {
+    "zh": {
+        "heading": "学生神经网络 · 本地迭代", "label": "试运行对照",
+        "note": "使用已积累的源站输入与概率在本地训练，由神经网络独立计算以下数值。输入含源站结构化信号，本模型不调用 LLM，也未独立理解帖文。主卡继续同步源站预测。",
+        "samples": "小时样本", "span": "观察跨度", "trained": "训练时间", "model": "模型",
+        "evaluation": "初步留出模仿误差（平均绝对误差，百分点）",
+        "evaluation_note": "样本时间跨度较短，误差仅反映对源站的模仿，不代表真实重置准确率。线上预测会继续保存，用于后续验证。",
+        "no_evaluation": "暂没有足够的独立留出样本；当前仅作试运行对照。",
+        "waiting": "等待训练后的新鲜源站输入，暂不显示学生预测。",
+        "checked": "输入对应的源站时间",
+        "below_baseline": "本次留出评估尚未胜过简单基线，学生预测仅供对照。",
+        "test_groups": "留出帖子组数",
+    },
+    "en": {
+        "heading": "Student neural network · local iteration", "label": "PILOT COMPARISON",
+        "note": "Locally trained on collected source inputs and probabilities. The values below are calculated by our neural network. Inputs include structured source signals; the model makes no LLM calls and does not independently understand posts. The main forecast remains synced from the source.",
+        "samples": "Hourly samples", "span": "Observation span", "trained": "Trained", "model": "Model",
+        "evaluation": "Preliminary held-out imitation error (MAE, percentage points)",
+        "evaluation_note": "The observation period is short. These errors measure imitation of the source, not accuracy against actual resets. Live predictions are saved for subsequent evaluation.",
+        "no_evaluation": "Insufficient independent holdout samples; shown only as a pilot comparison.",
+        "waiting": "Waiting for fresh source inputs computed after training; student forecast unavailable.",
+        "checked": "Source input time",
+        "below_baseline": "The student has not beaten the simple baselines on this holdout; shown for comparison only.",
+        "test_groups": "Held-out post groups",
+    },
+    "ja": {
+        "heading": "学生ニューラルネットワーク · ローカル更新", "label": "試験運用・比較用",
+        "note": "蓄積した元サイトの入力と確率を使ってローカルで学習し、以下の数値を計算します。入力には元サイトの構造化されたシグナルを含みます。LLMは呼び出さず、投稿を独自に意味解析するものでもありません。メイン予測は引き続き元サイトから同期します。",
+        "samples": "時間別サンプル", "span": "観測期間", "trained": "学習日時", "model": "モデル",
+        "evaluation": "暫定的な未学習期間の模倣誤差（MAE・パーセントポイント）",
+        "evaluation_note": "観測期間は短く、この誤差は元サイトの模倣度を示すだけで、実際のリセットの予測精度ではありません。運用中の予測も保存し、今後の検証に使います。",
+        "no_evaluation": "独立した評価サンプルが不足しているため、試験運用の比較としてのみ表示します。",
+        "waiting": "学習後に計算された新しい入力を待っています。学生モデルの予測は未表示です。",
+        "checked": "元サイトの入力時刻",
+        "below_baseline": "今回の評価では単純な基準モデルを上回っていません。比較用の予測です。",
+        "test_groups": "評価対象の投稿グループ数",
+    },
+}
+
 NEURAL_COPY: dict[str, dict[str, str]] = {
     "en": {
         "heading": "Neural model evaluation",
@@ -712,6 +751,34 @@ def page_context(
             "inLanguage": locale,
         },
     }
+    student = view.get("studentForecast") or {}
+    if student.get("modelAvailable"):
+        evaluation = student.get("evaluation") or {}
+        metrics = evaluation.get("student") or {}
+        scores = []
+        if evaluation.get("status") == "pilot_holdout":
+            for hours in (24, 48):
+                value = metrics.get(f"mae{hours}hPercentagePoints")
+                if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value):
+                    scores.append((copy[f"within_{hours}"], f"{value:.2f}"))
+        span = student.get("observationSpanDays")
+        student_mae = metrics.get("meanMaePercentagePoints")
+        baseline_maes = [score.get("meanMaePercentagePoints")
+                         for score in (evaluation.get("baselines") or {}).values() if isinstance(score, dict)]
+        below_baseline = isinstance(student_mae, (int, float)) and any(
+            isinstance(value, (int, float)) and value <= student_mae for value in baseline_maes)
+        context["student"] = {
+            "t": STUDENT_COPY[locale], "available": bool(student.get("available")),
+            "model": student.get("modelVersion"), "samples": student.get("sampleCount"),
+            "span": f"{span:.1f}" if isinstance(span, (int, float)) and math.isfinite(span) else None,
+            "trained": date_display(student.get("trainedAt"), copy["unknown"]),
+            "checked": date_display(student.get("checkedAt"), copy["unknown"]),
+            "scores": scores,
+            "below_baseline": below_baseline, "test_groups": evaluation.get("testPostGroupCount"),
+            "probabilities": [{"label": copy[f"within_{hours}"],
+                               "value": _percent(student.get(f"probability{hours}h"))
+                               if student.get("available") else None} for hours in (24, 48)],
+        }
     neural = view.get("neuralForecast") or snapshot.get("neuralForecast")
     if isinstance(neural, dict):
         evaluation = neural.get("evaluation") or {}

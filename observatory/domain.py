@@ -309,6 +309,8 @@ def build_snapshot(data: dict, locale: str = "ja", now: datetime | None = None) 
         "probability24h": teacher["probability24h"] if teacher else None,
         "probability48h": teacher["probability48h"] if teacher else None,
     }
+    from .student import student_forecast
+    view_model["studentForecast"] = student_forecast(data.get("teacher_forecast"), now=now)
     return {"schemaVersion": "public-v1", "checkedAt": iso(timestamp(data.get("checked_at")) or now), "updatedAt": iso(updated),
             "lastRandomResetAt": iso(last_random), "dataHealth": _health(data, now), "viewModel": view_model,
             "resetTeaserStatus": teaser_status, "latestTiboActivity": latest_activity, "recoveryObservation": _public_recovery(data, now)}

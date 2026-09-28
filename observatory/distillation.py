@@ -24,6 +24,7 @@ from .neural import parse_time
 from .teacher import MAX_AGE_SECONDS
 
 MODEL_VERSION = "teacher-student-mlp-v1"
+PILOT_MODEL_VERSION = "teacher-student-mlp-pilot-v1"
 TEACHER_VERSION = "upstream-public-forecast-v1"
 DEFAULT_DIRECTORY = Path("var/training/teacher-student")
 FEATURES = [
@@ -41,6 +42,11 @@ REQUIREMENTS: dict[str, Any] = {
     "minimumSplitSamples": {"train": 24, "validation": 8, "test": 8},
     "purgeHours": 24,
 }
+PILOT_REQUIREMENTS: dict[str, Any] = {
+    "minimumHourlySamples": 24, "minimumObservationSpanDays": 1,
+    "minimumDistinctTargets": 2, "evaluationMinimumSplitSamples": {"train": 24, "test": 8},
+    "testHours": 24, "purgeHours": 24, "fixedAlpha": 100.0,
+}
 LIMITATIONS = [
     "The target is the source site's probability, not a confirmed reset outcome.",
     "Matching the teacher does not demonstrate better real-world reset prediction.",
@@ -49,6 +55,13 @@ LIMITATIONS = [
     "Hourly observations are correlated; their count is not the number of independent reset events.",
     "Final candidate weights include the holdout period; reported scores use a separate pre-holdout fit.",
     "This command never replaces the website's primary forecast or automatically publishes a model.",
+]
+PILOT_LIMITATIONS = LIMITATIONS + [
+    "This explicitly requested pilot relaxes data-quantity requirements only for comparison deployment.",
+    "Its fixed architecture and regularization are not selected using the pilot holdout.",
+    "A short correlated holdout cannot establish generalization to new posts or future source algorithms.",
+    "If too few held-out samples remain after excluding posts shared with training, no evaluation score is reported.",
+    "The pilot is never eligible to replace the primary forecast, including during a source outage.",
 ]
 
 
@@ -205,6 +218,32 @@ def split_samples(samples: list[dict[str, Any]]) -> tuple[dict[str, list[dict[st
     return parts, dict(purged)
 
 
+def split_pilot_samples(samples: list[dict[str, Any]]) -> tuple[dict[str, list[dict[str, Any]]], dict[str, int]]:
+    """Fixed trailing 24h test, 24h purge, excluding posts present in training."""
+    parts: dict[str, list[dict[str, Any]]] = {"train": [], "test": []}
+    purged: Counter[str] = Counter()
+    if not samples:
+        return parts, {}
+    test_start = max(row["origin"] for row in samples) - timedelta(hours=PILOT_REQUIREMENTS["testHours"])
+    gap = timedelta(hours=PILOT_REQUIREMENTS["purgeHours"])
+    for row in samples:
+        if row["origin"] > test_start:
+            parts["test"].append(row)
+        elif max(row["origin"], row["availableAt"]) + gap <= test_start:
+            parts["train"].append(row)
+        else:
+            purged["time_boundary"] += 1
+    training_posts = {row["postAt"] for row in parts["train"] if row["postAt"]}
+    kept = []
+    for row in parts["test"]:
+        if row["postAt"] and row["postAt"] in training_posts:
+            purged["post_shared_with_training"] += 1
+        else:
+            kept.append(row)
+    parts["test"] = kept
+    return parts, dict(purged)
+
+
 def _logit(value: float) -> float:
     value = min(1 - 1e-6, max(1e-6, value))
     return math.log(value / (1 - value))
@@ -237,7 +276,8 @@ def forecast(model: dict[str, Any], teacher_context: dict[str, Any], *, now: dat
     """Portable candidate inference; historical use before model availability is refused."""
     now = now or datetime.now(UTC)
     try:
-        if now.tzinfo is None or model.get("modelVersion") != MODEL_VERSION:
+        version = model.get("modelVersion")
+        if now.tzinfo is None or version not in {MODEL_VERSION, PILOT_MODEL_VERSION}:
             return None
         origin = parse_time(teacher_context["checkedAt"])
         fetched = parse_time(teacher_context["fetchedAt"])
@@ -249,8 +289,11 @@ def forecast(model: dict[str, Any], teacher_context: dict[str, Any], *, now: dat
         if teacher_context.get("sourceStale") is not False:
             return None
         p24, p48 = _predict(model, features_at(teacher_context))
-        return {"modelVersion": MODEL_VERSION, "probability24h": p24, "probability48h": p48,
-                "experimental": True, "target": "upstream_probability_imitation"}
+        return {"modelVersion": version, "probability24h": p24, "probability48h": p48,
+                "experimental": True, "eligibleForUse": False,
+                "target": "upstream_probability_imitation", "deploymentRole": "comparison_only",
+                **{key: model.get(key) for key in ("trainedAt", "observedUntil", "sampleCount", "trainingMode",
+                   "observationSpanDays", "distinctUtcDays", "trainingDataSha256", "evaluation")}}
     except (ValueError, TypeError, KeyError, IndexError, ZeroDivisionError, OverflowError):
         return None
 
@@ -300,9 +343,95 @@ def _save(path: Path, payload: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
+def _pilot_train(dataset: dict[str, Any], *, model_path: Path, report_path: Path,
+                 now: datetime) -> dict[str, Any]:
+    samples, quality = prepare_samples(dataset, now=now)
+    parts, purged = split_pilot_samples(samples)
+    fields = [("hourlySampleCount", "minimumHourlySamples"),
+              ("observationSpanDays", "minimumObservationSpanDays"),
+              ("distinctTargets", "minimumDistinctTargets")]
+    reasons = [requirement for field, requirement in fields if quality[field] < PILOT_REQUIREMENTS[requirement]]
+    formal_parts, _ = split_samples(samples)
+    unmet_formal = [requirement for field, requirement in fields + [("distinctUtcDays", "minimumDistinctUtcDays")]
+                   if quality[field] < REQUIREMENTS[requirement]]
+    unmet_formal.extend(f"minimum_{name}_samples_after_purging"
+                       for name, minimum in REQUIREMENTS["minimumSplitSamples"].items() if len(formal_parts[name]) < minimum)
+    evaluation_reasons = [f"minimum_{name}_samples_after_purging"
+                          for name, minimum in PILOT_REQUIREMENTS["evaluationMinimumSplitSamples"].items()
+                          if len(parts[name]) < minimum]
+    evaluation: dict[str, Any] = {
+        "status": "not_available", "reasons": evaluation_reasons,
+        "trainSampleCount": len(parts["train"]), "testSampleCount": len(parts["test"]),
+        "trainPostGroupCount": len({row["postAt"] for row in parts["train"] if row["postAt"]}),
+        "testPostGroupCount": len({row["postAt"] for row in parts["test"] if row["postAt"]}),
+    }
+    report: dict[str, Any] = {
+        "schemaVersion": 1, "modelVersion": PILOT_MODEL_VERSION, "teacherModelVersion": TEACHER_VERSION,
+        "generatedAt": now.isoformat(), "status": "insufficient_data", "modelWritten": False,
+        "trainingMode": "pilot", "deploymentRole": "comparison_only", "experimental": True,
+        "eligibleForUse": False, "target": "upstream_probability_imitation", "requirements": PILOT_REQUIREMENTS,
+        "validationRequirements": REQUIREMENTS, "unmetValidationRequirements": unmet_formal,
+        "dataQuality": quality, "reasons": reasons, "featureNames": FEATURES,
+        "splitMethod": "Fixed trailing (last source time - 24h, last source time] test, 24h boundary purge; exclude test posts seen in training",
+        "purged": purged, "limitations": PILOT_LIMITATIONS, "evaluation": evaluation,
+        "splits": {name: {"count": len(rows), "start": rows[0]["origin"].isoformat() if rows else None,
+                          "end": rows[-1]["origin"].isoformat() if rows else None} for name, rows in parts.items()},
+    }
+    if reasons:
+        report["message"] = "Not enough distinct observations for even the comparison-only pilot; no new weights were written."
+        _save(report_path, report)
+        return report
+
+    alpha = PILOT_REQUIREMENTS["fixedAlpha"]
+    report.update(status="trained_pilot", selectedAlpha=alpha, randomSeed=42,
+                  alphaSelection="Fixed before evaluation; no tuning on this dataset")
+    if not evaluation_reasons:
+        train, test = parts["train"], parts["test"]
+        fitted = _fit(train, alpha)
+        test_predictions = [_predict(fitted, row["features"]) for row in test]
+        mean = [statistics.mean(row["targets"][index] for row in train) for index in (0, 1)]
+        persistence = []
+        for row in test:
+            past = [sample for sample in samples if sample["origin"] < row["origin"] and sample["availableAt"] <= row["origin"]]
+            persistence.append(past[-1]["targets"] if past else train[-1]["targets"])
+        metrics = _metrics(test, test_predictions)
+        baselines = {"training_mean": _metrics(test, [mean for _ in test]),
+                     "previous_retained_hourly_teacher": _metrics(test, persistence)}
+        evaluation.update(status="pilot_holdout", student=metrics, baselines=baselines)
+        report.update(student=metrics, baselines=baselines,
+                      persistenceDefinition="Latest strictly earlier retained hourly teacher value available by the test origin; never the current target")
+        report["holdoutPredictions"] = [
+            {"checkedAt": row["origin"].isoformat(), "teacher24h": row["targets"][0], "teacher48h": row["targets"][1],
+             "student24h": values[0], "student48h": values[1]}
+            for row, values in zip(test, test_predictions, strict=True)
+        ]
+    final_model = _fit(samples, alpha)
+    canonical = [{**row, "origin": row["origin"].isoformat(), "availableAt": row["availableAt"].isoformat()}
+                 for row in samples]
+    final_model.update({
+        "modelVersion": PILOT_MODEL_VERSION, "teacherModelVersion": TEACHER_VERSION,
+        "trainedAt": datetime.now(UTC).isoformat(), "observedUntil": max(row["availableAt"] for row in samples).isoformat(),
+        "trainingMode": "pilot", "deploymentRole": "comparison_only", "experimental": True,
+        "trainingDataSha256": hashlib.sha256(json.dumps(canonical, sort_keys=True).encode()).hexdigest(),
+        "sampleCount": len(samples), "observationSpanDays": quality["observationSpanDays"],
+        "distinctUtcDays": quality["distinctUtcDays"], "eligibleForUse": False,
+        "target": "upstream_probability_imitation", "evaluation": evaluation,
+        "validationRequirements": REQUIREMENTS, "unmetValidationRequirements": unmet_formal,
+        "requirements": PILOT_REQUIREMENTS, "limitations": PILOT_LIMITATIONS,
+    })
+    report.update(modelWritten=True, trainingDataSha256=final_model["trainingDataSha256"],
+                  trainedAt=final_model["trainedAt"], observedUntil=final_model["observedUntil"])
+    _save(model_path, final_model)
+    _save(report_path, report)
+    return report
+
+
 def train_student(dataset: dict[str, Any], *, model_path: Path = DEFAULT_DIRECTORY / "model.json",
-                  report_path: Path = DEFAULT_DIRECTORY / "report.json", now: datetime | None = None) -> dict[str, Any]:
+                  report_path: Path = DEFAULT_DIRECTORY / "report.json", now: datetime | None = None,
+                  pilot: bool = False) -> dict[str, Any]:
     now = now or datetime.now(UTC)
+    if pilot:
+        return _pilot_train(dataset, model_path=model_path, report_path=report_path, now=now)
     samples, quality = prepare_samples(dataset, now=now)
     parts, purged = split_samples(samples)
     reasons = []
@@ -349,8 +478,8 @@ def train_student(dataset: dict[str, Any], *, model_path: Path = DEFAULT_DIRECTO
         "status": "trained_candidate", "modelWritten": True, "selectedAlpha": alpha,
         "randomSeed": 42, "validationCandidates": candidates, "student": metrics,
         "baselines": {"development_mean": _metrics(test, [mean for _ in test]),
-                      "previous_observed_teacher": _metrics(test, persistence)},
-        "persistenceDefinition": "Latest strictly earlier teacher value available by each test origin; never the current target",
+                      "previous_retained_hourly_teacher": _metrics(test, persistence)},
+        "persistenceDefinition": "Latest strictly earlier retained hourly teacher value available by each test origin; never the current target",
         "holdoutPredictions": [{"checkedAt": row["origin"].isoformat(),
                                 "teacher24h": row["targets"][0], "teacher48h": row["targets"][1],
                                 "student24h": values[0], "student48h": values[1]}
@@ -376,6 +505,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--dataset", type=Path, help="Frozen collection export; otherwise read configured MySQL")
     parser.add_argument("--model", type=Path, default=DEFAULT_DIRECTORY / "model.json")
     parser.add_argument("--report", type=Path, default=DEFAULT_DIRECTORY / "report.json")
+    parser.add_argument("--pilot", action="store_true", help="Explicit small-data comparison-only pilot; never eligible as primary")
     args = parser.parse_args(argv)
     try:
         if args.dataset:
@@ -383,7 +513,7 @@ def main(argv: list[str] | None = None) -> None:
         else:
             with create_collection_store(CollectionSettings.from_env()) as store:
                 dataset = store.export_dataset()
-        report = train_student(dataset, model_path=args.model, report_path=args.report)
+        report = train_student(dataset, model_path=args.model, report_path=args.report, pilot=args.pilot)
         print(json.dumps({key: report[key] for key in ("status", "modelWritten", "dataQuality", "reasons", "requirements")}, indent=2))
     except ImportError:
         print("Missing training dependency. Install with: uv sync --extra ml", file=sys.stderr)

@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from observatory.app import ROOT, create_app
 from observatory.config import Settings
-from observatory.presentation import COPY, page_context, safe_url
+from observatory.presentation import COPY, STUDENT_COPY, page_context, safe_url
 
 NOW = datetime(2026, 9, 12, 10, tzinfo=UTC)
 
@@ -49,6 +49,47 @@ def test_active_notice_replaces_primary_percentage_cards_but_keeps_historical_mo
     assert COPY[locale]["historical_forecast_note"] in html
     assert COPY[locale]["social_rule_notice"] in html
     assert "29%" in html and "50%" in html
+
+
+@pytest.mark.parametrize("locale", ["zh", "en", "ja"])
+def test_student_is_independent_comparison_with_training_provenance(snapshot, locale):
+    snapshot["viewModel"]["studentForecast"] = {
+        "modelAvailable": True, "available": True, "modelVersion": "teacher-student-mlp-pilot-v1",
+        "trainedAt": NOW.isoformat(), "checkedAt": NOW.isoformat(), "sampleCount": 97,
+        "observationSpanDays": 3.993, "probability24h": .18, "probability48h": .42,
+        "evaluation": {"status": "pilot_holdout", "testPostGroupCount": 1, "student": {
+            "mae24hPercentagePoints": 8.31, "mae48hPercentagePoints": 9.42,
+            "meanMaePercentagePoints": 8.865},
+            "baselines": {"training_mean": {"meanMaePercentagePoints": 5}}},
+    }
+    context = page_context(snapshot, locale)
+    assert [row["value"] for row in context["student"]["probabilities"]] == [18, 42]
+    assert [row["value"] for row in context["probabilities"]] == [25, 77]
+    html = render(snapshot, locale)
+    assert STUDENT_COPY[locale]["heading"] in html
+    assert STUDENT_COPY[locale]["evaluation_note"] in html
+    assert STUDENT_COPY[locale]["below_baseline"] in html
+    assert STUDENT_COPY[locale]["test_groups"] in html
+    assert "8.31" in html and "9.42" in html and "97" in html
+    assert html.count('role="progressbar"') == 2
+
+
+def test_student_unavailable_retains_training_details_without_stale_probabilities(snapshot):
+    snapshot["viewModel"]["studentForecast"] = {
+        "modelAvailable": True, "available": False, "modelVersion": "teacher-student-mlp-pilot-v1",
+        "trainedAt": NOW.isoformat(), "sampleCount": 97, "observationSpanDays": 3.993,
+        "probability24h": .18, "probability48h": .42,
+        "evaluation": {"status": "not_available"},
+    }
+    html = render(snapshot, "zh")
+    assert STUDENT_COPY["zh"]["waiting"] in html
+    assert STUDENT_COPY["zh"]["no_evaluation"] in html
+    assert "97" in html and "18%" not in html and "42%" not in html
+
+
+def test_student_missing_model_has_no_empty_card(snapshot):
+    snapshot["viewModel"]["studentForecast"] = {"modelAvailable": False, "available": False}
+    assert 'id="student-heading"' not in render(snapshot)
 
 
 @pytest.fixture

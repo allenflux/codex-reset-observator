@@ -75,6 +75,7 @@ def test_localized_pages_interactions_and_layout(local_site, width):
                 expect(page.get_by_role("heading", level=1)).to_be_visible()
                 expect(page.get_by_role("progressbar")).to_have_count(2)
                 expect(page.locator("#neural-heading")).to_be_visible()
+                expect(page.locator("#student-heading")).to_be_visible()
                 assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
             before = page.locator("[data-heatmap-count]").first.inner_text()
             if mirrored:
@@ -82,6 +83,11 @@ def test_localized_pages_interactions_and_layout(local_site, width):
                 expect(page.locator(".forecast-panel")).to_contain_text("源站预测时间")
                 expect(page.get_by_role("progressbar").first).to_have_attribute("aria-valuenow", "36")
                 expect(page.get_by_role("progressbar").last).to_have_attribute("aria-valuenow", "54")
+                expect(page.locator(".student-card .neural-values dd")).to_have_count(2)
+                expect(page.locator(".student-card")).to_contain_text("试运行对照")
+            else:
+                expect(page.locator(".student-card")).to_contain_text("等待训练后的新鲜源站输入")
+                expect(page.locator(".student-card .neural-values")).to_have_count(0)
             page.locator('[data-heatmap-range]').select_option("month")
             assert page.locator("[data-heatmap-count]").first.inner_text() != before
             page.locator('[data-heatmap-range]').select_option("all")
