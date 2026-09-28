@@ -56,4 +56,6 @@ uv run --extra ml python -m observatory.distillation --pilot \
 
 网站只对训练完成后的新鲜源站上下文进行学生推理。采集器另存学生预测、模型版本、权重指纹、训练时间及不含老师概率的输入，便于下一轮进行真正的前瞻对照。输入对应的 `checkedAt` 是预测窗口起点，保存时间仅用于可用性审计。Docker 容器只运行标准库推理，不在线训练。
 
+现有 `score-forecasts` 的真实事件评分仅用于历史模型和统计基线；源站概率、学生模仿记录会明确返回 `teacher_imitation_requires_separate_evaluation`，不按错误的本地入库时间窗口生成 Brier 分数。后续需另行实现按源站起点及可用时间对齐的前瞻比较。
+
 发布遵循本地验证 → Git commit/push → `ssh vps` 进入 `/root/codex-reset-observator` 拉取 → Docker Compose 构建并启动的顺序。

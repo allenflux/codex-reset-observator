@@ -174,7 +174,7 @@ def build_training_dataset(
 def score_archived_forecasts(
     store: CollectionSource, *, now: datetime | None = None, max_gap_hours: float = 3,
 ) -> list[dict[str, Any]]:
-    """Score stored forecasts, preserving their original values and source cutoff."""
+    """Score reset forecasts; teacher imitation needs a separate target and origin."""
     now, max_gap = _cutoff(now, max_gap_hours)
     timeline = _Timeline(store, now)
     results = []
@@ -182,6 +182,11 @@ def score_archived_forecasts(
     for prediction in timeline.dataset["predictions"]:
         origin = parse_time(prediction["timestamp"])
         if origin > now:
+            continue
+        features = prediction.get("features")
+        if isinstance(features, dict) and features.get("forecastKind") in ("upstream_teacher", "teacher_student_pilot"):
+            results.append({**prediction, "status": "unknown",
+                            "reason": "teacher_imitation_requires_separate_evaluation", "label": None})
             continue
         row = {**prediction, **timeline.outcome(origin, now, max_gap)}
         source_run = runs.get(prediction["sourceRunId"])

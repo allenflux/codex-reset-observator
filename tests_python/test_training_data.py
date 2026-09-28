@@ -103,6 +103,40 @@ def test_forecast_waits_for_full_48_hour_followup():
         assert ready["status"] == "scored"
 
 
+@pytest.mark.parametrize("forecast_kind", ["upstream_teacher", "teacher_student_pilot"])
+@pytest.mark.parametrize("elapsed_hours", [12, 48])
+def test_teacher_imitation_is_not_scored_as_a_reset_forecast(forecast_kind, elapsed_hours):
+    source_origin = (ORIGIN - timedelta(minutes=10)).isoformat()
+    features = {"forecastKind": forecast_kind, "forecastOrigin": source_origin,
+                "teacherForecast": {"checkedAt": source_origin}}
+    with CollectionStore() as store:
+        for hour in range(49):
+            rows = past_events()
+            if hour >= 6:
+                rows.append(event("new-reset", ORIGIN + timedelta(hours=6)))
+            run_id = collect(store, hour, rows)
+            if hour == 0:
+                archive(store, run_id)
+                store.record_prediction(timestamp=ORIGIN, probability24h=.7, probability48h=.9,
+                                        model_version=f"{forecast_kind}-test", features=features,
+                                        source_run_id=run_id)
+        baseline, imitation = score_archived_forecasts(store, now=ORIGIN + timedelta(hours=elapsed_hours))
+        assert imitation["status"] == "unknown"
+        assert imitation["reason"] == "teacher_imitation_requires_separate_evaluation"
+        assert imitation["label"] is None
+        assert imitation["features"] == features
+        assert parse_time(imitation["timestamp"]) == ORIGIN
+        assert imitation["modelVersion"] == f"{forecast_kind}-test"
+        assert imitation["probability24h"] == .7 and imitation["probability48h"] == .9
+        assert not {"target24h", "target48h", "brier24h", "brier48h", "firstTargetEventAt"}.intersection(imitation)
+        if elapsed_hours == 48:
+            assert baseline["status"] == "scored" and baseline["label"] == 1
+            assert baseline["brier24h"] == (.25 - 1) ** 2
+            assert baseline["brier48h"] == (.4 - 1) ** 2
+        else:
+            assert baseline["status"] == "pending" and "brier24h" not in baseline
+
+
 def test_missing_poll_coverage_is_unknown_instead_of_a_negative_label():
     with CollectionStore() as store:
         for hour in range(49):

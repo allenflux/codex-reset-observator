@@ -202,7 +202,7 @@ uv run --env-file .env observatory export-training
 uv run --env-file .env observatory score-forecasts
 ```
 
-分别输出 `var/training/prospective-dataset.json` 和 `var/training/forecast-scores.json`；可用 `--output var/training/run-001/文件名.json` 单独保存。`export-training` 依据每个 UTC 日首个成功采集时点实际可见的历史生成日级样本；`score-forecasts` 评估采集器当时存档的预测，并不评估刚训练出的本地模型。
+分别输出 `var/training/prospective-dataset.json` 和 `var/training/forecast-scores.json`；可用 `--output var/training/run-001/文件名.json` 单独保存。`export-training` 依据每个 UTC 日首个成功采集时点实际可见的历史生成日级样本；`score-forecasts` 评估采集器当时存档的历史模型／统计基线预测，并不评估刚训练出的本地模型。源站概率及学生模仿预测暂标为 `unknown / teacher_imitation_requires_separate_evaluation`，不生成重置事件 Brier 分数；它们的模仿目标和源站窗口起点需要专门对齐，不能直接按本地入库时间套用现有事件评分器。本次模仿误差见学生训练报告；线上归档供后续单独验证。
 
 未满 48 小时的记录标记 `pending`；缺少后续采集或默认超过 3 小时的采集空档标记 `unknown`，不当成“没有重置”。初次启动时没有成熟样本是正常情况。这两个命令只导出审计数据，不触发训练；目前 `train` 默认仍读取最新历史，前瞻导出文件也不是 `--history` 所需的事件列表格式。
 
